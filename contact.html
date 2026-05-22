@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Contact — PlagiFix</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#f8fafc;color:#0f172a;line-height:1.7;min-height:100vh;display:flex;flex-direction:column;}
+a{color:#2563eb;text-decoration:none;}
+nav{display:flex;align-items:center;padding:0 64px;height:68px;border-bottom:1px solid #e2e8f0;background:#fff;}
+.logo{font-size:1.3rem;font-weight:800;letter-spacing:-0.03em;color:#0f172a;}
+.logo span{color:#2563eb;}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 24px;}
+.wrap{width:100%;max-width:480px;}
+.tag{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:#2563eb;margin-bottom:10px;}
+h1{font-size:1.8rem;font-weight:800;letter-spacing:-0.03em;margin-bottom:8px;}
+.sub{font-size:0.88rem;color:#64748b;margin-bottom:32px;line-height:1.7;}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:28px;box-shadow:0 1px 3px rgba(0,0,0,0.05);}
+.field{margin-bottom:16px;}
+label{display:block;font-size:0.78rem;font-weight:600;color:#374151;margin-bottom:6px;}
+input,textarea{width:100%;padding:10px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;color:#0f172a;background:#fff;outline:none;transition:border-color .15s;}
+input:focus,textarea:focus{border-color:#2563eb;}
+textarea{resize:vertical;min-height:110px;}
+.submit{width:100%;padding:12px;background:#0f172a;color:#fff;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all .15s;margin-top:4px;}
+.submit:hover{background:#1e293b;}
+.or{text-align:center;font-size:0.8rem;color:#94a3b8;margin:20px 0 16px;}
+.email-link{display:block;text-align:center;font-size:0.88rem;font-weight:600;color:#2563eb;}
+.success{display:none;text-align:center;padding:24px;}
+.success-icon{font-size:2.5rem;margin-bottom:12px;}
+.success h3{font-size:1.1rem;font-weight:700;margin-bottom:8px;}
+.success p{font-size:0.85rem;color:#64748b;}
+footer{background:#0f172a;padding:24px 64px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.foot-logo{font-size:1rem;font-weight:800;color:#fff;}
+.foot-logo span{color:#818cf8;}
+.foot-links{display:flex;gap:20px;}
+.foot-links a{font-size:0.74rem;color:rgba(255,255,255,0.35);}
+.foot-copy{font-size:0.72rem;color:rgba(255,255,255,0.25);}
+</style>
+</head>
+<body>
+<nav><a href="/" class="logo">Plagi<span>Fix</span></a></nav>
+<main>
+  <div class="wrap">
+    <div class="tag">Support</div>
+    <h1>Get in touch</h1>
+    <p class="sub">Have a question or issue? We typically respond within a few hours.</p>
+
+    <div class="card">
+      <div id="form-wrap">
+        <div class="field">
+          <label>Your name</label>
+          <input type="text" id="name" placeholder="Dr. Priya M."/>
+        </div>
+        <div class="field">
+          <label>Email address</label>
+          <input type="email" id="email" placeholder="you@university.edu"/>
+        </div>
+        <div class="field">
+          <label>Message</label>
+          <textarea id="message" placeholder="Describe your question or issue..."></textarea>
+        </div>
+        <button class="submit" onclick="sendMessage()">Send message</button>
+        <div class="or">or email us directly</div>
+        <a href="mailto:support@plagifix.com" class="email-link">support@plagifix.com</a>
+      </div>
+      <div class="success" id="success">
+        <div class="success-icon">✅</div>
+        <h3>Message sent!</h3>
+        <p>We'll get back to you at your email address within a few hours.</p>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="foot-logo">Plagi<span>Fix</span></div>
+  <div class="foot-links">
+    <a href="/privacy-policy.html">Privacy Policy</a>
+    <a href="/terms-of-service.html">Terms of Service</a>
+    <a href="/refund-policy.html">Refund Policy</a>
+    <a href="/contact.html">Contact</a>
+  </div>
+  <div class="foot-copy">© 2025 PlagiFix</div>
+</footer>
+<script>
+function sendMessage() {
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const message = document.getElementById('message').value.trim();
+  if (!name || !email || !message) { alert('Please fill in all fields.'); return; }
+  // Opens mail client with pre-filled email
+  const subject = encodeURIComponent('PlagiFix Support Request from ' + name);
+  const body = encodeURIComponent('Name: ' + name + '\nEmail: ' + email + '\n\nMessage:\n' + message);
+  window.location.href = 'mailto:support@plagifix.com?subject=' + subject + '&body=' + body;
+  document.getElementById('form-wrap').style.display = 'none';
+  document.getElementById('success').style.display = 'block';
+}
+</script>
+</body>
+</html>
