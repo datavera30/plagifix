@@ -206,7 +206,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
 </head>
 <body>
 
-<button class="float-btn" id="float-btn" onclick="openPayment('elite')">✦ Fix my document</button>
+<button class="float-btn" id="float-btn" onclick="openPayment('buy')">✦ Fix my document</button>
 
 <nav>
   <a href="#" class="logo">Plagi<span>Fix</span></a>
@@ -216,7 +216,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
     <a href="#pricing">Pricing</a>
     <a href="#faq">FAQ</a>
     <a href="#pricing" class="btn btn-out">Sign in</a>
-    <a href="#pricing" class="btn btn-blue" onclick="event.preventDefault();openPayment('elite')">Get started →</a>
+    <a href="#pricing" class="btn btn-blue" onclick="event.preventDefault();openPayment('buy')">Get started →</a>
   </div>
 </nav>
 
@@ -226,7 +226,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
     <h1>Remove Turnitin flags.<br><span class="blue">Instantly.</span></h1>
     <p class="hero-sub">PlagiFix removes plagiarism and AI detection flags from your thesis or research paper — without changing a single word of your content.</p>
     <div class="hero-acts">
-      <button onclick="openPayment('elite')" class="btn btn-blue btn-xl">Fix my document — from $5</button>
+      <button onclick="openPayment('buy')" class="btn btn-blue btn-xl">Fix my document — from $5</button>
       <a href="#how" class="btn btn-out btn-lg">How it works</a>
     </div>
     <div class="hero-trust">
@@ -294,6 +294,80 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
     <div><div class="stat-n" data-target="100" data-suffix="%">0</div><div class="stat-l">Lossless — Zero Content Change</div></div>
   </div>
 </div>
+<section class="sec sec-bg" id="pricing">
+  <div class="sec-in">
+    <div class="sec-tag">Pricing</div>
+    <div class="sec-t">Find your perfect plan.</div>
+    <p class="sec-s">Buy credits as you go, or choose a plan for the best value. No subscriptions. No hidden fees.</p>
+    <div class="price-grid">
+      <div class="pc">
+        <div class="pc-name">Buy Credits</div>
+        <div class="pc-price"><sup>$</sup>5</div>
+        <div class="pc-meta">per credit · 20-day validity</div>
+        <div class="pc-value">$5 per document</div>
+        <div class="pc-div"></div>
+        <ul class="pc-list">
+          <li>1 credit</li><li>Plagiarism flag removal</li><li>AI detection flag removal</li>
+          <li>Accepted by Turnitin, iThenticate & more</li><li>Works on any language, any subject</li>
+          <li>Your content stays exactly as written</li><li>Document deleted immediately after download</li>
+          <li>20-day credit validity</li><li>Standard support</li><li>Fast processing</li>
+        </ul>
+        <button onclick="openPayment('buy')" class="pc-btn sec">Get started</button>
+      </div>
+      <div class="pc">
+        <div class="pc-name">Starter</div>
+        <div class="pc-price"><sup>$</sup>49</div>
+        <div class="pc-meta">25 credits · 30-day validity</div>
+        <div class="pc-value">$1.96 per document</div>
+        <div class="pc-div"></div>
+        <ul class="pc-list">
+          <li>25 credits</li><li>Plagiarism flag removal</li><li>AI detection flag removal</li>
+          <li>Accepted by Turnitin, iThenticate & more</li><li>Works on any language, any subject</li>
+          <li>Your content stays exactly as written</li><li>Document deleted immediately after download</li>
+          <li>30-day credit validity</li><li>Standard support</li><li>Fast processing</li>
+        </ul>
+        <button onclick="openPayment('starter')" class="pc-btn sec">Get Starter</button>
+      </div>
+      <div class="pc pop">
+        <div class="pc-badge">Most popular</div>
+        <div class="pc-name">Elite</div>
+        <div class="pc-price"><sup>$</sup>99</div>
+        <div class="pc-meta">80 credits · 60-day validity</div>
+        <div class="pc-value">$1.24 per document</div>
+        <div class="pc-div"></div>
+        <ul class="pc-list">
+          <li>80 credits</li><li>Plagiarism flag removal</li><li>AI detection flag removal</li>
+          <li>Accepted by Turnitin, iThenticate & more</li><li>Works on any language, any subject</li>
+          <li>Your content stays exactly as written</li><li>Document deleted immediately after download</li>
+          <li>60-day credit validity</li><li>Priority support</li><li>Faster processing</li>
+        </ul>
+        <button onclick="openPayment('elite')" class="pc-btn pri">Get Elite</button>
+      </div>
+      <div class="pc">
+        <div class="pc-name">Pro</div>
+        <div class="pc-price"><sup>$</sup>199</div>
+        <div class="pc-meta">250 credits · 90-day validity</div>
+        <div class="pc-value">$0.80 per document</div>
+        <div class="pc-div"></div>
+        <ul class="pc-list">
+          <li>250 credits</li><li>Plagiarism flag removal</li><li>AI detection flag removal</li>
+          <li>Accepted by Turnitin, iThenticate & more</li><li>Works on any language, any subject</li>
+          <li>Your content stays exactly as written</li><li>Document deleted immediately after download</li>
+          <li>90-day credit validity</li><li>Dedicated support</li><li>Instant processing</li>
+        </ul>
+        <button onclick="openPayment('pro')" class="pc-btn sec">Get Pro</button>
+      </div>
+    </div>
+    <div class="trust-badges">
+      <div class="trust-badge"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Secure payments by Razorpay</div>
+      <div class="trust-badge"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 256-bit SSL encryption</div>
+      <div class="trust-badge"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Instant download after payment</div>
+      <div class="trust-badge"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Full refund guarantee</div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule"/>
 
 <section class="sec" id="how">
   <div class="sec-in">
@@ -392,78 +466,6 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
   </div>
 </div>
 
-<section class="sec sec-bg" id="pricing">
-  <div class="sec-in">
-    <div class="sec-tag">Pricing</div>
-    <div class="sec-t">Find your perfect plan.</div>
-    <p class="sec-s">Buy credits as you go, or choose a plan for the best value. No subscriptions. No hidden fees.</p>
-    <div class="price-grid">
-      <div class="pc">
-        <div class="pc-name">Buy Credits</div>
-        <div class="pc-price"><sup>$</sup>5</div>
-        <div class="pc-meta">per credit · 20-day validity</div>
-        <div class="pc-value">$5 per document</div>
-        <div class="pc-div"></div>
-        <ul class="pc-list">
-          <li>1 credit</li><li>Plagiarism flag removal</li><li>AI detection flag removal</li>
-          <li>Accepted by Turnitin, iThenticate & more</li><li>Works on any language, any subject</li>
-          <li>Your content stays exactly as written</li><li>Document deleted immediately after download</li>
-          <li>20-day credit validity</li><li>Standard support</li><li>Fast processing</li>
-        </ul>
-        <button onclick="openPayment('buy')" class="pc-btn sec">Get started</button>
-      </div>
-      <div class="pc">
-        <div class="pc-name">Starter</div>
-        <div class="pc-price"><sup>$</sup>49</div>
-        <div class="pc-meta">25 credits · 30-day validity</div>
-        <div class="pc-value">$1.96 per document</div>
-        <div class="pc-div"></div>
-        <ul class="pc-list">
-          <li>25 credits</li><li>Plagiarism flag removal</li><li>AI detection flag removal</li>
-          <li>Accepted by Turnitin, iThenticate & more</li><li>Works on any language, any subject</li>
-          <li>Your content stays exactly as written</li><li>Document deleted immediately after download</li>
-          <li>30-day credit validity</li><li>Standard support</li><li>Fast processing</li>
-        </ul>
-        <button onclick="openPayment('starter')" class="pc-btn sec">Get Starter</button>
-      </div>
-      <div class="pc pop">
-        <div class="pc-badge">Most popular</div>
-        <div class="pc-name">Elite</div>
-        <div class="pc-price"><sup>$</sup>99</div>
-        <div class="pc-meta">80 credits · 60-day validity</div>
-        <div class="pc-value">$1.24 per document</div>
-        <div class="pc-div"></div>
-        <ul class="pc-list">
-          <li>80 credits</li><li>Plagiarism flag removal</li><li>AI detection flag removal</li>
-          <li>Accepted by Turnitin, iThenticate & more</li><li>Works on any language, any subject</li>
-          <li>Your content stays exactly as written</li><li>Document deleted immediately after download</li>
-          <li>60-day credit validity</li><li>Priority support</li><li>Faster processing</li>
-        </ul>
-        <button onclick="openPayment('elite')" class="pc-btn pri">Get Elite</button>
-      </div>
-      <div class="pc">
-        <div class="pc-name">Pro</div>
-        <div class="pc-price"><sup>$</sup>199</div>
-        <div class="pc-meta">250 credits · 90-day validity</div>
-        <div class="pc-value">$0.80 per document</div>
-        <div class="pc-div"></div>
-        <ul class="pc-list">
-          <li>250 credits</li><li>Plagiarism flag removal</li><li>AI detection flag removal</li>
-          <li>Accepted by Turnitin, iThenticate & more</li><li>Works on any language, any subject</li>
-          <li>Your content stays exactly as written</li><li>Document deleted immediately after download</li>
-          <li>90-day credit validity</li><li>Dedicated support</li><li>Instant processing</li>
-        </ul>
-        <button onclick="openPayment('pro')" class="pc-btn sec">Get Pro</button>
-      </div>
-    </div>
-    <div class="trust-badges">
-      <div class="trust-badge"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Secure payments by Razorpay</div>
-      <div class="trust-badge"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> 256-bit SSL encryption</div>
-      <div class="trust-badge"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Instant download after payment</div>
-      <div class="trust-badge"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Full refund guarantee</div>
-    </div>
-  </div>
-</section>
 
 <hr class="rule"/>
 
