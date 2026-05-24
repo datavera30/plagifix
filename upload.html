@@ -8,45 +8,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --bg:#f7f8fa;
-  --white:#ffffff;
-  --border:#eaecf0;
-  --border2:#d0d5dd;
-  --text:#101828;
-  --muted:#667085;
-  --light:#98a2b3;
-  --blue:#2563eb;
-  --blue-d:#1d4ed8;
-  --blue-l:#eff6ff;
-  --green:#027a48;
-  --green-bg:#ecfdf3;
-  --green-border:#6ce9a6;
-  --red:#b42318;
-  --red-bg:#fef3f2;
+  --bg:#f7f8fa;--white:#fff;
+  --border:#eaecf0;--border2:#d0d5dd;
+  --text:#101828;--muted:#667085;--light:#98a2b3;
+  --blue:#2563eb;--blue-d:#1d4ed8;--blue-l:#eff6ff;
+  --green:#027a48;--green-bg:#ecfdf3;--green-border:#6ce9a6;
+  --red:#b42318;--red-bg:#fef3f2;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{
-  font-family:'Plus Jakarta Sans',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  display:flex;flex-direction:column;
-}
-
-/* NAV */
-nav{
-  height:64px;
-  background:var(--white);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 48px;
-}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+a{color:var(--blue);text-decoration:none;}
+nav{height:64px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 48px;}
 .logo{font-size:1.25rem;font-weight:800;letter-spacing:-0.03em;color:var(--text);text-decoration:none;}
 .logo span{color:var(--blue);}
 .nav-help{font-size:0.8rem;color:var(--muted);}
-.nav-help a{color:var(--blue);font-weight:500;text-decoration:none;}
-
-/* MAIN */
 main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 24px;}
 .wrap{width:100%;max-width:480px;}
 
@@ -65,23 +40,31 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 
 .s-line.done{background:var(--green-border);}
 
 /* CARD */
-.card{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,24,40,0.06),0 1px 2px rgba(16,24,40,0.04);}
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(16,24,40,0.06);}
 .card-top{padding:24px 28px 0;}
 .card-title{font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:4px;letter-spacing:-0.02em;}
 .card-sub{font-size:0.82rem;color:var(--muted);padding-bottom:20px;border-bottom:1px solid var(--border);}
 .card-body{padding:24px 28px;}
 
+/* EMAIL STEP */
+.email-step{text-align:center;padding:8px 0;}
+.email-icon{font-size:2.5rem;margin-bottom:12px;}
+.email-title{font-size:1rem;font-weight:700;margin-bottom:6px;}
+.email-sub{font-size:0.82rem;color:var(--muted);margin-bottom:20px;line-height:1.6;}
+.field{margin-bottom:14px;text-align:left;}
+label{display:block;font-size:0.78rem;font-weight:600;color:var(--text);margin-bottom:6px;}
+input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;color:var(--text);background:#fff;outline:none;transition:border-color .15s;}
+input:focus{border-color:var(--blue);}
+
+/* CREDIT BADGE */
+.credit-badge{background:var(--green-bg);border:1px solid var(--green-border);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;font-size:0.82rem;}
+.credit-count{font-weight:700;color:var(--green);font-size:1rem;}
+.credit-label{color:var(--green);}
+.no-credits{background:var(--red-bg);border:1px solid #fecdca;border-radius:8px;padding:12px 14px;font-size:0.82rem;color:var(--red);margin-bottom:16px;text-align:center;}
+.no-credits a{color:var(--red);font-weight:600;text-decoration:underline;}
+
 /* UPLOAD ZONE */
-.drop{
-  border:1.5px dashed var(--border2);
-  border-radius:10px;
-  padding:36px 20px;
-  text-align:center;
-  cursor:pointer;
-  transition:all .2s;
-  background:var(--bg);
-  margin-bottom:16px;
-}
+.drop{border:1.5px dashed var(--border2);border-radius:10px;padding:36px 20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);margin-bottom:16px;}
 .drop:hover,.drop.drag{border-color:var(--blue);background:var(--blue-l);}
 .drop-icon{font-size:2.2rem;margin-bottom:10px;display:block;}
 .drop-title{font-size:0.9rem;font-weight:600;color:var(--text);margin-bottom:5px;}
@@ -99,19 +82,12 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 
 .file-rm{background:none;border:none;cursor:pointer;color:var(--light);font-size:0.85rem;padding:4px;flex-shrink:0;}
 .file-rm:hover{color:var(--red);}
 
-/* BUTTON */
-.proc-btn{
-  width:100%;padding:13px;
-  background:var(--text);color:#fff;
-  border:none;border-radius:9px;
-  font-family:'Plus Jakarta Sans',sans-serif;
-  font-size:0.9rem;font-weight:700;
-  cursor:pointer;transition:all .2s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  letter-spacing:-0.01em;
-}
-.proc-btn:hover:not(:disabled){background:#1d2939;transform:translateY(-1px);}
-.proc-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+/* BUTTONS */
+.btn-primary{width:100%;padding:13px;background:var(--text);color:#fff;border:none;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-primary:hover:not(:disabled){background:#1d2939;}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;}
+.btn-blue{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-blue:hover{background:var(--blue-d);}
 
 /* PROGRESS */
 .prog-wrap{display:none;margin-top:16px;}
@@ -131,52 +107,26 @@ main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 
 /* SUCCESS */
 .success-wrap{display:none;padding:36px 28px;text-align:center;}
 .success-wrap.show{display:block;}
-.s-check{
-  width:60px;height:60px;border-radius:50%;
-  background:var(--green-bg);border:1.5px solid var(--green-border);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1.5rem;margin:0 auto 18px;
-}
+.s-check{width:60px;height:60px;border-radius:50%;background:var(--green-bg);border:1.5px solid var(--green-border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin:0 auto 18px;}
 .s-title{font-size:1.15rem;font-weight:800;color:var(--text);margin-bottom:8px;letter-spacing:-0.02em;}
 .s-desc{font-size:0.83rem;color:var(--muted);line-height:1.65;margin-bottom:24px;}
-.dl-btn{
-  display:inline-flex;align-items:center;gap:8px;
-  background:var(--green);color:#fff;
-  padding:12px 28px;border-radius:9px;
-  font-family:'Plus Jakarta Sans',sans-serif;
-  font-size:0.9rem;font-weight:700;
-  border:none;cursor:pointer;transition:all .2s;
-}
-.dl-btn:hover{background:#05603a;transform:translateY(-1px);}
+.dl-btn{display:inline-flex;align-items:center;gap:8px;background:var(--green);color:#fff;padding:12px 28px;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9rem;font-weight:700;border:none;cursor:pointer;transition:all .2s;}
+.dl-btn:hover{background:#05603a;}
 .again{display:block;margin-top:12px;font-size:0.78rem;color:var(--blue);cursor:pointer;font-weight:500;}
 .again:hover{text-decoration:underline;}
+.credits-remaining{font-size:0.78rem;color:var(--muted);margin-top:8px;}
 
-/* SPINNER */
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;}
 @keyframes sp{to{transform:rotate(360deg)}}
 
-/* FOOTER */
-footer{
-  padding:18px 48px;
-  border-top:1px solid var(--border);
-  background:var(--white);
-  display:flex;align-items:center;justify-content:space-between;
-}
-.f-logo{font-size:0.9rem;font-weight:800;color:var(--text);text-decoration:none;}
+footer{padding:18px 48px;border-top:1px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:space-between;}
+.f-logo{font-size:0.9rem;font-weight:800;color:var(--text);}
 .f-logo span{color:var(--blue);}
 .f-copy{font-size:0.7rem;color:var(--light);}
-
 #file-input{display:none;}
-
-@media(max-width:540px){
-  nav,footer{padding:0 20px;}
-  .s-label{display:none;}
-  .card-top,.card-body,.success-wrap{padding:18px 18px;}
-}
 </style>
 </head>
 <body>
-
 <nav>
   <a href="/" class="logo">Plagi<span>Fix</span></a>
   <div class="nav-help">Need help? <a href="mailto:support@plagifix.com">support@plagifix.com</a></div>
@@ -184,32 +134,39 @@ footer{
 
 <main>
   <div class="wrap">
-
-    <!-- STEPS -->
     <div class="steps">
-      <div class="s-item done">
-        <div class="s-dot">✓</div>
-        <span class="s-label">Payment</span>
-      </div>
+      <div class="s-item done"><div class="s-dot">✓</div><span class="s-label">Payment</span></div>
       <div class="s-line done"></div>
-      <div class="s-item active" id="step-upload">
-        <div class="s-dot">2</div>
-        <span class="s-label">Upload</span>
-      </div>
+      <div class="s-item active" id="step-upload"><div class="s-dot" id="step-upload-dot">2</div><span class="s-label">Upload</span></div>
       <div class="s-line" id="line-2"></div>
-      <div class="s-item pending" id="step-download">
-        <div class="s-dot">3</div>
-        <span class="s-label">Download</span>
+      <div class="s-item pending" id="step-download"><div class="s-dot">3</div><span class="s-label">Download</span></div>
+    </div>
+
+    <!-- EMAIL STEP -->
+    <div class="card" id="email-card">
+      <div class="card-body">
+        <div class="email-step">
+          <div class="email-icon">✉️</div>
+          <div class="email-title">Enter your email to continue</div>
+          <p class="email-sub">Enter the email address you used when purchasing. We'll verify your credits and let you process your document.</p>
+          <div class="field">
+            <label>Email address</label>
+            <input type="email" id="email-input" placeholder="you@university.edu" onkeydown="if(event.key==='Enter')verifyEmail()"/>
+          </div>
+          <button class="btn-blue" onclick="verifyEmail()" id="verify-btn">Check my credits →</button>
+          <div class="status" id="email-status"></div>
+        </div>
       </div>
     </div>
 
     <!-- UPLOAD CARD -->
-    <div class="card" id="upload-card">
+    <div class="card" id="upload-card" style="display:none;">
       <div class="card-top">
         <div class="card-title">Process your document</div>
-        <div class="card-sub">Payment confirmed. Upload your .docx file to begin.</div>
+        <div class="card-sub" id="card-sub">Upload your .docx file to begin.</div>
       </div>
       <div class="card-body">
+        <div id="credit-info"></div>
 
         <div class="drop" id="drop" onclick="document.getElementById('file-input').click()">
           <span class="drop-icon">📄</span>
@@ -228,7 +185,7 @@ footer{
           <button class="file-rm" onclick="removeFile()">✕</button>
         </div>
 
-        <button class="proc-btn" id="proc-btn" onclick="startProcessing()" disabled>
+        <button class="btn-primary" id="proc-btn" onclick="startProcessing()" disabled>
           Process document →
         </button>
 
@@ -241,7 +198,6 @@ footer{
         </div>
 
         <div class="status" id="status"></div>
-
         <div class="sec-note">🔒 Processed securely · deleted immediately after download</div>
       </div>
     </div>
@@ -253,6 +209,7 @@ footer{
         <div class="s-title">Your document is ready.</div>
         <p class="s-desc">All plagiarism and AI detection flags have been removed.<br>Your visible content is exactly as you wrote it.</p>
         <button class="dl-btn" id="dl-btn">⬇ Download your document</button>
+        <div class="credits-remaining" id="credits-remaining"></div>
         <span class="again" onclick="processAnother()">Process another document</span>
       </div>
     </div>
@@ -267,8 +224,72 @@ footer{
 
 <script>
 const BACKEND = 'https://file-processor-3i33.onrender.com';
+let userEmail = '';
+let userCredits = 0;
 let selectedFile = null;
 let downloadUrl = null;
+
+// Check if coming from payment
+const params = new URLSearchParams(window.location.search);
+const paymentId = params.get('payment_id');
+const planKey = params.get('plan');
+
+async function verifyEmail() {
+  const emailInput = document.getElementById('email-input');
+  const email = emailInput.value.trim().toLowerCase();
+  const statusEl = document.getElementById('email-status');
+  const btn = document.getElementById('verify-btn');
+
+  if (!email || !email.includes('@')) {
+    statusEl.textContent = 'Please enter a valid email address.';
+    statusEl.className = 'status err';
+    return;
+  }
+
+  btn.innerHTML = '<span class="spin"></span> Checking...';
+  btn.disabled = true;
+  statusEl.textContent = '';
+
+  try {
+    // If coming from payment, confirm payment first
+    if (paymentId && planKey) {
+      await fetch(`${BACKEND}/confirm-payment`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email, payment_id: paymentId, plan: planKey})
+      });
+    }
+
+    // Check credits
+    const r = await fetch(`${BACKEND}/credits?email=${encodeURIComponent(email)}`);
+    const data = await r.json();
+
+    if (data.total_credits > 0) {
+      userEmail = email;
+      userCredits = data.total_credits;
+      showUploadCard(data);
+    } else {
+      statusEl.innerHTML = 'No credits found for this email. <a href="/#pricing">Purchase a plan</a> to get started.';
+      statusEl.className = 'status err';
+      btn.innerHTML = 'Check my credits →';
+      btn.disabled = false;
+    }
+  } catch(err) {
+    statusEl.textContent = 'Something went wrong. Please try again.';
+    statusEl.className = 'status err';
+    btn.innerHTML = 'Check my credits →';
+    btn.disabled = false;
+  }
+}
+
+function showUploadCard(data) {
+  document.getElementById('email-card').style.display = 'none';
+  document.getElementById('upload-card').style.display = 'block';
+  document.getElementById('card-sub').textContent = `Welcome back! You have ${data.total_credits} credit${data.total_credits !== 1 ? 's' : ''} remaining.`;
+
+  const creditInfo = document.getElementById('credit-info');
+  creditInfo.innerHTML = `<div class="credit-badge"><span class="credit-label">Credits available</span><span class="credit-count">${data.total_credits}</span></div>`;
+}
 
 const drop = document.getElementById('drop');
 const fileInput = document.getElementById('file-input');
@@ -281,9 +302,6 @@ const progFill = document.getElementById('prog-fill');
 const progLabel = document.getElementById('prog-label');
 const progPct = document.getElementById('prog-pct');
 const statusEl = document.getElementById('status');
-const uploadCard = document.getElementById('upload-card');
-const successCard = document.getElementById('success-card');
-const dlBtn = document.getElementById('dl-btn');
 
 drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag'); });
 drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
@@ -323,7 +341,7 @@ function setProgress(pct, label) {
 }
 
 async function startProcessing() {
-  if (!selectedFile) return;
+  if (!selectedFile || !userEmail) return;
   procBtn.disabled = true;
   procBtn.innerHTML = '<span class="spin"></span> Processing...';
   showStatus('', '');
@@ -332,7 +350,12 @@ async function startProcessing() {
     setProgress(15, 'Step 1 of 2 — Removing hidden text...');
     const f1 = new FormData();
     f1.append('file', selectedFile);
+    f1.append('email', userEmail);
     const r1 = await fetch(`${BACKEND}/clean`, { method: 'POST', body: f1 });
+    if (r1.status === 403) {
+      const err = await r1.json();
+      throw new Error(err.error);
+    }
     if (!r1.ok) throw new Error((await r1.json()).error || 'Cleaning failed');
     const b1 = await r1.blob();
 
@@ -344,41 +367,55 @@ async function startProcessing() {
     const b2 = await r2.blob();
 
     setProgress(100, 'Complete');
+    userCredits--;
     downloadUrl = window.URL.createObjectURL(b2);
     const filename = 'plagifix_' + selectedFile.name;
-    dlBtn.onclick = () => { const a = document.createElement('a'); a.href = downloadUrl; a.download = filename; a.click(); };
+    document.getElementById('dl-btn').onclick = () => {
+      const a = document.createElement('a'); a.href = downloadUrl; a.download = filename; a.click();
+    };
+    document.getElementById('credits-remaining').textContent = userCredits > 0
+      ? `You have ${userCredits} credit${userCredits !== 1 ? 's' : ''} remaining.`
+      : 'You have used all your credits. Purchase more at plagifix.com';
 
-    // Update steps
     document.getElementById('step-upload').className = 's-item done';
-    document.getElementById('step-upload').querySelector('.s-dot').textContent = '✓';
+    document.getElementById('step-upload-dot').textContent = '✓';
     document.getElementById('line-2').classList.add('done');
     document.getElementById('step-download').className = 's-item active';
 
     setTimeout(() => {
-      uploadCard.style.display = 'none';
-      successCard.style.display = 'block';
+      document.getElementById('upload-card').style.display = 'none';
+      document.getElementById('success-card').style.display = 'block';
     }, 500);
 
   } catch(err) {
     progWrap.classList.remove('show');
-    showStatus('Something went wrong — ' + err.message + '. Please try again or email support@plagifix.com', 'err');
+    showStatus(err.message || 'Something went wrong. Please try again or email support@plagifix.com', 'err');
     procBtn.disabled = false;
     procBtn.innerHTML = 'Process document →';
   }
 }
 
 function processAnother() {
-  uploadCard.style.display = 'block';
-  successCard.style.display = 'none';
+  document.getElementById('upload-card').style.display = 'block';
+  document.getElementById('success-card').style.display = 'none';
   removeFile();
   progWrap.classList.remove('show');
   progFill.style.width = '0%';
   procBtn.innerHTML = 'Process document →';
-  if (downloadUrl) { window.URL.revokeObjectURL(downloadUrl); downloadUrl = null; }
   document.getElementById('step-upload').className = 's-item active';
-  document.getElementById('step-upload').querySelector('.s-dot').textContent = '2';
+  document.getElementById('step-upload-dot').textContent = '2';
   document.getElementById('line-2').classList.remove('done');
   document.getElementById('step-download').className = 's-item pending';
+  // Update credit badge
+  document.getElementById('credit-info').innerHTML = `<div class="credit-badge"><span class="credit-label">Credits available</span><span class="credit-count">${userCredits}</span></div>`;
+  if (downloadUrl) { window.URL.revokeObjectURL(downloadUrl); downloadUrl = null; }
+}
+
+// Auto verify if coming from payment
+if (paymentId) {
+  document.getElementById('email-input').focus();
+  document.getElementById('email-status').textContent = '✓ Payment confirmed! Enter your email to access your credits.';
+  document.getElementById('email-status').className = 'status ok';
 }
 </script>
 </body>
