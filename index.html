@@ -7,6 +7,7 @@
 <meta name="description" content="PlagiFix removes plagiarism and AI detection flags from your academic documents instantly. From $5. Works with Turnitin and iThenticate."/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 :root{
   --bg:#fff;--bg2:#f8fafc;--bg3:#eff6ff;
@@ -22,7 +23,6 @@ html{scroll-behavior:smooth;}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;}
 a{text-decoration:none;color:inherit;}
 
-/* NAV */
 nav{display:flex;align-items:center;justify-content:space-between;padding:0 64px;height:68px;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.97);backdrop-filter:blur(10px);position:sticky;top:0;z-index:200;}
 .logo{font-size:1.4rem;font-weight:800;letter-spacing:-0.03em;color:var(--text);}
 .logo span{color:var(--blue);}
@@ -30,18 +30,15 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 64px
 .nav-c a{font-size:0.875rem;font-weight:500;color:var(--muted);transition:color .15s;}
 .nav-c a:hover{color:var(--text);}
 .btn{padding:10px 20px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.875rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
-.btn-blue{background:var(--blue);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,0.25);}
-.btn-blue:hover{background:var(--blue-d);box-shadow:0 4px 14px rgba(37,99,235,0.35);transform:translateY(-1px);}
-.btn-out{background:transparent;color:var(--text);border:1.5px solid var(--border2);}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-blue:hover{background:var(--blue-d);}
+.btn-out{background:transparent;color:var(--text);border:1.5px solid var(--border);}
 .btn-out:hover{border-color:var(--blue);color:var(--blue);}
-.btn-blue{background:var(--blue);color:#fff !important;box-shadow:0 2px 8px rgba(37,99,235,0.25);}
-.btn-blue:hover{background:var(--blue-d);transform:translateY(-1px);}
 .btn-lg{padding:13px 28px;font-size:0.95rem;border-radius:9px;}
 .btn-xl{padding:15px 32px;font-size:1rem;border-radius:9px;}
 .btn-white{background:#fff;color:var(--blue);font-weight:700;}
 .btn-white:hover{background:#f0f7ff;}
 
-/* HERO */
 .hero{background:linear-gradient(160deg,#eef2ff 0%,#f8f9fe 50%,#fff 100%);padding:88px 64px 0;border-bottom:1px solid var(--border);}
 .hero-in{max-width:880px;margin:0 auto;text-align:center;}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border2);color:var(--blue);font-size:0.77rem;font-weight:700;padding:7px 16px;border-radius:100px;margin-bottom:28px;box-shadow:0 2px 12px rgba(37,99,235,0.1);}
@@ -55,7 +52,6 @@ h1 .blue{color:var(--blue);}
 .ht{display:flex;align-items:center;gap:6px;font-size:0.79rem;font-weight:500;color:var(--muted);}
 .ht-check{color:var(--green);font-weight:700;}
 
-/* MOCKUP */
 .mockup{max-width:800px;margin:0 auto;background:#fff;border:1px solid var(--border);border-radius:13px 13px 0 0;box-shadow:0 -6px 40px rgba(37,99,235,0.08);overflow:hidden;}
 .mock-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:11px 16px;display:flex;align-items:center;gap:8px;}
 .mock-dot{width:10px;height:10px;border-radius:50%;}
@@ -81,18 +77,15 @@ h1 .blue{color:var(--blue);}
 .s-note.good{color:var(--green);}
 .mock-disclaimer{background:#fff;border-top:1px solid var(--border);padding:10px 26px;font-size:0.7rem;color:var(--light);text-align:center;font-style:italic;}
 
-/* LOGOS */
 .logos{background:var(--bg2);border-bottom:1px solid var(--border);padding:16px 64px;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;}
 .logos-lbl{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--light);margin-right:6px;}
 .lchip{background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:0.78rem;font-weight:600;color:var(--muted);}
 
-/* STATS */
 .stats{background:var(--blue);padding:40px 64px;}
 .stats-in{max-width:960px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center;}
 .stat-n{font-size:2.6rem;font-weight:800;color:#fff;letter-spacing:-0.04em;line-height:1;}
 .stat-l{font-size:0.78rem;color:rgba(255,255,255,0.65);margin-top:5px;font-weight:500;}
 
-/* SECTIONS */
 .sec{padding:88px 64px;}
 .sec-in{max-width:1040px;margin:0 auto;}
 .sec-bg{background:var(--bg2);}
@@ -101,7 +94,6 @@ h1 .blue{color:var(--blue);}
 .sec-s{font-size:0.93rem;color:var(--muted);max-width:480px;line-height:1.75;}
 .rule{border:none;border-top:1px solid var(--border);}
 
-/* STEPS */
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-top:44px;}
 .step{background:#fff;padding:30px 26px;}
 .step-n{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--blue);margin-bottom:16px;}
@@ -109,7 +101,6 @@ h1 .blue{color:var(--blue);}
 .step h4{font-size:1rem;font-weight:700;margin-bottom:8px;}
 .step p{font-size:0.82rem;color:var(--muted);line-height:1.7;}
 
-/* FEATURES */
 .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px;}
 .feat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:22px;transition:all .15s;}
 .feat:hover{border-color:var(--border2);box-shadow:0 4px 20px rgba(37,99,235,0.07);background:#fff;}
@@ -117,7 +108,6 @@ h1 .blue{color:var(--blue);}
 .feat h4{font-size:0.92rem;font-weight:700;margin-bottom:6px;}
 .feat p{font-size:0.8rem;color:var(--muted);line-height:1.65;}
 
-/* BEFORE AFTER */
 .ba-grid{display:grid;grid-template-columns:1fr 48px 1fr;gap:0;margin-top:44px;align-items:center;}
 .ba-box{border-radius:12px;overflow:hidden;}
 .ba-box.before{border:1.5px solid #fca5a5;}
@@ -132,14 +122,12 @@ h1 .blue{color:var(--blue);}
 .ba-n{font-weight:800;font-size:0.95rem;}
 .ba-arr{display:flex;align-items:center;justify-content:center;color:var(--blue);font-size:1.6rem;font-weight:700;}
 
-/* LANGUAGES */
 .lang-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:44px;}
 .lang-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;align-items:center;gap:12px;}
 .lang-flag{font-size:1.4rem;}
 .lang-name{font-size:0.85rem;font-weight:600;color:var(--text);}
 .lang-more{background:var(--blue-l);border:1px solid var(--border2);border-radius:10px;padding:16px 18px;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:600;color:var(--blue);}
 
-/* GUARANTEE */
 .guarantee{background:var(--blue);padding:72px;text-align:center;}
 .g-ic{font-size:3rem;margin-bottom:14px;display:block;}
 .g-t{font-size:2rem;font-weight:800;color:#fff;letter-spacing:-0.03em;margin-bottom:12px;}
@@ -147,7 +135,6 @@ h1 .blue{color:var(--blue);}
 .g-pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
 .g-pill{background:rgba(255,255,255,0.12);color:#fff;font-size:0.78rem;font-weight:500;padding:6px 16px;border-radius:100px;border:1px solid rgba(255,255,255,0.2);}
 
-/* PRICING */
 .price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:44px;}
 .pc{background:#fff;border:1.5px solid var(--border);border-radius:13px;padding:26px 22px;position:relative;transition:all .15s;}
 .pc:hover{border-color:var(--border2);box-shadow:0 6px 24px rgba(37,99,235,0.08);}
@@ -171,7 +158,6 @@ h1 .blue{color:var(--blue);}
 .trust-badge{display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--muted);}
 .trust-badge svg{width:14px;height:14px;stroke:var(--green);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 
-/* REVIEWS */
 .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px;}
 .rev-grid-2{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;}
 .rc{background:#fff;border:1px solid var(--border);border-radius:12px;padding:22px;}
@@ -181,19 +167,16 @@ h1 .blue{color:var(--blue);}
 .rc-inst{font-size:0.71rem;color:var(--light);margin-top:2px;}
 .rc-verify{font-size:0.68rem;color:var(--green);font-weight:600;margin-top:5px;}
 
-/* FAQ */
 .faq-wrap{max-width:700px;margin:44px auto 0;}
 .faq-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:11px;overflow:hidden;}
 .faq-item{background:#fff;padding:20px 24px;}
 .faq-item h4{font-size:0.93rem;font-weight:700;margin-bottom:8px;}
 .faq-item p{font-size:0.82rem;color:var(--muted);line-height:1.75;}
 
-/* CTA */
 .cta{background:linear-gradient(135deg,#1d4ed8,#2563eb);padding:88px 64px;text-align:center;}
 .cta h2{font-size:2.5rem;font-weight:800;color:#fff;letter-spacing:-0.04em;margin-bottom:12px;}
 .cta p{font-size:0.95rem;color:rgba(255,255,255,0.7);margin-bottom:28px;font-weight:300;}
 
-/* FOOTER */
 footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
 .foot-logo{font-size:1.1rem;font-weight:800;color:#fff;letter-spacing:-0.02em;}
 .foot-logo span{color:#818cf8;}
@@ -202,8 +185,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
 .foot-lks a:hover{color:rgba(255,255,255,0.8);}
 .foot-copy{font-size:0.72rem;color:rgba(255,255,255,0.25);}
 
-/* FLOATING BTN */
-.float-btn{position:fixed;bottom:28px;right:28px;background:var(--blue);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:700;padding:12px 22px;border-radius:100px;box-shadow:0 4px 24px rgba(37,99,235,0.4);z-index:100;transition:all .2s;display:flex;align-items:center;gap:8px;opacity:0;pointer-events:none;transform:translateY(8px);}
+.float-btn{position:fixed;bottom:28px;right:28px;background:var(--blue);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:700;padding:12px 22px;border-radius:100px;box-shadow:0 4px 24px rgba(37,99,235,0.4);z-index:100;transition:all .2s;display:flex;align-items:center;gap:8px;opacity:0;pointer-events:none;transform:translateY(8px);cursor:pointer;border:none;}
 .float-btn.visible{opacity:1;pointer-events:auto;transform:translateY(0);}
 .float-btn:hover{background:var(--blue-d);transform:translateY(-2px);}
 
@@ -224,7 +206,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
 </head>
 <body>
 
-<a href="#pricing" class="float-btn" id="float-btn">✦ Fix my document</a>
+<button class="float-btn" id="float-btn" onclick="openPayment('elite')">✦ Fix my document</button>
 
 <nav>
   <a href="#" class="logo">Plagi<span>Fix</span></a>
@@ -234,7 +216,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
     <a href="#pricing">Pricing</a>
     <a href="#faq">FAQ</a>
     <a href="#pricing" class="btn btn-out">Sign in</a>
-    <a href="#pricing" class="btn btn-blue">Get started →</a>
+    <a href="#pricing" class="btn btn-blue" onclick="event.preventDefault();openPayment('elite')">Get started →</a>
   </div>
 </nav>
 
@@ -244,7 +226,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
     <h1>Remove Turnitin flags.<br><span class="blue">Instantly.</span></h1>
     <p class="hero-sub">PlagiFix removes plagiarism and AI detection flags from your thesis or research paper — without changing a single word of your content.</p>
     <div class="hero-acts">
-      <a href="#pricing" class="btn btn-blue btn-xl">Fix my document — from $5</a>
+      <button onclick="openPayment('elite')" class="btn btn-blue btn-xl">Fix my document — from $5</button>
       <a href="#how" class="btn btn-out btn-lg">How it works</a>
     </div>
     <div class="hero-trust">
@@ -428,7 +410,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
           <li>Your content stays exactly as written</li><li>Document deleted immediately after download</li>
           <li>20-day credit validity</li><li>Standard support</li><li>Fast processing</li>
         </ul>
-        <a href="https://mw9ycj-hw.myshopify.com/cart/48279424499926:1" class="pc-btn sec">Get started</a>
+        <button onclick="openPayment('buy')" class="pc-btn sec">Get started</button>
       </div>
       <div class="pc">
         <div class="pc-name">Starter</div>
@@ -442,7 +424,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
           <li>Your content stays exactly as written</li><li>Document deleted immediately after download</li>
           <li>30-day credit validity</li><li>Standard support</li><li>Fast processing</li>
         </ul>
-        <a href="https://mw9ycj-hw.myshopify.com/cart/48279503765718:1" class="pc-btn sec">Get Starter</a>
+        <button onclick="openPayment('starter')" class="pc-btn sec">Get Starter</button>
       </div>
       <div class="pc pop">
         <div class="pc-badge">Most popular</div>
@@ -457,7 +439,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
           <li>Your content stays exactly as written</li><li>Document deleted immediately after download</li>
           <li>60-day credit validity</li><li>Priority support</li><li>Faster processing</li>
         </ul>
-        <a href="https://mw9ycj-hw.myshopify.com/cart/48279504421078:1" class="pc-btn pri" style="background:var(--blue-d);box-shadow:0 4px 14px rgba(37,99,235,0.3);">Get Elite</a>
+        <button onclick="openPayment('elite')" class="pc-btn pri">Get Elite</button>
       </div>
       <div class="pc">
         <div class="pc-name">Pro</div>
@@ -471,7 +453,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
           <li>Your content stays exactly as written</li><li>Document deleted immediately after download</li>
           <li>90-day credit validity</li><li>Dedicated support</li><li>Instant processing</li>
         </ul>
-        <a href="https://mw9ycj-hw.myshopify.com/cart/48279499112662:1" class="pc-btn sec">Get Pro</a>
+        <button onclick="openPayment('pro')" class="pc-btn sec">Get Pro</button>
       </div>
     </div>
     <div class="trust-badges">
@@ -524,7 +506,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
 <div class="cta">
   <h2>Submit with confidence.</h2>
   <p>Join researchers and students worldwide who trust PlagiFix for clean, fair document submissions.</p>
-  <a href="#pricing" class="btn btn-white btn-xl">Fix my document — from $5</a>
+  <button onclick="openPayment('elite')" class="btn btn-white btn-xl">Fix my document — from $5</button>
 </div>
 
 <footer>
@@ -539,11 +521,53 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
 </footer>
 
 <script>
+const RAZORPAY_KEY = 'rzp_live_St689tKeuE962U';
+
+const plans = {
+  buy:     { amount: 49900,   name: 'Buy Credits',  description: '1 credit · 20-day validity' },
+  starter: { amount: 479900,  name: 'Starter',      description: '25 credits · 30-day validity' },
+  elite:   { amount: 959900,  name: 'Elite',        description: '80 credits · 60-day validity' },
+  pro:     { amount: 1929900, name: 'Pro',          description: '250 credits · 90-day validity' }
+};
+
+function openPayment(planKey) {
+  const plan = plans[planKey];
+  const options = {
+    key: RAZORPAY_KEY,
+    amount: plan.amount,
+    currency: 'INR',
+    name: 'PlagiFix',
+    description: plan.description,
+    image: 'https://plagifix.com/favicon.ico',
+    handler: function(response) {
+      window.location.href = '/upload.html?payment_id=' + response.razorpay_payment_id + '&plan=' + planKey;
+    },
+    prefill: {
+      name: '',
+      email: '',
+      contact: ''
+    },
+    notes: {
+      plan: plan.name
+    },
+    theme: {
+      color: '#2563eb'
+    },
+    modal: {
+      ondismiss: function() {}
+    }
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+// Floating CTA button
 const floatBtn = document.getElementById('float-btn');
 window.addEventListener('scroll', () => {
   floatBtn.classList.toggle('visible', window.scrollY > 400);
 });
 
+// Counter animation
 const counters = document.querySelectorAll('.stat-n[data-target]');
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
