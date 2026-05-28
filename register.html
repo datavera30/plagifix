@@ -76,6 +76,7 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 <script>
 const SUPABASE_URL = 'https://wrypnctfcwijglyivthg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I7NR_6S40Ydjyw44Ic26pw_I5-XUrTr';
+const BACKEND = 'https://file-processor-3i33.onrender.com';
 
 async function register() {
   const name = document.getElementById('name').value.trim();
@@ -115,9 +116,16 @@ async function register() {
     localStorage.setItem('pf_email', email);
     localStorage.setItem('pf_name', name);
 
-    statusEl.textContent = '✓ Account created! Redirecting...';
+    // Give 1 free credit to new user
+    await fetch(`${BACKEND}/free-credit`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email})
+    });
+
+    statusEl.textContent = '✓ Account created! You have 1 free credit. Redirecting...';
     statusEl.className = 'status ok';
-    setTimeout(() => window.location.href = '/dashboard.html', 1000);
+    setTimeout(() => window.location.href = '/dashboard.html', 1500);
   } catch(err) {
     statusEl.textContent = err.message || 'Registration failed. Please try again.';
     statusEl.className = 'status err';
