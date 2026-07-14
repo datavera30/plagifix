@@ -111,6 +111,19 @@ async function register() {
     const data = await r.json();
     if (data.error) throw new Error(data.error.message || data.msg);
 
+    // With "Confirm email" enabled, Supabase returns 200 + a user object
+    // but NO session (access_token is null/undefined) until the user
+    // clicks the confirmation link in their inbox. Only treat signup as
+    // complete — store a session, grant the free credit, and redirect —
+    // once a real access_token is present.
+    if (!data.access_token) {
+      statusEl.textContent = '✓ Almost done! Check your inbox and click the confirmation link to activate your account.';
+      statusEl.className = 'status ok';
+      btn.innerHTML = 'Create account';
+      btn.disabled = false;
+      return;
+    }
+
     // Store session
     localStorage.setItem('pf_token', data.access_token);
     localStorage.setItem('pf_email', email);
