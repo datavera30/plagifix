@@ -72,6 +72,7 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 <script>
 const SUPABASE_URL = 'https://wrypnctfcwijglyivthg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I7NR_6S40Ydjyw44Ic26pw_I5-XUrTr';
+const BACKEND = 'https://file-processor-3i33.onrender.com';
 
 // If already logged in redirect to dashboard
 if (localStorage.getItem('pf_token')) {
@@ -113,6 +114,22 @@ async function login() {
     localStorage.setItem('pf_token', data.access_token);
     localStorage.setItem('pf_email', email);
     localStorage.setItem('pf_name', data.user?.user_metadata?.full_name || email);
+
+    // Grant the one-time free credit here, on first successful sign-in.
+    // This is the correct place for it now that email confirmation is
+    // required — signup alone no longer produces a usable session, so
+    // this is the first real moment a user has one. It's safe to call
+    // this on every single login (not just the first): the backend's
+    // /free-credit endpoint checks whether this email has ever had any
+    // credit row before, and does nothing if so — so a returning user,
+    // or someone who tries to sign up again with the same email, will
+    // never receive a second free credit no matter how many times this
+    // runs.
+    fetch(`${BACKEND}/free-credit`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email})
+    }).catch(() => {}); // best-effort; don't block sign-in on this
 
     // If coming from payment, confirm it first
     if (paymentId && planKey) {
