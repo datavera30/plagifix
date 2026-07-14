@@ -103,7 +103,11 @@ async function register() {
   btn.disabled = true;
 
   try {
-    const r = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+    // redirect_to tells Supabase where to send the user after they click the
+    // confirmation link in their email — straight to the login page, where
+    // they'll sign in manually and that sign-in is what grants their free credit.
+    const redirectTo = encodeURIComponent('https://plagifix.com/login.html');
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/signup?redirect_to=${redirectTo}`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json', 'apikey': SUPABASE_KEY},
       body: JSON.stringify({email, password, data: {full_name: name}})
