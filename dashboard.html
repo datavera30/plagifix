@@ -78,6 +78,8 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 .f-logo{font-size:0.9rem;font-weight:800;color:#101828;}
 .f-logo span{color:#2563eb;}
 .f-copy{font-size:0.7rem;color:#98a2b3;}
+.loading-gate{position:fixed;inset:0;background:#f7f8fa;display:flex;align-items:center;justify-content:center;z-index:999;}
+.loading-gate .spin{width:28px;height:28px;border-width:3px;border-color:rgba(37,99,235,0.2);border-top-color:#2563eb;}
 @media(max-width:700px){
   nav,main,footer{padding-left:20px;padding-right:20px;}
   .stats{grid-template-columns:1fr 1fr;}
@@ -86,6 +88,7 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 </style>
 </head>
 <body>
+<div class="loading-gate" id="loading-gate"><div class="spin"></div></div>
 <nav>
   <a href="/" class="logo">Plagi<span>Fix</span></a>
   <div class="nav-right">
@@ -208,19 +211,65 @@ const SUPABASE_URL = 'https://wrypnctfcwijglyivthg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I7NR_6S40Ydjyw44Ic26pw_I5-XUrTr';
 
 const token = localStorage.getItem('pf_token');
-const email = localStorage.getItem('pf_email');
-const name = localStorage.getItem('pf_name') || email;
-
-if (!token || !email) {
-  window.location.href = '/login.html';
-}
+let email = localStorage.getItem('pf_email');
+let name = localStorage.getItem('pf_name') || email;
 
 let userCredits = 0;
 let selectedFile = null;
 let downloadUrl = null;
 
-document.getElementById('nav-name').textContent = name;
-document.getElementById('greeting').textContent = `Welcome back, ${name.split(' ')[0]}!`;
+function clearSessionAndRedirect() {
+  localStorage.removeItem('pf_token');
+  localStorage.removeItem('pf_email');
+  localStorage.removeItem('pf_name');
+  window.location.href = '/login.html';
+}
+
+// SECURITY FIX: the previous version only checked that pf_token/pf_email
+// existed in localStorage — it never confirmed the token was a real,
+// still-valid Supabase session, and every backend/Supabase call below is
+// keyed off the plain `email` string. That meant anyone could open dev
+// tools, manually set pf_token/pf_email to any value (including someone
+// else's real email), and load this page as if they were that user —
+// seeing their credit balance, plan, and processing history with no
+// password required.
+//
+// Fix: before rendering anything, verify the token against Supabase's
+// /auth/v1/user endpoint. This confirms (a) the token is a real, unexpired
+// session issued by Supabase, and (b) the email baked into that session
+// actually matches the email we're about to use for every subsequent call.
+// If either check fails, the stored session is wiped and the user is sent
+// back to login — no dashboard content is ever rendered in that case.
+async function verifySession() {
+  if (!token || !email) {
+    clearSessionAndRedirect();
+    return false;
+  }
+  try {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    if (!r.ok) throw new Error('invalid or expired session');
+    const user = await r.json();
+    if (!user.email || user.email.toLowerCase() !== email.toLowerCase()) {
+      throw new Error('session/email mismatch');
+    }
+    if (!user.email_confirmed_at && !user.confirmed_at) {
+      throw new Error('email not confirmed');
+    }
+    // Keep name/email in sync with the verified session, not just
+    // whatever was last written to localStorage.
+    name = user.user_metadata?.full_name || name || user.email;
+    email = user.email;
+    return true;
+  } catch (err) {
+    clearSessionAndRedirect();
+    return false;
+  }
+}
 
 async function loadDashboard() {
   try {
@@ -276,8 +325,6 @@ async function loadDashboard() {
     document.getElementById('welcome-sub').textContent = 'Error loading account data.';
   }
 }
-
-loadDashboard();
 
 const drop = document.getElementById('drop');
 const fileInput = document.getElementById('file-input');
@@ -379,6 +426,15 @@ function logout() {
   localStorage.removeItem('pf_name');
   window.location.href = '/';
 }
+
+(async () => {
+  const ok = await verifySession();
+  if (!ok) return; // verifySession already redirected to /login.html
+  document.getElementById('nav-name').textContent = name;
+  document.getElementById('greeting').textContent = `Welcome back, ${name.split(' ')[0]}!`;
+  document.getElementById('loading-gate').style.display = 'none';
+  loadDashboard();
+})();
 </script>
 </body>
 </html>
