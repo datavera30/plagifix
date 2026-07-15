@@ -2,8 +2,8 @@ name: Keep Supabase Alive
 
 on:
   schedule:
-    - cron: '0 6 */3 * *'
-  workflow_dispatch:
+    - cron: '0 6 */3 * *'   # runs every 3 days at 6:00 AM UTC
+  workflow_dispatch:         # lets you also trigger it manually anytime from the Actions tab
 
 jobs:
   ping:
@@ -13,6 +13,7 @@ jobs:
         env:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
         run: |
-          curl -s "https://wrypnctfcwijglyivthg.supabase.co/rest/v1/customers?select=email&limit=1" \
+          curl -s -o /dev/null -w "%{http_code}" \
+            "https://wrypnctfcwijglyivthg.supabase.co/rest/v1/customers?select=id&limit=1" \
             -H "apikey: $SUPABASE_SERVICE_KEY" \
             -H "Authorization: Bearer $SUPABASE_SERVICE_KEY"
