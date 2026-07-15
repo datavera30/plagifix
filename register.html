@@ -22,6 +22,11 @@ h1{font-size:1.4rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:6px;tex
 label{display:block;font-size:0.78rem;font-weight:600;color:#344054;margin-bottom:6px;}
 input{width:100%;padding:11px 14px;border:1.5px solid #d0d5dd;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;color:#101828;outline:none;transition:border-color .15s;}
 input:focus{border-color:#2563eb;}
+.pw-wrap{position:relative;}
+.pw-wrap input{padding-right:44px;}
+.pw-toggle{position:absolute;right:0;top:0;height:100%;width:40px;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:#98a2b3;padding:0;}
+.pw-toggle:hover{color:#667085;}
+.pw-toggle svg{width:18px;height:18px;}
 .btn{width:100%;padding:13px;background:#2563eb;color:#fff;border:none;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px;}
 .btn:hover:not(:disabled){background:#1d4ed8;}
 .btn:disabled{opacity:.4;cursor:not-allowed;}
@@ -57,11 +62,21 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
     </div>
     <div class="field">
       <label>Password</label>
-      <input type="password" id="password" placeholder="Min. 6 characters"/>
+      <div class="pw-wrap">
+        <input type="password" id="password" placeholder="Min. 6 characters"/>
+        <button type="button" class="pw-toggle" onclick="togglePw('password', this)" aria-label="Show password">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
     </div>
     <div class="field">
       <label>Confirm password</label>
-      <input type="password" id="confirm" placeholder="Repeat your password" onkeydown="if(event.key==='Enter')register()"/>
+      <div class="pw-wrap">
+        <input type="password" id="confirm" placeholder="Repeat your password" onkeydown="if(event.key==='Enter')register()"/>
+        <button type="button" class="pw-toggle" onclick="togglePw('confirm', this)" aria-label="Show password">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
     </div>
     <button class="btn" id="reg-btn" onclick="register()">Create account</button>
     <div class="status" id="status"></div>
@@ -77,6 +92,16 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 const SUPABASE_URL = 'https://wrypnctfcwijglyivthg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I7NR_6S40Ydjyw44Ic26pw_I5-XUrTr';
 const BACKEND = 'https://file-processor-3i33.onrender.com';
+
+function togglePw(id, btn) {
+  const input = document.getElementById(id);
+  const showing = input.type === 'text';
+  input.type = showing ? 'password' : 'text';
+  const eyeOpen = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/>';
+  const eyeOff = '<path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 4.22-5.36M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  btn.querySelector('svg').innerHTML = showing ? eyeOpen : eyeOff;
+  btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+}
 
 async function register() {
   const name = document.getElementById('name').value.trim();
