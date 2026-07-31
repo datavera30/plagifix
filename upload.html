@@ -88,6 +88,9 @@ input:focus{border-color:var(--blue);}
 .btn-primary:disabled{opacity:.35;cursor:not-allowed;}
 .btn-blue{width:100%;padding:13px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all .2s;}
 .btn-blue:hover{background:var(--blue-d);}
+.btn-secondary{width:100%;padding:11px;background:#fff;color:var(--text);border:1.5px solid var(--border2);border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;display:block;}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue);}
+.divider-sm{text-align:center;font-size:0.78rem;color:var(--light);margin:16px 0;}
 
 /* PROGRESS */
 .prog-wrap{display:none;margin-top:16px;}
@@ -155,6 +158,8 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:var(--whi
           </div>
           <button class="btn-blue" onclick="verifyEmail()" id="verify-btn">Check my credits →</button>
           <div class="status" id="email-status"></div>
+          <div class="divider-sm">New user?</div>
+          <a href="/register.html" class="btn-secondary">Register →</a>
         </div>
       </div>
     </div>
