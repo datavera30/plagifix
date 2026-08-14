@@ -6,6 +6,7 @@
 <title>PlagiFix — Dashboard</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:#f7f8fa;color:#101828;min-height:100vh;display:flex;flex-direction:column;}
@@ -78,12 +79,32 @@ h1{font-size:1.5rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px;}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;}
 @keyframes sp{to{transform:rotate(360deg)}}
 #file-input{display:none;}
+#tr-file-input{display:none;}
 footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:flex;align-items:center;justify-content:space-between;}
 .f-logo{font-size:0.9rem;font-weight:800;color:#101828;}
 .f-logo span{color:#2563eb;}
 .f-copy{font-size:0.7rem;color:#98a2b3;}
 .loading-gate{position:fixed;inset:0;background:#f7f8fa;display:flex;align-items:center;justify-content:center;z-index:999;}
 .loading-gate .spin{width:28px;height:28px;border-width:3px;border-color:rgba(37,99,235,0.2);border-top-color:#2563eb;}
+.modal-overlay{position:fixed;inset:0;background:rgba(16,24,40,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
+.modal-box{background:#fff;border-radius:14px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid #eaecf0;position:sticky;top:0;background:#fff;}
+.modal-header h3{font-size:1.05rem;font-weight:800;}
+.modal-close{background:none;border:none;font-size:1rem;color:#98a2b3;cursor:pointer;padding:4px;}
+.modal-close:hover{color:#101828;}
+.modal-body{padding:20px 24px;}
+.modal-plan{border:1.5px solid #eaecf0;border-radius:12px;padding:18px;margin-bottom:14px;position:relative;}
+.modal-plan.pop{border-color:#2563eb;box-shadow:0 4px 16px rgba(37,99,235,0.1);}
+.modal-plan-badge{position:absolute;top:-11px;left:18px;background:#2563eb;color:#fff;font-size:0.62rem;font-weight:700;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.06em;}
+.modal-plan-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;}
+.modal-plan-name{font-size:0.95rem;font-weight:700;}
+.modal-plan-price{font-size:1.5rem;font-weight:800;color:#101828;}
+.modal-plan-meta{font-size:0.78rem;color:#667085;margin-bottom:12px;}
+.modal-plan-list{list-style:none;margin-bottom:14px;}
+.modal-plan-list li{font-size:0.78rem;color:#344054;padding:3px 0;}
+.modal-plan-list li::before{content:'✓ ';color:#027a48;font-weight:700;}
+.modal-plan-btn{width:100%;padding:11px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;border:none;background:#2563eb;color:#fff;}
+.modal-plan-btn:hover{background:#1d4ed8;}
 @media(max-width:700px){
   nav,main,footer{padding-left:20px;padding-right:20px;}
   .stats{grid-template-columns:1fr 1fr;}
@@ -94,7 +115,7 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 <body>
 <div class="loading-gate" id="loading-gate"><div class="spin"></div></div>
 <nav>
-  <a href="/" class="logo">Plagi<span>Fix</span></a>
+  <a href="/" class="logo" style="display:flex;align-items:center;gap:0;"><img src="/images/logo.png" alt="PlagiFix logo" style="width:32px;height:32px;border-radius:50%;"/>Plagi<span>Fix</span></a>
   <div class="nav-right">
     <span class="nav-name" id="nav-name"></span>
     <button class="logout-btn" onclick="logout()">Sign out</button>
@@ -123,79 +144,79 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
     </div>
   </div>
 
-  <div class="buy-more" id="buy-more-banner" style="display:none;">
-    <div class="buy-more-text">
-      <h3>Running low on credits?</h3>
-      <p>Top up your account to keep processing documents.</p>
-    </div>
-    <button class="buy-more-btn" onclick="window.location.href='/#pricing'">Buy more credits →</button>
-  </div>
-
   <div class="dash-tabs">
     <button class="dash-tab active" id="tab-btn-clean" onclick="switchTab('clean')">📝 Plagiarism & AI Remover</button>
     <button class="dash-tab" id="tab-btn-turnitin" onclick="switchTab('turnitin')">📊 Turnitin Report</button>
   </div>
 
   <div id="tab-clean">
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">Process a Document</div>
-      <span style="font-size:0.75rem;color:#98a2b3;" id="credits-label"></span>
-    </div>
-    <div class="section-body">
-      <div id="no-credits-msg" style="display:none;text-align:center;padding:20px;">
-        <div style="font-size:1.5rem;margin-bottom:10px;">😔</div>
-        <div style="font-size:0.88rem;font-weight:600;margin-bottom:6px;">No credits remaining</div>
-        <div style="font-size:0.78rem;color:#667085;margin-bottom:14px;">Purchase a plan to process more documents.</div>
-        <a href="/#pricing" style="display:inline-block;background:#2563eb;color:#fff;padding:9px 20px;border-radius:8px;font-weight:600;font-size:0.82rem;">Buy credits →</a>
+    <div class="buy-more" id="buy-more-banner" style="display:none;">
+      <div class="buy-more-text">
+        <h3>Running low on credits?</h3>
+        <p>Top up your Plagiarism &amp; AI Removal credits.</p>
       </div>
+      <button class="buy-more-btn" onclick="openBuyModal('clean')">Buy Credits →</button>
+    </div>
 
-      <div id="upload-section">
-        <div class="drop" id="drop" onclick="document.getElementById('file-input').click()">
-          <span class="drop-icon">📄</span>
-          <div class="drop-title">Drop your .docx file here</div>
-          <p class="drop-sub">or <b onclick="event.stopPropagation();document.getElementById('file-input').click()">browse to upload</b></p>
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Process a Document</div>
+        <span style="font-size:0.75rem;color:#98a2b3;" id="credits-label"></span>
+      </div>
+      <div class="section-body">
+        <div id="no-credits-msg" style="display:none;text-align:center;padding:20px;">
+          <div style="font-size:1.5rem;margin-bottom:10px;">😔</div>
+          <div style="font-size:0.88rem;font-weight:600;margin-bottom:6px;">No credits remaining</div>
+          <div style="font-size:0.78rem;color:#667085;margin-bottom:14px;">Purchase a plan to process more documents.</div>
+          <a href="javascript:void(0)" onclick="openBuyModal('clean')" style="display:inline-block;background:#2563eb;color:#fff;padding:9px 20px;border-radius:8px;font-weight:600;font-size:0.82rem;">Buy Credits →</a>
         </div>
-        <input type="file" id="file-input" accept=".docx"/>
 
-        <div class="file-row" id="file-row">
-          <span style="font-size:1.2rem;">📝</span>
-          <div style="flex:1;min-width:0;">
-            <div class="file-name" id="file-name-el"></div>
-            <div class="file-size" id="file-size-el"></div>
+        <div id="upload-section">
+          <div class="drop" id="drop" onclick="document.getElementById('file-input').click()">
+            <span class="drop-icon">📄</span>
+            <div class="drop-title">Drop your .docx file here</div>
+            <p class="drop-sub">or <b onclick="event.stopPropagation();document.getElementById('file-input').click()">browse to upload</b></p>
           </div>
-          <button class="file-rm" onclick="removeFile()">✕</button>
+          <input type="file" id="file-input" accept=".docx"/>
+
+          <div class="file-row" id="file-row">
+            <span style="font-size:1.2rem;">📝</span>
+            <div style="flex:1;min-width:0;">
+              <div class="file-name" id="file-name-el"></div>
+              <div class="file-size" id="file-size-el"></div>
+            </div>
+            <button class="file-rm" onclick="removeFile()">✕</button>
+          </div>
+
+          <button class="proc-btn" id="proc-btn" onclick="startProcessing()" disabled>
+            Process document →
+          </button>
+
+          <div class="prog-wrap" id="prog-wrap">
+            <div class="prog-info"><span id="prog-label">Processing...</span><span id="prog-pct">0%</span></div>
+            <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+          </div>
+          <div class="status" id="status"></div>
         </div>
 
-        <button class="proc-btn" id="proc-btn" onclick="startProcessing()" disabled>
-          Process document →
-        </button>
-
-        <div class="prog-wrap" id="prog-wrap">
-          <div class="prog-info"><span id="prog-label">Processing...</span><span id="prog-pct">0%</span></div>
-          <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+        <div class="download-box" id="download-box">
+          <div style="font-size:1.5rem;margin-bottom:8px;">✅</div>
+          <div style="font-weight:700;margin-bottom:4px;">Your document is ready!</div>
+          <div style="font-size:0.78rem;color:#027a48;">All flags removed. Content unchanged.</div>
+          <button class="dl-btn" id="dl-btn">⬇ Download document</button>
+          <button class="again-btn" onclick="processAnother()">Process another document</button>
         </div>
-        <div class="status" id="status"></div>
-      </div>
-
-      <div class="download-box" id="download-box">
-        <div style="font-size:1.5rem;margin-bottom:8px;">✅</div>
-        <div style="font-weight:700;margin-bottom:4px;">Your document is ready!</div>
-        <div style="font-size:0.78rem;color:#027a48;">All flags removed. Content unchanged.</div>
-        <button class="dl-btn" id="dl-btn">⬇ Download document</button>
-        <button class="again-btn" onclick="processAnother()">Process another document</button>
       </div>
     </div>
-  </div>
   </div>
 
   <div id="tab-turnitin" style="display:none;">
     <div class="buy-more" id="tr-buy-more-banner" style="display:none;">
       <div class="buy-more-text">
         <h3>Running low on report credits?</h3>
-        <p>Top up to keep requesting Turnitin reports.</p>
+        <p>Top up your Turnitin Report credits.</p>
       </div>
-      <button class="buy-more-btn" onclick="window.location.href='/#turnitin-pricing'">Buy more credits →</button>
+      <button class="buy-more-btn" onclick="openBuyModal('turnitin')">Buy Credits →</button>
     </div>
 
     <div class="section">
@@ -208,11 +229,11 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
           <div style="font-size:1.5rem;margin-bottom:10px;">😔</div>
           <div style="font-size:0.88rem;font-weight:600;margin-bottom:6px;">No credits remaining</div>
           <div style="font-size:0.78rem;color:#667085;margin-bottom:14px;">Purchase a plan to request Turnitin reports.</div>
-          <a href="/#turnitin-pricing" style="display:inline-block;background:#2563eb;color:#fff;padding:9px 20px;border-radius:8px;font-weight:600;font-size:0.82rem;">Buy credits →</a>
+          <a href="javascript:void(0)" onclick="openBuyModal('turnitin')" style="display:inline-block;background:#2563eb;color:#fff;padding:9px 20px;border-radius:8px;font-weight:600;font-size:0.82rem;">Buy Credits →</a>
         </div>
 
         <div id="tr-upload-section">
-          <p style="font-size:0.8rem;color:#667085;margin-bottom:14px;line-height:1.6;">Upload your document to request an official Similarity and AI Detection report. Reports are reviewed and typically delivered within a few hours — you'll see it appear below once ready.</p>
+          <p style="font-size:0.8rem;color:#667085;margin-bottom:14px;line-height:1.6;">Upload your document to request an official Similarity and AI Detection report. Reports are typically delivered within a few hours — you'll see it appear below once ready.</p>
           <div class="drop" id="tr-drop" onclick="document.getElementById('tr-file-input').click()">
             <span class="drop-icon">📄</span>
             <div class="drop-title">Drop your .docx file here</div>
@@ -281,9 +302,19 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
   </div>
 </main>
 
+<div class="modal-overlay" id="buy-modal" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="modal-title">Buy Credits</h3>
+      <button class="modal-close" onclick="closeBuyModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-plans"></div>
+  </div>
+</div>
+
 <footer>
   <div class="f-logo">Plagi<span>Fix</span></div>
-  <div class="f-copy">© 2025 PlagiFix</div>
+  <div class="f-copy">© 2025 PlagiFix. All rights reserved.</div>
 </footer>
 
 <script>
@@ -350,6 +381,14 @@ async function verifySession() {
     clearSessionAndRedirect();
     return false;
   }
+}
+
+function switchTab(tab) {
+  document.getElementById('tab-clean').style.display = tab === 'clean' ? 'block' : 'none';
+  document.getElementById('tab-turnitin').style.display = tab === 'turnitin' ? 'block' : 'none';
+  document.getElementById('tab-btn-clean').classList.toggle('active', tab === 'clean');
+  document.getElementById('tab-btn-turnitin').classList.toggle('active', tab === 'turnitin');
+  if (tab === 'turnitin') loadTurnitinRequests();
 }
 
 async function loadDashboard() {
@@ -501,14 +540,6 @@ function processAnother() {
   }
 }
 
-function switchTab(tab) {
-  document.getElementById('tab-clean').style.display = tab === 'clean' ? 'block' : 'none';
-  document.getElementById('tab-turnitin').style.display = tab === 'turnitin' ? 'block' : 'none';
-  document.getElementById('tab-btn-clean').classList.toggle('active', tab === 'clean');
-  document.getElementById('tab-btn-turnitin').classList.toggle('active', tab === 'turnitin');
-  if (tab === 'turnitin') loadTurnitinRequests();
-}
-
 let trSelectedFile = null;
 
 const trDrop = document.getElementById('tr-drop');
@@ -594,6 +625,96 @@ async function loadTurnitinRequests() {
   } catch(err) {
     tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">Could not load reports.</td></tr>';
   }
+}
+
+// ============================================================
+// BUY CREDITS MODAL — lets users purchase without leaving the dashboard
+// ============================================================
+const RAZORPAY_KEY = 'rzp_live_St689tKeuE962U';
+
+// Mirrors the plans defined on index.html. 'clean' plans grant Plagiarism &
+// AI Removal credits; 'turnitin' plans grant Turnitin Report credits; the
+// Classic plan grants both at once and is shown in both modals since it's
+// the one plan that works across both tabs.
+const dashPlans = {
+  clean: [
+    { key: 'buy', amount: 19900, name: 'Starter', price: '$2', meta: '1 credit, 20-day validity',
+      features: ['1 Plagiarism & AI Removal credit', 'Fast processing'] },
+    { key: 'starter', amount: 199900, name: 'Classic', price: '$20', meta: '18 credits total · one purchase, two credit types', popular: true,
+      features: ['10 Plagiarism & AI Removal credits', '8 Turnitin Report credits included', 'Priority support'] },
+    { key: 'pro', amount: 449900, name: 'Pro', price: '$45', meta: '25 credits, 60-day validity',
+      features: ['25 Plagiarism & AI Removal credits', 'Instant processing'] }
+  ],
+  turnitin: [
+    { key: 'tr_single', amount: 19900, name: 'Starter', price: '$2', meta: '1 report credit',
+      features: ['1 Turnitin Report credit', 'Typically ready within a few hours'] },
+    { key: 'starter', amount: 199900, name: 'Classic', price: '$20', meta: '18 credits total · one purchase, two credit types', popular: true,
+      features: ['8 Turnitin Report credits included', '10 Plagiarism & AI Removal credits', 'Priority support'] },
+    { key: 'tr_research', amount: 449900, name: 'Pro', price: '$45', meta: '25 report credits',
+      features: ['25 Turnitin Report credits', 'Priority delivery'] }
+  ]
+};
+
+let currentModalContext = 'clean'; // tracks which tab opened the modal, so we know what to refresh after payment
+
+function openBuyModal(context) {
+  currentModalContext = context;
+  document.getElementById('modal-title').textContent = context === 'clean'
+    ? 'Buy Plagiarism & AI Removal Credits'
+    : 'Buy Turnitin Report Credits';
+
+  const plans = dashPlans[context];
+  const container = document.getElementById('modal-plans');
+  container.innerHTML = plans.map(p => `
+    <div class="modal-plan ${p.popular ? 'pop' : ''}">
+      ${p.popular ? '<div class="modal-plan-badge">Most popular</div>' : ''}
+      <div class="modal-plan-top">
+        <span class="modal-plan-name">${p.name}</span>
+        <span class="modal-plan-price">${p.price}</span>
+      </div>
+      <div class="modal-plan-meta">${p.meta}</div>
+      <ul class="modal-plan-list">${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
+      <button class="modal-plan-btn" onclick="buyPlan('${p.key}', ${p.amount}, '${p.name}')">Get ${p.name} →</button>
+    </div>
+  `).join('');
+
+  document.getElementById('buy-modal').style.display = 'flex';
+}
+
+function closeBuyModal() {
+  document.getElementById('buy-modal').style.display = 'none';
+}
+
+function buyPlan(planKey, amount, planName) {
+  const options = {
+    key: RAZORPAY_KEY,
+    amount: amount,
+    currency: 'INR',
+    name: 'PlagiFix',
+    description: planName,
+    image: 'https://plagifix.com/favicon.ico',
+    handler: async function(response) {
+      // Already logged in — confirm the payment directly rather than
+      // sending the user through login.html like the homepage flow does.
+      try {
+        await fetch(`${BACKEND}/confirm-payment`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ email, payment_id: response.razorpay_payment_id, plan: planKey })
+        });
+      } catch (err) { /* fall through — dashboard refresh below will show current state either way */ }
+
+      closeBuyModal();
+      loadDashboard();
+      if (currentModalContext === 'turnitin') loadTurnitinRequests();
+    },
+    prefill: { name: name || '', email: email || '' },
+    notes: { plan: planName },
+    theme: { color: '#2563eb' },
+    modal: { ondismiss: function() {} }
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
 }
 
 function logout() {
