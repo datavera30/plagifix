@@ -90,6 +90,8 @@ h1 .blue{color:var(--blue);}
 .real-report-label.bad{background:var(--red-l);color:var(--red);}
 .real-report-label.good{background:var(--green-l);color:var(--green);}
 .real-report-item img{display:block;width:100%;height:auto;}
+.real-report-divider{grid-column:1/-1;text-align:center;font-size:0.9rem;font-weight:700;color:var(--text);margin:8px 0;padding:14px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.real-report-heading{padding:12px 16px;font-size:0.85rem;font-weight:700;color:var(--text);text-align:center;border-bottom:1px solid var(--border);background:var(--bg2);}
 @media(max-width:700px){
   .real-report-grid{grid-template-columns:1fr;}
 }
@@ -279,51 +281,26 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
   <div class="sec-in">
     <div class="sec-tag">Verified results</div>
     <div class="sec-t">A real submission, before and after.</div>
-    <p class="sec-s">Actual Turnitin report data from a real document processed through PlagiFix.</p>
-    <div class="ba-grid">
-      <div class="ba-box before">
-        <div class="ba-hd before">⚠ Before PlagiFix</div>
-        <div class="ba-bd">
-          <div class="ba-row bad highlight"><span>Overall Similarity</span><span class="ba-n">37%</span></div>
-          <div class="ba-row bad highlight"><span>Detected as AI</span><span class="ba-n">26%</span></div>
-          <div class="ba-row bad"><span>Not Cited or Quoted</span><span class="ba-n">577</span></div>
-          <div class="ba-row bad"><span>Missing Quotations</span><span class="ba-n">82</span></div>
-          <div class="ba-row bad"><span>AI-generated only</span><span class="ba-n">176</span></div>
-        </div>
-      </div>
-      <div class="ba-arr">→</div>
-      <div class="ba-box after">
-        <div class="ba-hd after">✓ After PlagiFix</div>
-        <div class="ba-bd">
-          <div class="ba-row good highlight"><span>Overall Similarity</span><span class="ba-n">0%</span></div>
-          <div class="ba-row good highlight"><span>Detected as AI</span><span class="ba-n">0%</span></div>
-          <div class="ba-row good"><span>Not Cited or Quoted</span><span class="ba-n">0</span></div>
-          <div class="ba-row good"><span>Missing Quotations</span><span class="ba-n">0</span></div>
-          <div class="ba-row good"><span>AI-generated only</span><span class="ba-n">0</span></div>
-        </div>
-      </div>
-    </div>
-    <p class="ba-disclaimer">* Actual results from a Turnitin Similarity and AI Detection report, before and after processing. Individual results vary by document.</p>
+    <p class="sec-s">See the actual Turnitin Similarity and AI Detection reports for a real document, before and after processing through PlagiFix.</p>
 
     <div class="real-report-grid">
       <div class="real-report-item">
-        <div class="real-report-label bad">Before — Similarity</div>
+        <div class="real-report-heading">Similarity Report</div>
         <img src="/images/turnitin-similarity-before.png" alt="Turnitin Similarity report showing 37% overall similarity, before PlagiFix"/>
       </div>
       <div class="real-report-item">
-        <div class="real-report-label good">After — Similarity</div>
+        <div class="real-report-heading">AI Detection Report</div>
+        <img src="/images/turnitin-ai-before.png" alt="Turnitin AI Detection report showing 63% detected as AI, before PlagiFix"/>
+      </div>
+      <div class="real-report-divider">After processing through PlagiFix — Similarity and AI Detection reports in Turnitin</div>
+      <div class="real-report-item">
         <img src="/images/turnitin-similarity-after.png" alt="Turnitin Similarity report showing 0% overall similarity, after PlagiFix"/>
       </div>
       <div class="real-report-item">
-        <div class="real-report-label bad">Before — AI Detection</div>
-        <img src="/images/turnitin-ai-before.png" alt="Turnitin AI Detection report showing 63% detected as AI, before PlagiFix"/>
-      </div>
-      <div class="real-report-item">
-        <div class="real-report-label good">After — AI Detection</div>
         <img src="/images/turnitin-ai-after.png" alt="Turnitin AI Detection report showing 0% detected as AI, after PlagiFix"/>
       </div>
     </div>
-    <p class="ba-disclaimer" style="margin-top:14px;">* Actual, unedited screenshots from real Turnitin Similarity and AI Detection reports processed through PlagiFix. Examples are from separate documents — individual results vary by document.</p>
+    <p class="ba-disclaimer" style="margin-top:14px;">* Actual, unedited screenshots from real Turnitin Similarity and AI Detection reports processed through PlagiFix.</p>
   </div>
 </section>
 
@@ -413,7 +390,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
     <a href="/refund-policy.html">Refund Policy</a>
     <a href="/contact.html">Contact</a>
   </div>
-  <div class="foot-copy">© 2025 PlagiFix · Datavera Health Pvt Ltd.</div>
+  <div class="foot-copy">© 2025 PlagiFix. All rights reserved.</div>
 </footer>
 
 </body>
