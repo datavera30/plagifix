@@ -219,7 +219,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
     <a href="#how">How it works</a>
     <a href="#features">Features</a>
     <a href="#pricing">Pricing</a>
-    <a href="/register.html">Turnitin Report</a>
+    <a href="/turnitin-report.html">Turnitin Report</a>
     <a href="#faq">FAQ</a>
     <a href="/login.html" class="btn btn-out">Sign in</a>
     <a href="/register.html" class="btn btn-blue" style="color:#fff;">Register →</a>
@@ -528,6 +528,56 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
 
 <hr class="rule"/>
 
+<section class="sec" id="turnitin-pricing">
+  <div class="sec-in">
+    <div class="sec-tag">Turnitin Report</div>
+    <div class="sec-t">Get an official Similarity &amp; AI report.</div>
+    <p class="sec-s">Request a genuine Turnitin Similarity and AI Detection report, reviewed and delivered to your dashboard. Separate from your plagiarism-removal credits.</p>
+
+    <div class="price-grid" style="grid-template-columns:repeat(3,1fr);max-width:780px;margin:44px auto 0;">
+      <div class="pc">
+        <div class="pc-name">Single Report</div>
+        <div class="pc-price"><sup>$</sup>2</div>
+        <div class="pc-meta">1 report credit</div>
+        <div class="pc-value">$2.00 per report</div>
+        <div class="pc-div"></div>
+        <ul class="pc-list">
+          <li>1 report credit</li><li>Official Similarity report</li><li>Official AI Detection report</li>
+          <li>Delivered to dashboard & email</li><li>Typically ready within a few hours</li>
+        </ul>
+        <button onclick="openPayment('tr_single')" class="pc-btn sec">Get started</button>
+      </div>
+      <div class="pc pop">
+        <div class="pc-badge">Most popular</div>
+        <div class="pc-name">Starter Pack</div>
+        <div class="pc-price"><sup>$</sup>20</div>
+        <div class="pc-meta">10 report credits</div>
+        <div class="pc-value">$2.00 per report</div>
+        <div class="pc-div"></div>
+        <ul class="pc-list">
+          <li>10 report credits</li><li>Official Similarity report</li><li>Official AI Detection report</li>
+          <li>Delivered to dashboard & email</li><li>Typically ready within a few hours</li>
+        </ul>
+        <button onclick="openPayment('tr_starter')" class="pc-btn pri">Get Starter</button>
+      </div>
+      <div class="pc">
+        <div class="pc-name">Research Pack</div>
+        <div class="pc-price"><sup>$</sup>45</div>
+        <div class="pc-meta">25 report credits</div>
+        <div class="pc-value">$1.80 per report</div>
+        <div class="pc-div"></div>
+        <ul class="pc-list">
+          <li>25 report credits</li><li>Official Similarity report</li><li>Official AI Detection report</li>
+          <li>Delivered to dashboard & email</li><li>Priority delivery</li>
+        </ul>
+        <button onclick="openPayment('tr_research')" class="pc-btn sec">Get Research Pack</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule"/>
+
 
 <section class="sec sec-bg">
   <div class="sec-in">
@@ -612,7 +662,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
     <a href="/refund-policy.html">Refund Policy</a>
     <a href="/contact.html">Contact</a>
   </div>
-  <div class="foot-copy">© 2025 PlagiFix</div>
+  <div class="foot-copy">© 2025 PlagiFix. All rights reserved.</div>
 </footer>
 
 <script>
@@ -621,7 +671,15 @@ const plans = {
   buy:     { amount: 49900,   name: 'Buy Credits',  description: '1 credit, 20-day validity' },
   starter: { amount: 479900,  name: 'Starter',      description: '25 credits, 30-day validity' },
   elite:   { amount: 959900,  name: 'Elite',        description: '80 credits, 60-day validity' },
-  pro:     { amount: 1929900, name: 'Pro',          description: '250 credits, 90-day validity' }
+  pro:     { amount: 1929900, name: 'Pro',          description: '250 credits, 90-day validity' },
+  // Turnitin Report plans — separate credit pool from the plans above.
+  // Amounts below are placeholders matching the $ prices shown on the
+  // pricing cards at roughly the same INR conversion rate used for the
+  // plans above — double check these against your real Razorpay/INR
+  // pricing before going live.
+  tr_single:   { amount: 19900,  name: 'Turnitin Single Report', description: '1 report credit' },
+  tr_starter:  { amount: 199900, name: 'Turnitin Starter Pack',  description: '10 report credits' },
+  tr_research: { amount: 449900, name: 'Turnitin Research Pack', description: '25 report credits' }
 };
 function openPayment(planKey) {
   const plan = plans[planKey];
