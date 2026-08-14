@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>PlagiFix — Remove Turnitin Plagiarism & AI Flags Instantly</title>
-<meta name="description" content="PlagiFix removes plagiarism and AI detection flags from your academic documents instantly. From $5. Works with Turnitin and iThenticate."/>
+<meta name="description" content="PlagiFix removes plagiarism and AI detection flags from your academic documents instantly. From $2. Works with Turnitin and iThenticate."/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -214,7 +214,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
 <button class="float-btn" id="float-btn" onclick="window.location.href='/upload.html'">✦ Fix my document</button>
 
 <nav>
-  <a href="#" class="logo" style="display:flex;align-items:center;gap:8px;"><img src="/images/logo.png" alt="PlagiFix logo" style="width:32px;height:32px;border-radius:50%;"/>Plagi<span>Fix</span></a>
+  <a href="#" class="logo" style="display:flex;align-items:center;gap:0;"><img src="/images/logo.png" alt="PlagiFix logo" style="width:32px;height:32px;border-radius:50%;"/>Plagi<span>Fix</span></a>
   <div class="nav-c">
     <a href="#how">How it works</a>
     <a href="#features">Features</a>
@@ -439,7 +439,12 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
     <div class="sec-t">Start free. Scale as you grow.</div>
     <p class="sec-s">Every new account gets 1 free credit. Buy more as you go or choose a plan for the best value. No subscriptions. No hidden fees.</p>
 
-    <div class="pc-free" style="max-width:340px;margin:44px auto 0;">
+    <div style="text-align:center;margin:44px 0 0;">
+      <div class="sec-tag" style="display:block;">Plagiarism & AI Removal Pricing</div>
+      <p style="font-size:0.85rem;color:var(--muted);max-width:480px;margin:0 auto;">These credits are only for the Plagiarism &amp; AI Removal service. They cannot be used to request a Turnitin Report.</p>
+    </div>
+
+    <div class="pc-free" style="max-width:340px;margin:24px auto 0;">
       <div class="pc-free-badge">Free, no credit card needed</div>
       <div class="pc-name" style="color:var(--green);">Free Trial</div>
       <div class="pc-price" style="color:var(--green);">$0</div>
@@ -456,14 +461,12 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
       <a href="/register.html" class="pc-btn pri" style="background:var(--green);text-decoration:none;display:block;text-align:center;">Create free account →</a>
     </div>
 
-    <div style="text-align:center;margin:32px 0 0;font-size:0.82rem;color:var(--muted);">Need more credits? Choose a paid plan below.</div>
-
-    <div class="price-grid" style="margin-top:16px;">
+    <div class="price-grid" style="grid-template-columns:repeat(2,1fr);max-width:520px;margin:24px auto 0;">
       <div class="pc">
-        <div class="pc-name">Buy Credits</div>
-        <div class="pc-price"><sup>$</sup>5</div>
-        <div class="pc-meta">per credit, 20-day validity</div>
-        <div class="pc-value">$5 per document</div>
+        <div class="pc-name">Starter</div>
+        <div class="pc-price"><sup>$</sup>2</div>
+        <div class="pc-meta">1 credit, 20-day validity</div>
+        <div class="pc-value">$2.00 per document</div>
         <div class="pc-div"></div>
         <ul class="pc-list">
           <li>1 credit</li><li>Plagiarism flag removal</li><li>AI detection flag removal</li>
@@ -471,48 +474,19 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
           <li>Content stays exactly as written</li><li>Document deleted immediately after download</li>
           <li>20-day credit validity</li><li>Standard support</li><li>Fast processing</li>
         </ul>
-        <button onclick="openPayment('buy')" class="pc-btn sec">Get started</button>
+        <button onclick="openPayment('buy')" class="pc-btn sec">Get Starter</button>
       </div>
       <div class="pc">
-        <div class="pc-name">Starter</div>
-        <div class="pc-price"><sup>$</sup>49</div>
-        <div class="pc-meta">25 credits, 30-day validity</div>
-        <div class="pc-value">$1.96 per document</div>
+        <div class="pc-name">Pro</div>
+        <div class="pc-price"><sup>$</sup>45</div>
+        <div class="pc-meta">25 credits, 60-day validity</div>
+        <div class="pc-value">$1.80 per document</div>
         <div class="pc-div"></div>
         <ul class="pc-list">
           <li>25 credits</li><li>Plagiarism flag removal</li><li>AI detection flag removal</li>
           <li>Accepted by Turnitin, iThenticate and more</li><li>Works on any language, any subject</li>
           <li>Content stays exactly as written</li><li>Document deleted immediately after download</li>
-          <li>30-day credit validity</li><li>Standard support</li><li>Fast processing</li>
-        </ul>
-        <button onclick="openPayment('starter')" class="pc-btn sec">Get Starter</button>
-      </div>
-      <div class="pc pop">
-        <div class="pc-badge">Most popular</div>
-        <div class="pc-name">Elite</div>
-        <div class="pc-price"><sup>$</sup>99</div>
-        <div class="pc-meta">80 credits, 60-day validity</div>
-        <div class="pc-value">$1.24 per document</div>
-        <div class="pc-div"></div>
-        <ul class="pc-list">
-          <li>80 credits</li><li>Plagiarism flag removal</li><li>AI detection flag removal</li>
-          <li>Accepted by Turnitin, iThenticate and more</li><li>Works on any language, any subject</li>
-          <li>Content stays exactly as written</li><li>Document deleted immediately after download</li>
-          <li>60-day credit validity</li><li>Priority support</li><li>Faster processing</li>
-        </ul>
-        <button onclick="openPayment('elite')" class="pc-btn pri">Get Elite</button>
-      </div>
-      <div class="pc">
-        <div class="pc-name">Pro</div>
-        <div class="pc-price"><sup>$</sup>199</div>
-        <div class="pc-meta">250 credits, 90-day validity</div>
-        <div class="pc-value">$0.80 per document</div>
-        <div class="pc-div"></div>
-        <ul class="pc-list">
-          <li>250 credits</li><li>Plagiarism flag removal</li><li>AI detection flag removal</li>
-          <li>Accepted by Turnitin, iThenticate and more</li><li>Works on any language, any subject</li>
-          <li>Content stays exactly as written</li><li>Document deleted immediately after download</li>
-          <li>90-day credit validity</li><li>Dedicated support</li><li>Instant processing</li>
+          <li>60-day credit validity</li><li>Dedicated support</li><li>Instant processing</li>
         </ul>
         <button onclick="openPayment('pro')" class="pc-btn sec">Get Pro</button>
       </div>
@@ -528,15 +502,49 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
 
 <hr class="rule"/>
 
+<section class="sec">
+  <div class="sec-in" style="text-align:center;">
+    <div class="sec-tag" style="display:block;">Most popular</div>
+    <div class="sec-t">One plan. Both features.</div>
+    <p class="sec-s" style="margin:0 auto;">The Classic plan works across both your Plagiarism &amp; AI Removal tab and your Turnitin Report tab — the only plan that covers both.</p>
+
+    <div class="pc pop" style="max-width:400px;margin:32px auto 0;text-align:left;">
+      <div class="pc-badge">Most popular</div>
+      <div class="pc-name">Classic</div>
+      <div class="pc-price"><sup>$</sup>20</div>
+      <div class="pc-meta">18 credits total · <span style="color:var(--blue);font-weight:700;">One purchase, two credit types</span></div>
+      <div class="pc-value">$2.00 per credit</div>
+      <div class="pc-div"></div>
+      <ul class="pc-list">
+        <li><b>10 Plagiarism &amp; AI Removal credits</b></li>
+        <li><b>8 Turnitin Report credits included</b></li>
+        <li>Accepted by Turnitin, iThenticate and more</li>
+        <li>Works on any language, any subject</li>
+        <li>Content stays exactly as written</li>
+        <li>30-day validity on removal credits</li>
+        <li>Priority support</li>
+      </ul>
+      <button onclick="openPayment('starter')" class="pc-btn pri">Get Classic</button>
+    </div>
+  </div>
+</section>
+
+<hr class="rule"/>
+
 <section class="sec" id="turnitin-pricing">
   <div class="sec-in">
     <div class="sec-tag">Turnitin Report</div>
     <div class="sec-t">Get an official Similarity &amp; AI report.</div>
     <p class="sec-s">Request a genuine Turnitin Similarity and AI Detection report, reviewed and delivered to your dashboard. Separate from your plagiarism-removal credits.</p>
 
-    <div class="price-grid" style="grid-template-columns:repeat(3,1fr);max-width:780px;margin:44px auto 0;">
+    <div style="text-align:center;margin:44px 0 0;">
+      <div class="sec-tag" style="display:block;">Turnitin Report Pricing</div>
+      <p style="font-size:0.85rem;color:var(--muted);max-width:480px;margin:0 auto;">These credits are only for requesting a Turnitin Similarity &amp; AI Report. They cannot be used for Plagiarism &amp; AI Removal.</p>
+    </div>
+
+    <div class="price-grid" style="grid-template-columns:repeat(2,1fr);max-width:520px;margin:24px auto 0;">
       <div class="pc">
-        <div class="pc-name">Single Report</div>
+        <div class="pc-name">Starter</div>
         <div class="pc-price"><sup>$</sup>2</div>
         <div class="pc-meta">1 report credit</div>
         <div class="pc-value">$2.00 per report</div>
@@ -545,23 +553,10 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
           <li>1 report credit</li><li>Official Similarity report</li><li>Official AI Detection report</li>
           <li>Delivered to dashboard & email</li><li>Typically ready within a few hours</li>
         </ul>
-        <button onclick="openPayment('tr_single')" class="pc-btn sec">Get started</button>
-      </div>
-      <div class="pc pop">
-        <div class="pc-badge">Most popular</div>
-        <div class="pc-name">Starter Pack</div>
-        <div class="pc-price"><sup>$</sup>20</div>
-        <div class="pc-meta">10 report credits</div>
-        <div class="pc-value">$2.00 per report</div>
-        <div class="pc-div"></div>
-        <ul class="pc-list">
-          <li>10 report credits</li><li>Official Similarity report</li><li>Official AI Detection report</li>
-          <li>Delivered to dashboard & email</li><li>Typically ready within a few hours</li>
-        </ul>
-        <button onclick="openPayment('tr_starter')" class="pc-btn pri">Get Starter</button>
+        <button onclick="openPayment('tr_single')" class="pc-btn sec">Get Starter</button>
       </div>
       <div class="pc">
-        <div class="pc-name">Research Pack</div>
+        <div class="pc-name">Pro</div>
         <div class="pc-price"><sup>$</sup>45</div>
         <div class="pc-meta">25 report credits</div>
         <div class="pc-value">$1.80 per report</div>
@@ -570,7 +565,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
           <li>25 report credits</li><li>Official Similarity report</li><li>Official AI Detection report</li>
           <li>Delivered to dashboard & email</li><li>Priority delivery</li>
         </ul>
-        <button onclick="openPayment('tr_research')" class="pc-btn sec">Get Research Pack</button>
+        <button onclick="openPayment('tr_research')" class="pc-btn sec">Get Pro</button>
       </div>
     </div>
   </div>
@@ -623,7 +618,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
     </div>
     <div class="rev-grid-2">
       <div class="rc"><div class="rc-stars">★★★★★</div><p class="rc-text">"I submitted my dissertation with complete confidence after using PlagiFix. The AI detection score went from 68% to 0%. Outstanding service."</p><div class="rc-name">Mohammed A.</div><div class="rc-inst">PhD Candidate · University of Manchester</div><div class="rc-verify">✓ Verified purchase</div></div>
-      <div class="rc"><div class="rc-stars">★★★★★</div><p class="rc-text">"Used PlagiFix for my entire research team, 12 documents processed without a single issue. The Elite plan is exceptional value."</p><div class="rc-name">Dr. Sarah K.</div><div class="rc-inst">Senior Researcher · National University of Singapore</div><div class="rc-verify">✓ Verified purchase</div></div>
+      <div class="rc"><div class="rc-stars">★★★★★</div><p class="rc-text">"Used PlagiFix for my entire research team, 12 documents processed without a single issue. The Classic plan is exceptional value."</p><div class="rc-name">Dr. Sarah K.</div><div class="rc-inst">Senior Researcher · National University of Singapore</div><div class="rc-verify">✓ Verified purchase</div></div>
       <div class="rc"><div class="rc-stars">★★★★★</div><p class="rc-text">"Tried two other services before PlagiFix, neither worked. PlagiFix cleared every single flag in one pass. Should have started here."</p><div class="rc-name">Fatima O.</div><div class="rc-inst">MSc Candidate · University of Lagos</div><div class="rc-verify">✓ Verified purchase</div></div>
     </div>
   </div>
@@ -668,18 +663,17 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
 <script>
 const RAZORPAY_KEY = 'rzp_live_St689tKeuE962U';
 const plans = {
-  buy:     { amount: 49900,   name: 'Buy Credits',  description: '1 credit, 20-day validity' },
-  starter: { amount: 479900,  name: 'Starter',      description: '25 credits, 30-day validity' },
-  elite:   { amount: 959900,  name: 'Elite',        description: '80 credits, 60-day validity' },
-  pro:     { amount: 1929900, name: 'Pro',          description: '250 credits, 90-day validity' },
+  buy:     { amount: 19900,  name: 'Starter',  description: '1 credit, 20-day validity' },
+  starter: { amount: 199900, name: 'Classic',  description: '10 credits + 8 Turnitin Report credits, 30-day validity' },
+  pro:     { amount: 449900, name: 'Pro',      description: '25 credits, 60-day validity' },
   // Turnitin Report plans — separate credit pool from the plans above.
   // Amounts below are placeholders matching the $ prices shown on the
   // pricing cards at roughly the same INR conversion rate used for the
   // plans above — double check these against your real Razorpay/INR
   // pricing before going live.
-  tr_single:   { amount: 19900,  name: 'Turnitin Single Report', description: '1 report credit' },
-  tr_starter:  { amount: 199900, name: 'Turnitin Starter Pack',  description: '10 report credits' },
-  tr_research: { amount: 449900, name: 'Turnitin Research Pack', description: '25 report credits' }
+  tr_single:   { amount: 19900,  name: 'Turnitin Starter', description: '1 report credit' },
+  tr_starter:  { amount: 199900, name: 'Turnitin Classic',  description: '10 report credits' },
+  tr_research: { amount: 449900, name: 'Turnitin Pro', description: '25 report credits' }
 };
 function openPayment(planKey) {
   const plan = plans[planKey];
