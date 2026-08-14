@@ -27,6 +27,10 @@ h1{font-size:1.5rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px;}
 .stat-value.blue{color:#2563eb;}
 .stat-value.green{color:#027a48;}
 .stat-sub{font-size:0.72rem;color:#98a2b3;margin-top:4px;}
+.dash-tabs{display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid #eaecf0;}
+.dash-tab{background:none;border:none;padding:12px 4px;margin-right:20px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:600;color:#98a2b3;cursor:pointer;border-bottom:2.5px solid transparent;transition:all .15s;}
+.dash-tab:hover{color:#667085;}
+.dash-tab.active{color:#2563eb;border-bottom-color:#2563eb;}
 .section{background:#fff;border:1px solid #eaecf0;border-radius:12px;margin-bottom:20px;}
 .section-header{padding:18px 22px;border-bottom:1px solid #eaecf0;display:flex;align-items:center;justify-content:space-between;}
 .section-title{font-size:0.95rem;font-weight:700;}
@@ -127,6 +131,12 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
     <button class="buy-more-btn" onclick="window.location.href='/#pricing'">Buy more credits →</button>
   </div>
 
+  <div class="dash-tabs">
+    <button class="dash-tab active" id="tab-btn-clean" onclick="switchTab('clean')">📝 Plagiarism & AI Remover</button>
+    <button class="dash-tab" id="tab-btn-turnitin" onclick="switchTab('turnitin')">📊 Turnitin Report</button>
+  </div>
+
+  <div id="tab-clean">
   <div class="section">
     <div class="section-header">
       <div class="section-title">Process a Document</div>
@@ -174,6 +184,77 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
         <div style="font-size:0.78rem;color:#027a48;">All flags removed. Content unchanged.</div>
         <button class="dl-btn" id="dl-btn">⬇ Download document</button>
         <button class="again-btn" onclick="processAnother()">Process another document</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <div id="tab-turnitin" style="display:none;">
+    <div class="buy-more" id="tr-buy-more-banner" style="display:none;">
+      <div class="buy-more-text">
+        <h3>Running low on report credits?</h3>
+        <p>Top up to keep requesting Turnitin reports.</p>
+      </div>
+      <button class="buy-more-btn" onclick="window.location.href='/#turnitin-pricing'">Buy more credits →</button>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Request a Turnitin Report</div>
+        <span style="font-size:0.75rem;color:#98a2b3;" id="tr-credits-label"></span>
+      </div>
+      <div class="section-body">
+        <div id="tr-no-credits-msg" style="display:none;text-align:center;padding:20px;">
+          <div style="font-size:1.5rem;margin-bottom:10px;">😔</div>
+          <div style="font-size:0.88rem;font-weight:600;margin-bottom:6px;">No credits remaining</div>
+          <div style="font-size:0.78rem;color:#667085;margin-bottom:14px;">Purchase a plan to request Turnitin reports.</div>
+          <a href="/#turnitin-pricing" style="display:inline-block;background:#2563eb;color:#fff;padding:9px 20px;border-radius:8px;font-weight:600;font-size:0.82rem;">Buy credits →</a>
+        </div>
+
+        <div id="tr-upload-section">
+          <p style="font-size:0.8rem;color:#667085;margin-bottom:14px;line-height:1.6;">Upload your document to request an official Similarity and AI Detection report. Reports are reviewed and typically delivered within a few hours — you'll see it appear below once ready.</p>
+          <div class="drop" id="tr-drop" onclick="document.getElementById('tr-file-input').click()">
+            <span class="drop-icon">📄</span>
+            <div class="drop-title">Drop your .docx file here</div>
+            <p class="drop-sub">or <b onclick="event.stopPropagation();document.getElementById('tr-file-input').click()">browse to upload</b></p>
+          </div>
+          <input type="file" id="tr-file-input" accept=".docx"/>
+
+          <div class="file-row" id="tr-file-row">
+            <span style="font-size:1.2rem;">📝</span>
+            <div style="flex:1;min-width:0;">
+              <div class="file-name" id="tr-file-name-el"></div>
+              <div class="file-size" id="tr-file-size-el"></div>
+            </div>
+            <button class="file-rm" onclick="trRemoveFile()">✕</button>
+          </div>
+
+          <button class="proc-btn" id="tr-proc-btn" onclick="trRequestReport()" disabled>
+            Request report →
+          </button>
+          <div class="status" id="tr-status"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Your Turnitin Reports</div>
+      </div>
+      <div class="section-body" style="padding:0;">
+        <table class="credit-table">
+          <thead>
+            <tr>
+              <th>File</th>
+              <th>Requested</th>
+              <th>Status</th>
+              <th>Report</th>
+            </tr>
+          </thead>
+          <tbody id="tr-requests-tbody">
+            <tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">Loading...</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -417,6 +498,101 @@ function processAnother() {
   if (userCredits <= 0) {
     document.getElementById('no-credits-msg').style.display = 'block';
     document.getElementById('upload-section').style.display = 'none';
+  }
+}
+
+function switchTab(tab) {
+  document.getElementById('tab-clean').style.display = tab === 'clean' ? 'block' : 'none';
+  document.getElementById('tab-turnitin').style.display = tab === 'turnitin' ? 'block' : 'none';
+  document.getElementById('tab-btn-clean').classList.toggle('active', tab === 'clean');
+  document.getElementById('tab-btn-turnitin').classList.toggle('active', tab === 'turnitin');
+  if (tab === 'turnitin') loadTurnitinRequests();
+}
+
+let trSelectedFile = null;
+
+const trDrop = document.getElementById('tr-drop');
+const trFileInput = document.getElementById('tr-file-input');
+const trFileRow = document.getElementById('tr-file-row');
+const trProcBtn = document.getElementById('tr-proc-btn');
+const trStatusEl = document.getElementById('tr-status');
+
+trDrop.addEventListener('dragover', e => { e.preventDefault(); trDrop.classList.add('drag'); });
+trDrop.addEventListener('dragleave', () => trDrop.classList.remove('drag'));
+trDrop.addEventListener('drop', e => { e.preventDefault(); trDrop.classList.remove('drag'); if (e.dataTransfer.files[0]) trSetFile(e.dataTransfer.files[0]); });
+trFileInput.addEventListener('change', () => { if (trFileInput.files[0]) trSetFile(trFileInput.files[0]); });
+
+function trSetFile(file) {
+  if (!file.name.endsWith('.docx')) { trStatusEl.textContent = 'Please upload a .docx file.'; trStatusEl.className = 'status err'; return; }
+  trSelectedFile = file;
+  document.getElementById('tr-file-name-el').textContent = file.name;
+  document.getElementById('tr-file-size-el').textContent = (file.size/1024/1024).toFixed(2) + ' MB';
+  trFileRow.classList.add('show');
+  trDrop.style.display = 'none';
+  trProcBtn.disabled = false;
+  trStatusEl.textContent = '';
+}
+
+function trRemoveFile() {
+  trSelectedFile = null; trFileInput.value = '';
+  trFileRow.classList.remove('show'); trDrop.style.display = '';
+  trProcBtn.disabled = true; trStatusEl.textContent = '';
+}
+
+async function trRequestReport() {
+  if (!trSelectedFile) return;
+  trProcBtn.disabled = true;
+  trProcBtn.innerHTML = '<span class="spin"></span> Sending request...';
+  trStatusEl.textContent = '';
+
+  try {
+    const formData = new FormData();
+    formData.append('file', trSelectedFile);
+    formData.append('email', email);
+    const r = await fetch(`${BACKEND}/request-turnitin-report`, { method: 'POST', body: formData });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error || 'Request failed');
+
+    trStatusEl.textContent = '✓ ' + data.message;
+    trStatusEl.className = 'status ok';
+    trRemoveFile();
+    loadTurnitinRequests();
+    loadDashboard(); // refresh credit count since a credit was used
+  } catch(err) {
+    trStatusEl.textContent = err.message || 'Something went wrong. Please try again.';
+    trStatusEl.className = 'status err';
+  }
+  trProcBtn.disabled = false;
+  trProcBtn.innerHTML = 'Request report →';
+}
+
+async function loadTurnitinRequests() {
+  const tbody = document.getElementById('tr-requests-tbody');
+  try {
+    const r = await fetch(`${BACKEND}/turnitin-requests?email=${encodeURIComponent(email)}`);
+    const data = await r.json();
+    const reqs = data.requests || [];
+    if (reqs.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">No reports requested yet.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = reqs.map(r => {
+      const date = r.requested_at ? new Date(r.requested_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '—';
+      const statusBadge = r.status === 'complete'
+        ? '<span class="badge active">Ready</span>'
+        : '<span class="badge expired">Processing</span>';
+      const reportCell = r.report_url
+        ? `<a href="${r.report_url}" target="_blank" rel="noopener" style="color:#2563eb;font-weight:600;">⬇ Download</a>`
+        : '<span style="color:#98a2b3;">—</span>';
+      return `<tr>
+        <td>${r.filename || '—'}</td>
+        <td>${date}</td>
+        <td>${statusBadge}</td>
+        <td>${reportCell}</td>
+      </tr>`;
+    }).join('');
+  } catch(err) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">Could not load reports.</td></tr>';
   }
 }
 
