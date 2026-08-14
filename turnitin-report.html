@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PlagiFix — Official Turnitin Similarity & AI Report</title>
+<meta name="description" content="Request an official Turnitin Similarity and AI Detection report, generated through Turnitin's authorised institutional access — delivered straight to your PlagiFix dashboard."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#fff;--bg2:#f8fafc;--bg3:#eff6ff;
+  --border:#e2e8f0;--border2:#bfdbfe;
+  --text:#0f172a;--muted:#64748b;--light:#94a3b8;
+  --blue:#2563eb;--blue-d:#1d4ed8;--blue-l:#eff6ff;
+  --green:#16a34a;--green-l:#f0fdf4;
+  --red:#dc2626;--red-l:#fef2f2;
+  --gold:#d97706;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+nav{display:flex;align-items:center;justify-content:space-between;padding:0 64px;height:68px;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.97);backdrop-filter:blur(10px);position:sticky;top:0;z-index:200;}
+.logo{font-size:1.4rem;font-weight:800;letter-spacing:-0.03em;color:var(--text);}
+.logo span{color:var(--blue);}
+.nav-c{display:flex;gap:24px;align-items:center;}
+.nav-c a{font-size:0.875rem;font-weight:500;color:var(--muted);transition:color .15s;}
+.nav-c a:hover{color:var(--text);}
+.btn{padding:10px 20px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.875rem;font-weight:600;cursor:pointer;border:none;transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-blue:hover{background:var(--blue-d);}
+.btn-out{background:transparent;color:var(--text);border:1.5px solid var(--border);}
+.btn-out:hover{border-color:var(--blue);color:var(--blue);}
+.btn-lg{padding:13px 28px;font-size:0.95rem;border-radius:9px;}
+.btn-xl{padding:15px 32px;font-size:1rem;border-radius:9px;}
+.btn-white{background:#fff;color:var(--blue);font-weight:700;}
+.btn-white:hover{background:#f0f7ff;}
+.hero{background:linear-gradient(160deg,#eef2ff 0%,#f8f9fe 50%,#fff 100%);padding:88px 64px;border-bottom:1px solid var(--border);}
+.hero-in{max-width:880px;margin:0 auto;text-align:center;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border2);color:var(--blue);font-size:0.77rem;font-weight:700;padding:7px 16px;border-radius:100px;margin-bottom:28px;box-shadow:0 2px 12px rgba(37,99,235,0.1);}
+.live{width:7px;height:7px;border-radius:50%;background:var(--green);animation:livep 1.8s infinite;}
+@keyframes livep{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.4}}
+h1{font-size:3.2rem;font-weight:800;line-height:1.12;letter-spacing:-0.04em;color:var(--text);margin-bottom:22px;}
+h1 .blue{color:var(--blue);}
+.hero-sub{font-size:1.1rem;color:var(--muted);max-width:580px;margin:0 auto 36px;line-height:1.75;font-weight:400;}
+.hero-acts{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
+.hero-trust{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;}
+.ht{display:flex;align-items:center;gap:6px;font-size:0.79rem;font-weight:500;color:var(--muted);}
+.ht-check{color:var(--green);font-weight:700;}
+.sec{padding:88px 64px;}
+.sec-in{max-width:1040px;margin:0 auto;}
+.sec-bg{background:var(--bg2);}
+.sec-tag{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--blue);margin-bottom:10px;}
+.sec-t{font-size:2.2rem;font-weight:800;letter-spacing:-0.04em;line-height:1.2;margin-bottom:12px;}
+.sec-s{font-size:0.93rem;color:var(--muted);max-width:480px;line-height:1.75;}
+.rule{border:none;border-top:1px solid var(--border);}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-top:44px;}
+.step{background:#fff;padding:30px 26px;}
+.step-n{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--blue);margin-bottom:16px;}
+.step-ic{font-size:2rem;margin-bottom:14px;display:block;}
+.step h4{font-size:1rem;font-weight:700;margin-bottom:8px;}
+.step p{font-size:0.82rem;color:var(--muted);line-height:1.7;}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:44px;}
+.feat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;transition:all .15s;}
+.feat:hover{border-color:var(--border2);box-shadow:0 4px 20px rgba(37,99,235,0.07);background:#fff;}
+.feat-ic{width:44px;height:44px;background:var(--blue-l);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin-bottom:14px;}
+.feat h4{font-size:1.02rem;font-weight:700;margin-bottom:8px;}
+.feat p{font-size:0.86rem;color:var(--muted);line-height:1.7;}
+.sample-card{max-width:520px;margin:44px auto 0;background:#fff;border:1px solid var(--border);border-radius:13px;overflow:hidden;box-shadow:0 6px 24px rgba(37,99,235,0.08);}
+.ba-grid{display:grid;grid-template-columns:1fr 48px 1fr;gap:0;margin-top:44px;align-items:center;}
+.ba-box{border-radius:12px;overflow:hidden;}
+.ba-box.before{border:1.5px solid #fca5a5;}
+.ba-box.after{border:1.5px solid #86efac;}
+.ba-hd{padding:13px 18px;font-size:0.78rem;font-weight:700;display:flex;align-items:center;gap:7px;}
+.ba-hd.before{background:var(--red-l);color:var(--red);}
+.ba-hd.after{background:var(--green-l);color:var(--green);}
+.ba-bd{background:#fff;padding:14px 16px;}
+.ba-row{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-radius:7px;margin-bottom:6px;font-size:0.82rem;}
+.ba-row.bad{background:var(--red-l);color:var(--red);}
+.ba-row.good{background:var(--green-l);color:var(--green);}
+.ba-row.highlight{font-weight:700;font-size:0.95rem;}
+.ba-n{font-weight:800;font-size:1rem;}
+.ba-arr{display:flex;align-items:center;justify-content:center;color:var(--blue);font-size:1.6rem;font-weight:700;}
+.report-preview{max-width:920px;margin:44px auto 0;border:1px solid var(--border);border-radius:13px;overflow:hidden;box-shadow:0 6px 24px rgba(37,99,235,0.08);background:#fff;}
+.ba-disclaimer{text-align:center;color:var(--light);font-style:italic;font-size:0.8rem;margin-top:24px;max-width:680px;margin-left:auto;margin-right:auto;line-height:1.7;}
+.report-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:11px 16px;display:flex;align-items:center;gap:8px;}
+.report-dot{width:10px;height:10px;border-radius:50%;}
+.report-url{background:#fff;border:1px solid var(--border);border-radius:6px;padding:5px 14px;font-size:0.71rem;color:var(--muted);flex:1;max-width:320px;margin:0 auto;text-align:center;}
+.report-cols{display:grid;grid-template-columns:1fr 1fr;}
+.report-col{padding:28px 30px;}
+.report-col:first-child{border-right:1px solid var(--border);}
+.report-tag{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--blue);margin-bottom:10px;}
+.report-pct{font-size:2rem;font-weight:800;letter-spacing:-0.03em;margin-bottom:6px;}
+.report-pct.good{color:var(--green);}
+.report-desc{font-size:0.8rem;color:var(--muted);line-height:1.6;margin-bottom:20px;}
+.report-caution{background:var(--blue-l);border:1px solid var(--border2);border-radius:9px;padding:14px 16px;margin-bottom:20px;}
+.report-caution b{font-size:0.78rem;color:var(--text);display:block;margin-bottom:4px;}
+.report-caution p{font-size:0.76rem;color:var(--muted);line-height:1.6;}
+.report-groups-title{font-size:0.85rem;font-weight:700;margin-bottom:12px;}
+.report-item{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.report-ic{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.95rem;flex-shrink:0;color:#fff;}
+.report-item-txt b{font-size:0.83rem;display:block;}
+.report-item-txt span{font-size:0.75rem;color:var(--muted);line-height:1.5;}
+.report-footer{border-top:1px solid var(--border);padding:12px 30px;font-size:0.7rem;color:var(--light);grid-column:1/-1;}
+.slider-wrap{max-width:560px;margin:44px auto 0;position:relative;}
+.slider-track{overflow:hidden;border-radius:13px;border:1px solid var(--border);box-shadow:0 6px 24px rgba(37,99,235,0.08);}
+.slider-inner{display:flex;transition:transform .3s ease;}
+.slide{min-width:100%;background:#fff;}
+.slide-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:11px 16px;display:flex;align-items:center;gap:8px;}
+.slide-dot{width:10px;height:10px;border-radius:50%;}
+.slide-label{background:#fff;border:1px solid var(--border);border-radius:6px;padding:5px 14px;font-size:0.71rem;color:var(--muted);flex:1;max-width:280px;margin:0 auto;text-align:center;}
+.slide-body{padding:26px;}
+.slide-pct{font-size:2.4rem;font-weight:800;letter-spacing:-0.03em;line-height:1;margin-bottom:4px;}
+.slide-pct.bad{color:var(--red);}
+.slide-pct.good{color:var(--green);}
+.slide-sub{font-size:0.8rem;color:var(--muted);margin-bottom:18px;line-height:1.6;}
+.slide-list{display:flex;flex-direction:column;gap:8px;}
+.slide-item{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 12px;border-radius:7px;font-size:0.8rem;background:var(--bg2);}
+.slide-item-n{font-weight:700;color:var(--text);}
+.slide-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:16px;}
+.slide-btn{background:#fff;border:1.5px solid var(--border);border-radius:50%;width:36px;height:36px;cursor:pointer;font-size:1rem;color:var(--text);display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.slide-btn:hover{border-color:var(--blue);color:var(--blue);}
+.slide-dots{display:flex;gap:6px;}
+.slide-dots span{width:7px;height:7px;border-radius:50%;background:var(--border2);cursor:pointer;transition:all .15s;}
+.slide-dots span.active{background:var(--blue);width:18px;border-radius:4px;}
+@media(max-width:960px){
+  .ba-grid{grid-template-columns:1fr;gap:12px;}
+  .ba-arr{transform:rotate(90deg);}
+}
+.sample-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:11px 16px;display:flex;align-items:center;gap:8px;}
+.sample-dot{width:10px;height:10px;border-radius:50%;}
+.sample-url{background:#fff;border:1px solid var(--border);border-radius:6px;padding:5px 14px;font-size:0.71rem;color:var(--muted);flex:1;max-width:270px;margin:0 auto;text-align:center;}
+.sample-body{padding:26px;}
+.sample-row{margin-bottom:20px;}
+.sample-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.sample-name{font-size:0.8rem;color:var(--muted);}
+.sample-val{font-size:1.6rem;font-weight:800;line-height:1;color:var(--blue);}
+.sample-track{height:8px;background:var(--border);border-radius:100px;overflow:hidden;}
+.sample-fill{height:100%;border-radius:100px;background:var(--blue);}
+.sample-note{font-size:0.72rem;color:var(--light);margin-top:6px;}
+.sample-footer{background:var(--green-l);border-top:1px solid var(--border);padding:12px 26px;font-size:0.75rem;color:var(--green);font-weight:600;display:flex;align-items:center;gap:8px;}
+.price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:44px;}
+.pc{background:#fff;border:1.5px solid var(--border);border-radius:13px;padding:26px 22px;position:relative;transition:all .15s;}
+.pc:hover{border-color:var(--border2);box-shadow:0 6px 24px rgba(37,99,235,0.08);}
+.pc.pop{border:2px solid var(--blue);box-shadow:0 8px 32px rgba(37,99,235,0.13);}
+.pc-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--blue);color:#fff;font-size:0.67rem;font-weight:700;padding:3px 13px;border-radius:100px;white-space:nowrap;text-transform:uppercase;letter-spacing:0.08em;}
+.pc-name{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--light);margin-bottom:12px;}
+.pc-price{font-size:2.8rem;font-weight:800;letter-spacing:-0.05em;line-height:1;color:var(--text);margin-bottom:4px;}
+.pc-price sup{font-size:1rem;vertical-align:top;margin-top:8px;font-weight:600;}
+.pc-meta{font-size:0.74rem;color:var(--muted);margin-bottom:4px;}
+.pc-value{font-size:0.7rem;color:var(--blue);font-weight:700;background:var(--blue-l);padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:18px;}
+.pc-div{border:none;border-top:1px solid var(--border);margin:14px 0;}
+.pc-list{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:20px;}
+.pc-list li{font-size:0.78rem;color:var(--muted);display:flex;align-items:flex-start;gap:7px;line-height:1.5;}
+.pc-list li::before{content:'✓';color:var(--green);font-weight:700;font-size:0.72rem;flex-shrink:0;margin-top:1px;}
+.pc-btn{width:100%;padding:11px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;border:none;transition:all .15s;display:block;text-align:center;}
+.pc-btn.pri{background:var(--blue);color:#fff;}
+.pc-btn.pri:hover{background:var(--blue-d);}
+.pc-btn.sec{background:var(--bg2);color:var(--text);border:1.5px solid var(--border);}
+.pc-btn.sec:hover{border-color:var(--blue);color:var(--blue);}
+.faq-wrap{max-width:700px;margin:44px auto 0;}
+.faq-list{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);border-radius:11px;overflow:hidden;}
+.faq-item{background:#fff;padding:20px 24px;}
+.faq-item h4{font-size:0.93rem;font-weight:700;margin-bottom:8px;}
+.faq-item p{font-size:0.82rem;color:var(--muted);line-height:1.75;}
+.cta{background:linear-gradient(135deg,#1d4ed8,#2563eb);padding:88px 64px;text-align:center;}
+.cta h2{font-size:2.5rem;font-weight:800;color:#fff;letter-spacing:-0.04em;margin-bottom:12px;}
+.cta p{font-size:0.95rem;color:rgba(255,255,255,0.7);margin-bottom:28px;font-weight:300;}
+.cta-acts{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.foot-logo{font-size:1.1rem;font-weight:800;color:#fff;letter-spacing:-0.02em;}
+.foot-logo span{color:#818cf8;}
+.foot-lks{display:flex;gap:20px;}
+.foot-lks a{font-size:0.75rem;color:rgba(255,255,255,0.4);}
+.foot-lks a:hover{color:rgba(255,255,255,0.8);}
+.foot-copy{font-size:0.72rem;color:rgba(255,255,255,0.25);}
+@media(max-width:960px){
+  nav,.hero,.sec,.guarantee,.cta,footer{padding-left:24px;padding-right:24px;}
+  h1{font-size:2.4rem;}
+  .steps,.price-grid{grid-template-columns:1fr 1fr;}
+  .feat-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:600px){
+  h1{font-size:2rem;}
+  .steps,.feat-grid,.price-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Plagi<span>Fix</span></a>
+  <div class="nav-c">
+    <a href="/#how">How it works</a>
+    <a href="/#features">Features</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/turnitin-report.html">Turnitin Report</a>
+    <a href="/#faq">FAQ</a>
+    <a href="/login.html" class="btn btn-out">Sign in</a>
+    <a href="/register.html" class="btn btn-blue" style="color:#fff;">Register →</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-in">
+    <div class="hero-badge"><div class="live"></div> Official Turnitin Similarity & AI Report</div>
+    <h1>See what Turnitin<br><span class="blue">actually sees.</span></h1>
+    <p class="hero-sub">Free online checkers give inaccurate results. Get an official Turnitin Similarity and AI Detection report — the same report your university runs — delivered to your PlagiFix dashboard and your email.</p>
+    <div class="hero-acts">
+      <a href="/register.html" class="btn btn-blue btn-xl">Register →</a>
+      <a href="/login.html" class="btn btn-out btn-lg">Sign in</a>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="how">
+  <div class="sec-in">
+    <div class="sec-tag">Process</div>
+    <div class="sec-t">Three steps to your report.</div>
+    <p class="sec-s">Request a report from your dashboard — no separate account or tool needed.</p>
+    <div class="steps">
+      <div class="step"><div class="step-n">Step 01</div><span class="step-ic">🎯</span><h4>Choose a report pack</h4><p>Pick the pack that fits your needs and pay securely. Report credits are separate from your document-cleaning credits.</p></div>
+      <div class="step"><div class="step-n">Step 02</div><span class="step-ic">📄</span><h4>Upload your document</h4><p>From the Turnitin Report tab in your dashboard, upload your .docx file and request your report.</p></div>
+      <div class="step"><div class="step-n">Step 03</div><span class="step-ic">📊</span><h4>Receive your report</h4><p>Your report is generated through Turnitin's authorised institutional access and typically delivered to your dashboard within a few hours.</p></div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule"/>
+
+<section class="sec sec-bg" id="features">
+  <div class="sec-in">
+    <div class="sec-tag">What you get</div>
+    <div class="sec-t">A genuine report, not an estimate.</div>
+    <p class="sec-s">Every report includes both scores you need for submission, sourced from the real system.</p>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="feat-ic">📊</div>
+        <h4>Official Similarity Score</h4>
+        <p>A genuine Turnitin Similarity report, showing exactly how your document compares against existing sources.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ic">🤖</div>
+        <h4>Official AI Detection Score</h4>
+        <p>A genuine Turnitin AI Writing Detection report, so you know exactly what your submission will show.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ic">🏛️</div>
+        <h4>Institutional API Access</h4>
+        <p>Reports are generated through Turnitin's authorised institutional access — the same system your university runs, not a workaround.</p>
+      </div>
+      <div class="feat">
+        <div class="feat-ic">🔒</div>
+        <h4>Delivered Securely</h4>
+        <p>Your report appears directly in your PlagiFix dashboard and is also sent to your email.</p>
+      </div>
+    </div>
+
+    <div style="max-width:520px;margin:44px auto 0;background:var(--text);border-radius:13px;padding:24px 28px;text-align:center;">
+      <div style="color:#fff;font-size:1rem;font-weight:800;margin-bottom:6px;">Institutional access only</div>
+      <div style="color:rgba(255,255,255,0.6);font-size:0.82rem;line-height:1.6;">Every report is generated through Turnitin's authorised institutional access — not a free checker, not an estimate.</div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule"/>
+
+<section class="sec">
+  <div class="sec-in">
+    <div class="sec-tag">Verified results</div>
+    <div class="sec-t">A real submission, before and after.</div>
+    <p class="sec-s">Actual Turnitin report data from a real document processed through PlagiFix.</p>
+    <div class="ba-grid">
+      <div class="ba-box before">
+        <div class="ba-hd before">⚠ Before PlagiFix</div>
+        <div class="ba-bd">
+          <div class="ba-row bad highlight"><span>Overall Similarity</span><span class="ba-n">37%</span></div>
+          <div class="ba-row bad highlight"><span>Detected as AI</span><span class="ba-n">26%</span></div>
+          <div class="ba-row bad"><span>Not Cited or Quoted</span><span class="ba-n">577</span></div>
+          <div class="ba-row bad"><span>Missing Quotations</span><span class="ba-n">82</span></div>
+          <div class="ba-row bad"><span>AI-generated only</span><span class="ba-n">176</span></div>
+        </div>
+      </div>
+      <div class="ba-arr">→</div>
+      <div class="ba-box after">
+        <div class="ba-hd after">✓ After PlagiFix</div>
+        <div class="ba-bd">
+          <div class="ba-row good highlight"><span>Overall Similarity</span><span class="ba-n">0%</span></div>
+          <div class="ba-row good highlight"><span>Detected as AI</span><span class="ba-n">0%</span></div>
+          <div class="ba-row good"><span>Not Cited or Quoted</span><span class="ba-n">0</span></div>
+          <div class="ba-row good"><span>Missing Quotations</span><span class="ba-n">0</span></div>
+          <div class="ba-row good"><span>AI-generated only</span><span class="ba-n">0</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="ba-disclaimer">* Actual results from a Turnitin Similarity and AI Detection report, before and after processing. Individual results vary by document.</p>
+
+    <div class="report-preview">
+      <div class="report-bar">
+        <div class="report-dot" style="background:#ff5f57"></div>
+        <div class="report-dot" style="background:#febc2e"></div>
+        <div class="report-dot" style="background:#28c840"></div>
+        <div class="report-url">🔒 turnitin.com · Delivered via PlagiFix Dashboard</div>
+      </div>
+      <div class="report-cols">
+        <div class="report-col">
+          <div class="report-tag">Similarity Report</div>
+          <div class="report-pct good">0% <span style="font-size:1.1rem;font-weight:700;color:var(--text);">Overall Similarity</span></div>
+          <p class="report-desc">The combined total of all matches, including overlapping sources, for each database.</p>
+          <div class="report-groups-title">Match Groups</div>
+          <div class="report-item">
+            <div class="report-ic" style="background:#dc2626;">📖</div>
+            <div class="report-item-txt"><b>0 Not Cited or Quoted <span style="color:var(--muted);font-weight:500;">0%</span></b><span>Matches with neither in-text citation nor quotation marks</span></div>
+          </div>
+          <div class="report-item">
+            <div class="report-ic" style="background:#ea580c;">💬</div>
+            <div class="report-item-txt"><b>0 Missing Quotations <span style="color:var(--muted);font-weight:500;">0%</span></b><span>Matches that are still very similar to source material</span></div>
+          </div>
+          <div class="report-item">
+            <div class="report-ic" style="background:#ca8a04;">📋</div>
+            <div class="report-item-txt"><b>0 Missing Citation <span style="color:var(--muted);font-weight:500;">0%</span></b><span>Matches that have quotation marks, but no in-text citation</span></div>
+          </div>
+          <div class="report-item" style="margin-bottom:0;">
+            <div class="report-ic" style="background:#16a34a;">🎓</div>
+            <div class="report-item-txt"><b>0 Cited and Quoted <span style="color:var(--muted);font-weight:500;">0%</span></b><span>Matches with in-text citation present, but no quotation marks</span></div>
+          </div>
+        </div>
+        <div class="report-col">
+          <div class="report-tag">AI Detection Report</div>
+          <div class="report-pct good">0% <span style="font-size:1.1rem;font-weight:700;color:var(--text);">detected as AI</span></div>
+          <p class="report-desc">The percentage indicates the combined amount of likely AI-generated text as well as likely AI-generated text that was also likely AI-paraphrased.</p>
+          <div class="report-caution">
+            <b>Caution: review required.</b>
+            <p>It is essential to understand the limitations of AI detection before making decisions about a submission.</p>
+          </div>
+          <div class="report-groups-title">Detection Groups</div>
+          <div class="report-item">
+            <div class="report-ic" style="background:#0d9488;">🤖</div>
+            <div class="report-item-txt"><b>0 AI-generated only <span style="color:var(--muted);font-weight:500;">0%</span></b><span>Likely AI-generated text from a large-language model</span></div>
+          </div>
+          <div class="report-item" style="margin-bottom:0;">
+            <div class="report-ic" style="background:#7c3aed;">🤖</div>
+            <div class="report-item-txt"><b>0 AI-generated, then paraphrased <span style="color:var(--muted);font-weight:500;">0%</span></b><span>Likely AI-generated text that was likely revised using an AI-paraphrase tool</span></div>
+          </div>
+        </div>
+        <div class="report-footer">Preview · Generated via Turnitin institutional access · Delivered by PlagiFix</div>
+      </div>
+    </div>
+    <p class="ba-disclaimer" style="margin-top:14px;">* Preview shown reflects a document already processed through PlagiFix. Individual results vary by document.</p>
+  </div>
+</section>
+
+<hr class="rule"/>
+
+<section class="sec" id="pricing">
+  <div class="sec-in">
+    <div class="sec-tag">Pricing</div>
+    <div class="sec-t">Turnitin Report credits.</div>
+    <p class="sec-s">Separate from your document-cleaning credits — buy report credits when you need an official Turnitin report.</p>
+
+    <div class="price-grid" style="grid-template-columns:repeat(3,1fr);max-width:780px;margin:44px auto 0;">
+      <div class="pc">
+        <div class="pc-name">Single Report</div>
+        <div class="pc-price"><sup>$</sup>2</div>
+        <div class="pc-meta">1 report credit</div>
+        <div class="pc-value">$2.00 per report</div>
+        <div class="pc-div"></div>
+        <ul class="pc-list">
+          <li>1 report credit</li><li>Official Similarity report</li><li>Official AI Detection report</li>
+          <li>Delivered to dashboard & email</li><li>Typically ready within a few hours</li>
+        </ul>
+        <a href="/register.html" class="pc-btn sec">Get started</a>
+      </div>
+      <div class="pc pop">
+        <div class="pc-badge">Most popular</div>
+        <div class="pc-name">Starter Pack</div>
+        <div class="pc-price"><sup>$</sup>20</div>
+        <div class="pc-meta">10 report credits</div>
+        <div class="pc-value">$2.00 per report</div>
+        <div class="pc-div"></div>
+        <ul class="pc-list">
+          <li>10 report credits</li><li>Official Similarity report</li><li>Official AI Detection report</li>
+          <li>Delivered to dashboard & email</li><li>Typically ready within a few hours</li>
+        </ul>
+        <a href="/register.html" class="pc-btn pri">Get Starter</a>
+      </div>
+      <div class="pc">
+        <div class="pc-name">Research Pack</div>
+        <div class="pc-price"><sup>$</sup>45</div>
+        <div class="pc-meta">25 report credits</div>
+        <div class="pc-value">$1.80 per report</div>
+        <div class="pc-div"></div>
+        <ul class="pc-list">
+          <li>25 report credits</li><li>Official Similarity report</li><li>Official AI Detection report</li>
+          <li>Delivered to dashboard & email</li><li>Priority delivery</li>
+        </ul>
+        <a href="/register.html" class="pc-btn sec">Get Research Pack</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule"/>
+
+<section class="sec sec-bg" id="faq">
+  <div class="sec-in">
+    <div class="sec-tag" style="text-align:center;">FAQ</div>
+    <div class="sec-t" style="text-align:center;">Common questions.</div>
+    <div class="faq-wrap">
+      <div class="faq-list">
+        <div class="faq-item"><h4>Is this the same as PlagiFix's plagiarism removal service?</h4><p>No. Turnitin Report is a separate, complementary feature with its own credits and pricing. It gives you an official report, rather than removing flags from your document.</p></div>
+        <div class="faq-item"><h4>Do you store my document?</h4><p>Your document isn't kept in a database or long-term storage — it's only used to generate your report. Once your report is delivered, we don't retain a copy.</p></div>
+        <div class="faq-item"><h4>How long does a report take?</h4><p>Reports are generated through Turnitin's institutional access and are typically ready within a few hours. You'll see the status update in your dashboard once it's ready.</p></div>
+        <div class="faq-item"><h4>Where do I request a report?</h4><p>After signing in, go to the Turnitin Report tab in your dashboard — upload your document there and request your report.</p></div>
+        <div class="faq-item"><h4>Which file formats are supported?</h4><p>Currently .docx (Microsoft Word) files only.</p></div>
+        <div class="faq-item"><h4>What if something's wrong with my report?</h4><p>Contact us at support@plagifix.com and we'll review it.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta">
+  <h2>Get your official report.</h2>
+  <p>Sign in or create a free account to request your Turnitin Similarity and AI report.</p>
+  <div class="cta-acts">
+    <a href="/register.html" class="btn btn-white btn-xl">Register →</a>
+    <a href="/login.html" class="btn btn-out btn-lg" style="border-color:rgba(255,255,255,0.4);color:#fff;">Sign in</a>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-logo">Plagi<span>Fix</span></div>
+  <div class="foot-lks">
+    <a href="/privacy-policy.html">Privacy Policy</a>
+    <a href="/terms-of-service.html">Terms of Service</a>
+    <a href="/refund-policy.html">Refund Policy</a>
+    <a href="/contact.html">Contact</a>
+  </div>
+  <div class="foot-copy">© 2025 PlagiFix · Datavera Health Pvt Ltd.</div>
+</footer>
+
+</body>
+</html>
