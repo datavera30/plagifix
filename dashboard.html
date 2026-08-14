@@ -425,6 +425,20 @@ async function loadDashboard() {
       document.getElementById('buy-more-banner').style.display = 'flex';
     }
 
+    // NOTE: the backend doesn't yet track Plagiarism-removal credits and
+    // Turnitin Report credits as separate pools (that split is still
+    // pending) — so for now this reuses the same overall `userCredits`
+    // total as the best available signal for the Turnitin tab's banner
+    // too. Once separate credit types exist, this should check a
+    // dedicated Turnitin credit count instead.
+    if (userCredits <= 0) {
+      document.getElementById('tr-no-credits-msg').style.display = 'block';
+      document.getElementById('tr-upload-section').style.display = 'none';
+    }
+    if (userCredits <= 2) {
+      document.getElementById('tr-buy-more-banner').style.display = 'flex';
+    }
+
     const tbody = document.getElementById('credits-tbody');
     if (data.details && data.details.length > 0) {
       tbody.innerHTML = data.details.map(row => {
