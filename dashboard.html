@@ -208,6 +208,27 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
         </div>
       </div>
     </div>
+
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Your Plagiarism & AI Removal Credits</div>
+      </div>
+      <div class="section-body" style="padding:0;">
+        <table class="credit-table">
+          <thead>
+            <tr>
+              <th>Plan</th>
+              <th>Credits Remaining</th>
+              <th>Expires</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="clean-credits-tbody">
+            <tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <div id="tab-turnitin" style="display:none;">
@@ -278,26 +299,26 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
         </table>
       </div>
     </div>
-  </div>
 
-  <div class="section">
-    <div class="section-header">
-      <div class="section-title">Your Credits</div>
-    </div>
-    <div class="section-body" style="padding:0;">
-      <table class="credit-table">
-        <thead>
-          <tr>
-            <th>Plan</th>
-            <th>Credits Remaining</th>
-            <th>Expires</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="credits-tbody">
-          <tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">Loading...</td></tr>
-        </tbody>
-      </table>
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Your Turnitin Report Credits</div>
+      </div>
+      <div class="section-body" style="padding:0;">
+        <table class="credit-table">
+          <thead>
+            <tr>
+              <th>Plan</th>
+              <th>Credits Remaining</th>
+              <th>Expires</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="turnitin-credits-tbody">
+            <tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </main>
@@ -391,20 +412,32 @@ function switchTab(tab) {
   if (tab === 'turnitin') loadTurnitinRequests();
 }
 
+let turnitinCredits = 0;
+
 async function loadDashboard() {
   try {
     const r = await fetch(`${BACKEND}/credits?email=${encodeURIComponent(email)}`);
     const data = await r.json();
-    userCredits = data.total_credits || 0;
+
+    // The backend now tracks two genuinely separate credit pools —
+    // clean_credits (Plagiarism & AI Removal) and turnitin_credits
+    // (Turnitin Report). Each tab only ever reflects its own pool, so a
+    // free/removal credit never appears as available Turnitin credit,
+    // and using a removal credit never touches the Turnitin count.
+    userCredits = data.clean_credits ?? data.total_credits ?? 0;
+    turnitinCredits = data.turnitin_credits ?? 0;
 
     document.getElementById('stat-credits').textContent = userCredits;
-    document.getElementById('welcome-sub').textContent = `${email} · ${userCredits} credit${userCredits !== 1 ? 's' : ''} available`;
+    document.getElementById('welcome-sub').textContent = `${email} · ${userCredits} removal credit${userCredits !== 1 ? 's' : ''}, ${turnitinCredits} Turnitin credit${turnitinCredits !== 1 ? 's' : ''}`;
     document.getElementById('credits-label').textContent = `${userCredits} credit${userCredits !== 1 ? 's' : ''} remaining`;
+    document.getElementById('tr-credits-label').textContent = `${turnitinCredits} credit${turnitinCredits !== 1 ? 's' : ''} remaining`;
 
-    if (data.details && data.details.length > 0) {
-      const latest = data.details[0];
-      document.getElementById('stat-plan').textContent = latest.plan;
-      const exp = new Date(latest.expires).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+    const cleanDetails = (data.details || []).filter(d => (d.type || 'clean') === 'clean');
+    const turnitinDetails = (data.details || []).filter(d => d.type === 'turnitin');
+
+    if (cleanDetails.length > 0) {
+      document.getElementById('stat-plan').textContent = cleanDetails[0].plan;
+      const exp = new Date(cleanDetails[0].expires).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
       document.getElementById('stat-expiry').textContent = `Expires ${exp}`;
     } else {
       document.getElementById('stat-plan').textContent = 'No plan';
@@ -417,46 +450,39 @@ async function loadDashboard() {
     const usage = await usageR.json();
     document.getElementById('stat-processed').textContent = Array.isArray(usage) ? usage.length : 0;
 
-    if (userCredits <= 0) {
-      document.getElementById('no-credits-msg').style.display = 'block';
-      document.getElementById('upload-section').style.display = 'none';
-    }
-    if (userCredits <= 2) {
-      document.getElementById('buy-more-banner').style.display = 'flex';
-    }
+    // Plagiarism & AI Removal tab — reacts only to userCredits (clean pool)
+    document.getElementById('no-credits-msg').style.display = userCredits <= 0 ? 'block' : 'none';
+    document.getElementById('upload-section').style.display = userCredits <= 0 ? 'none' : 'block';
+    document.getElementById('buy-more-banner').style.display = userCredits <= 2 ? 'flex' : 'none';
 
-    // NOTE: the backend doesn't yet track Plagiarism-removal credits and
-    // Turnitin Report credits as separate pools (that split is still
-    // pending) — so for now this reuses the same overall `userCredits`
-    // total as the best available signal for the Turnitin tab's banner
-    // too. Once separate credit types exist, this should check a
-    // dedicated Turnitin credit count instead.
-    if (userCredits <= 0) {
-      document.getElementById('tr-no-credits-msg').style.display = 'block';
-      document.getElementById('tr-upload-section').style.display = 'none';
-    }
-    if (userCredits <= 2) {
-      document.getElementById('tr-buy-more-banner').style.display = 'flex';
-    }
+    // Turnitin Report tab — reacts only to turnitinCredits (turnitin pool)
+    document.getElementById('tr-no-credits-msg').style.display = turnitinCredits <= 0 ? 'block' : 'none';
+    document.getElementById('tr-upload-section').style.display = turnitinCredits <= 0 ? 'none' : 'block';
+    document.getElementById('tr-buy-more-banner').style.display = turnitinCredits <= 2 ? 'flex' : 'none';
 
-    const tbody = document.getElementById('credits-tbody');
-    if (data.details && data.details.length > 0) {
-      tbody.innerHTML = data.details.map(row => {
-        const exp = new Date(row.expires);
-        const expired = exp < new Date();
-        const expStr = exp.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
-        return `<tr>
-          <td>${row.plan}</td>
-          <td>${row.remaining}</td>
-          <td>${expStr}</td>
-          <td><span class="badge ${expired ? 'expired' : 'active'}">${expired ? 'Expired' : 'Active'}</span></td>
-        </tr>`;
-      }).join('');
-    } else {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">No credits found. <a href="/#pricing">Purchase a plan</a></td></tr>';
-    }
+    renderCreditsTable('clean-credits-tbody', cleanDetails, '/#pricing');
+    renderCreditsTable('turnitin-credits-tbody', turnitinDetails, '/#turnitin-pricing');
   } catch(err) {
     document.getElementById('welcome-sub').textContent = 'Error loading account data.';
+  }
+}
+
+function renderCreditsTable(tbodyId, rows, purchaseLink) {
+  const tbody = document.getElementById(tbodyId);
+  if (rows.length > 0) {
+    tbody.innerHTML = rows.map(row => {
+      const exp = new Date(row.expires);
+      const expired = exp < new Date();
+      const expStr = exp.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+      return `<tr>
+        <td>${row.plan}</td>
+        <td>${row.remaining}</td>
+        <td>${expStr}</td>
+        <td><span class="badge ${expired ? 'expired' : 'active'}">${expired ? 'Expired' : 'Active'}</span></td>
+      </tr>`;
+    }).join('');
+  } else {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">No credits found. <a href="${purchaseLink}">Purchase a plan</a></td></tr>`;
   }
 }
 
