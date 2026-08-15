@@ -340,6 +340,10 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 
 <script>
 const BACKEND = 'https://file-processor-3i33.onrender.com';
+
+// TEMPORARY: set to false once the Turnitin Report integration is ready
+// to launch for real — see the note in loadDashboard() for details.
+const TURNITIN_TEST_MODE = true;
 const SUPABASE_URL = 'https://wrypnctfcwijglyivthg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I7NR_6S40Ydjyw44Ic26pw_I5-XUrTr';
 
@@ -456,9 +460,21 @@ async function loadDashboard() {
     document.getElementById('buy-more-banner').style.display = userCredits <= 2 ? 'flex' : 'none';
 
     // Turnitin Report tab — reacts only to turnitinCredits (turnitin pool)
-    document.getElementById('tr-no-credits-msg').style.display = turnitinCredits <= 0 ? 'block' : 'none';
-    document.getElementById('tr-upload-section').style.display = turnitinCredits <= 0 ? 'none' : 'block';
-    document.getElementById('tr-buy-more-banner').style.display = turnitinCredits <= 2 ? 'flex' : 'none';
+    // TEMPORARY: while the Turnitin Report integration is still being
+    // built/tested, credit gating on this tab is bypassed entirely —
+    // matching the backend's REQUIRE_TURNITIN_PAYMENT=false test mode.
+    // Set TURNITIN_TEST_MODE to false (and flip REQUIRE_TURNITIN_PAYMENT
+    // back to true on Render) once the integration is ready to launch
+    // for real, so both the frontend and backend re-enforce payment
+    // together rather than one being locked and the other not.
+    if (TURNITIN_TEST_MODE) {
+      document.getElementById('tr-no-credits-msg').style.display = 'none';
+      document.getElementById('tr-upload-section').style.display = 'block';
+    } else {
+      document.getElementById('tr-no-credits-msg').style.display = turnitinCredits <= 0 ? 'block' : 'none';
+      document.getElementById('tr-upload-section').style.display = turnitinCredits <= 0 ? 'none' : 'block';
+    }
+    document.getElementById('tr-buy-more-banner').style.display = (!TURNITIN_TEST_MODE && turnitinCredits <= 2) ? 'flex' : 'none';
 
     renderCreditsTable('clean-credits-tbody', cleanDetails, '/#pricing');
     renderCreditsTable('turnitin-credits-tbody', turnitinDetails, '/#turnitin-pricing');
