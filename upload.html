@@ -6,6 +6,7 @@
 <title>PlagiFix — Process Your Document</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 :root{
   --bg:#f7f8fa;--white:#fff;
@@ -151,15 +152,15 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:var(--whi
         <div class="email-step">
           <div class="email-icon">✉️</div>
           <div class="email-title">Enter your email to continue</div>
-          <p class="email-sub">Enter the email address you used when purchasing. We'll verify your credits and let you process your document.</p>
+          <p class="email-sub">We'll send your cleaned document's receipt here. No account needed — pay once, upload, and download.</p>
           <div class="field">
             <label>Email address</label>
-            <input type="email" id="email-input" placeholder="you@university.edu" onkeydown="if(event.key==='Enter')verifyEmail()"/>
+            <input type="email" id="email-input" placeholder="you@university.edu" onkeydown="if(event.key==='Enter')continueToUpload()"/>
           </div>
-          <button class="btn-blue" onclick="verifyEmail()" id="verify-btn">Check my credits →</button>
+          <button class="btn-blue" onclick="continueToUpload()" id="verify-btn">Continue →</button>
           <div class="status" id="email-status"></div>
-          <div class="divider-sm">New user?</div>
-          <a href="/register.html" class="btn-secondary">Register →</a>
+          <div class="divider-sm">Want a free credit instead of paying?</div>
+          <a href="/register.html" class="btn-secondary">Create a free account →</a>
         </div>
       </div>
     </div>
@@ -168,10 +169,13 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:var(--whi
     <div class="card" id="upload-card" style="display:none;">
       <div class="card-top">
         <div class="card-title">Process your document</div>
-        <div class="card-sub" id="card-sub">Upload your .docx file to begin.</div>
+        <div class="card-sub" id="card-sub">Upload your .docx file, then pay $2 to clean and download it.</div>
       </div>
       <div class="card-body">
-        <div id="credit-info"></div>
+        <div class="credit-badge">
+          <span class="credit-label">One-time price</span>
+          <span class="credit-count">$2</span>
+        </div>
 
         <div class="drop" id="drop" onclick="document.getElementById('file-input').click()">
           <span class="drop-icon">📄</span>
@@ -190,8 +194,8 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:var(--whi
           <button class="file-rm" onclick="removeFile()">✕</button>
         </div>
 
-        <button class="btn-primary" id="proc-btn" onclick="startProcessing()" disabled>
-          Process document →
+        <button class="btn-primary" id="proc-btn" onclick="startPayment()" disabled>
+          Pay $2 & process document →
         </button>
 
         <div class="prog-wrap" id="prog-wrap">
@@ -214,7 +218,6 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:var(--whi
         <div class="s-title">Your document is ready.</div>
         <p class="s-desc">All plagiarism and AI detection flags have been removed.<br>Your visible content is exactly as you wrote it.</p>
         <button class="dl-btn" id="dl-btn">⬇ Download your document</button>
-        <div class="credits-remaining" id="credits-remaining"></div>
         <span class="again" onclick="processAnother()">Process another document</span>
       </div>
     </div>
@@ -224,26 +227,20 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:var(--whi
 
 <footer>
   <a href="/" class="f-logo">Plagi<span>Fix</span></a>
-  <div class="f-copy">© 2025 PlagiFix</div>
+  <div class="f-copy">© 2025 PlagiFix · Datavera Health Pvt Ltd.</div>
 </footer>
 
 <script>
 const BACKEND = 'https://file-processor-3i33.onrender.com';
+const RAZORPAY_KEY = 'rzp_live_St689tKeuE962U';
 let userEmail = '';
-let userCredits = 0;
 let selectedFile = null;
 let downloadUrl = null;
 
-// Check if coming from payment
-const params = new URLSearchParams(window.location.search);
-const paymentId = params.get('payment_id');
-const planKey = params.get('plan');
-
-async function verifyEmail() {
+function continueToUpload() {
   const emailInput = document.getElementById('email-input');
   const email = emailInput.value.trim().toLowerCase();
   const statusEl = document.getElementById('email-status');
-  const btn = document.getElementById('verify-btn');
 
   if (!email || !email.includes('@')) {
     statusEl.textContent = 'Please enter a valid email address.';
@@ -251,49 +248,9 @@ async function verifyEmail() {
     return;
   }
 
-  btn.innerHTML = '<span class="spin"></span> Checking...';
-  btn.disabled = true;
-  statusEl.textContent = '';
-
-  try {
-    // If coming from payment, confirm payment first
-    if (paymentId && planKey) {
-      await fetch(`${BACKEND}/confirm-payment`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email, payment_id: paymentId, plan: planKey})
-      });
-    }
-
-    // Check credits
-    const r = await fetch(`${BACKEND}/credits?email=${encodeURIComponent(email)}`);
-    const data = await r.json();
-
-    if (data.total_credits > 0) {
-      userEmail = email;
-      userCredits = data.total_credits;
-      showUploadCard(data);
-    } else {
-      statusEl.innerHTML = 'No credits found for this email. <a href="/#pricing">Purchase a plan</a> to get started.';
-      statusEl.className = 'status err';
-      btn.innerHTML = 'Check my credits →';
-      btn.disabled = false;
-    }
-  } catch(err) {
-    statusEl.textContent = 'Something went wrong. Please try again.';
-    statusEl.className = 'status err';
-    btn.innerHTML = 'Check my credits →';
-    btn.disabled = false;
-  }
-}
-
-function showUploadCard(data) {
+  userEmail = email;
   document.getElementById('email-card').style.display = 'none';
   document.getElementById('upload-card').style.display = 'block';
-  document.getElementById('card-sub').textContent = `Welcome back! You have ${data.total_credits} credit${data.total_credits !== 1 ? 's' : ''} remaining.`;
-
-  const creditInfo = document.getElementById('credit-info');
-  creditInfo.innerHTML = `<div class="credit-badge"><span class="credit-label">Credits available</span><span class="credit-count">${data.total_credits}</span></div>`;
 }
 
 const drop = document.getElementById('drop');
@@ -345,14 +302,54 @@ function setProgress(pct, label) {
   progPct.textContent = pct + '%';
 }
 
-async function startProcessing() {
+// Step 1 of the click: open Razorpay checkout. The actual document
+// processing only starts once payment succeeds (see payAndProcess below).
+function startPayment() {
   if (!selectedFile || !userEmail) return;
   procBtn.disabled = true;
+  procBtn.innerHTML = '<span class="spin"></span> Opening payment...';
+  showStatus('', '');
+
+  const options = {
+    key: RAZORPAY_KEY,
+    amount: 19900, // ₹199 — matches the $2 Starter credit price used elsewhere
+    currency: 'INR',
+    name: 'PlagiFix',
+    description: '1 document — Plagiarism & AI Removal',
+    image: 'https://plagifix.com/favicon.ico',
+    handler: function(response) {
+      payAndProcess(response.razorpay_payment_id);
+    },
+    prefill: { email: userEmail },
+    notes: { plan: 'buy' },
+    theme: { color: '#2563eb' },
+    modal: {
+      ondismiss: function() {
+        procBtn.disabled = false;
+        procBtn.innerHTML = 'Pay $2 & process document →';
+      }
+    }
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+// Step 2: payment succeeded — grant the credit this payment paid for,
+// then immediately spend it processing the uploaded file, all in one
+// continuous flow so the guest never has to see or manage credits.
+async function payAndProcess(paymentId) {
   procBtn.innerHTML = '<span class="spin"></span> Processing...';
   showStatus('', '');
 
   try {
-    setProgress(30, 'Processing your document...');
+    setProgress(15, 'Confirming payment...');
+    await fetch(`${BACKEND}/confirm-payment`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email: userEmail, payment_id: paymentId, plan: 'buy' })
+    });
+
+    setProgress(40, 'Processing your document...');
     const formData = new FormData();
     formData.append('file', selectedFile);
     formData.append('email', userEmail);
@@ -365,15 +362,11 @@ async function startProcessing() {
 
     setProgress(100, 'Complete');
     const blob = await r.blob();
-    userCredits--;
     downloadUrl = window.URL.createObjectURL(blob);
     const filename = 'processed_' + selectedFile.name;
     document.getElementById('dl-btn').onclick = () => {
       const a = document.createElement('a'); a.href = downloadUrl; a.download = filename; a.click();
     };
-    document.getElementById('credits-remaining').textContent = userCredits > 0
-      ? `You have ${userCredits} credit${userCredits !== 1 ? 's' : ''} remaining.`
-      : 'You have used all your credits. Purchase more at plagifix.com';
 
     document.getElementById('step-upload').className = 's-item done';
     document.getElementById('step-upload-dot').textContent = '✓';
@@ -387,32 +380,31 @@ async function startProcessing() {
 
   } catch(err) {
     progWrap.classList.remove('show');
-    showStatus(err.message || 'Something went wrong. Please try again or email support@plagifix.com', 'err');
+    showStatus(
+      err.message ||
+      'Payment succeeded but processing failed. Please email support@plagifix.com with your payment ID: ' + paymentId,
+      'err'
+    );
     procBtn.disabled = false;
-    procBtn.innerHTML = 'Process document →';
+    procBtn.innerHTML = 'Pay $2 & process document →';
   }
 }
 
 function processAnother() {
-  document.getElementById('upload-card').style.display = 'block';
+  document.getElementById('email-card').style.display = 'block';
+  document.getElementById('upload-card').style.display = 'none';
   document.getElementById('success-card').style.display = 'none';
+  document.getElementById('email-input').value = '';
+  document.getElementById('email-status').textContent = '';
   removeFile();
   progWrap.classList.remove('show');
   progFill.style.width = '0%';
-  procBtn.innerHTML = 'Process document →';
+  procBtn.innerHTML = 'Pay $2 & process document →';
   document.getElementById('step-upload').className = 's-item active';
   document.getElementById('step-upload-dot').textContent = '2';
   document.getElementById('line-2').classList.remove('done');
   document.getElementById('step-download').className = 's-item pending';
-  document.getElementById('credit-info').innerHTML = `<div class="credit-badge"><span class="credit-label">Credits available</span><span class="credit-count">${userCredits}</span></div>`;
   if (downloadUrl) { window.URL.revokeObjectURL(downloadUrl); downloadUrl = null; }
-}
-
-// Auto verify if coming from payment
-if (paymentId) {
-  document.getElementById('email-input').focus();
-  document.getElementById('email-status').textContent = '✓ Payment confirmed! Enter your email to access your credits.';
-  document.getElementById('email-status').className = 'status ok';
 }
 </script>
 </body>
