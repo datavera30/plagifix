@@ -6,11 +6,19 @@
 <title>PlagiFix — Create Account</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://openfpcdn.io/fingerprintjs/v4/iife.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:#f7f8fa;color:#101828;min-height:100vh;display:flex;flex-direction:column;}
 a{color:#2563eb;text-decoration:none;}
 nav{height:64px;background:#fff;border-bottom:1px solid #eaecf0;display:flex;align-items:center;justify-content:space-between;padding:0 48px;}
+.nav-c{display:flex;gap:18px;align-items:center;}
+.nav-c a{font-size:0.875rem;font-weight:700;color:#101828;transition:color .15s;}
+.nav-c a:hover{color:#2563eb;}
+.nav-c .btn-out{padding:9px 18px;border-radius:8px;font-size:0.85rem;font-weight:700;border:1.5px solid #d0d5dd;color:#101828;}
+.nav-c .btn-out:hover{border-color:#2563eb;color:#2563eb;}
+.nav-c .btn-blue{padding:9px 18px;border-radius:8px;font-size:0.85rem;font-weight:700;background:#2563eb;color:#fff;}
+.nav-c .btn-blue:hover{background:#1d4ed8;}
 .logo{font-size:1.25rem;font-weight:800;letter-spacing:-0.03em;color:#101828;}
 .logo span{color:#2563eb;}
 main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 24px;}
@@ -46,7 +54,17 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 </style>
 </head>
 <body>
-<nav><a href="/" class="logo">Plagi<span>Fix</span></a></nav>
+<nav>
+  <a href="/" class="logo">Plagi<span>Fix</span></a>
+  <div class="nav-c">
+    <a href="/">Home</a>
+    <a href="/#how">AI & Plag Fix</a>
+    <a href="/turnitin-report.html">Turnitin Report</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/#faq">FAQ</a>
+    <a href="/login.html" class="btn-out">Sign in</a>
+  </div>
+</nav>
 <main>
   <div class="card">
     <div class="card-icon">📝</div>
@@ -92,6 +110,21 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 const SUPABASE_URL = 'https://wrypnctfcwijglyivthg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I7NR_6S40Ydjyw44Ic26pw_I5-XUrTr';
 const BACKEND = 'https://file-processor-3i33.onrender.com';
+
+// Generate a device fingerprint once, as early as possible, and stash it in
+// localStorage so login.html can reuse the SAME id later (this is what lets
+// the backend recognize "this device already claimed a free credit" even
+// when the free credit actually gets granted at login time, not signup time).
+let deviceIdPromise = (async () => {
+  try {
+    const fp = await FingerprintJS.load();
+    const result = await fp.get();
+    localStorage.setItem('pf_device_id', result.visitorId);
+    return result.visitorId;
+  } catch (err) {
+    return '';
+  }
+})();
 
 function togglePw(id, btn) {
   const input = document.getElementById(id);
@@ -159,11 +192,22 @@ async function register() {
     localStorage.setItem('pf_name', name);
 
     // Give 1 free credit to new user
-    await fetch(`${BACKEND}/free-credit`, {
+    const deviceId = await deviceIdPromise;
+    const creditR = await fetch(`${BACKEND}/free-credit`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({email})
+      body: JSON.stringify({email, device_id: deviceId})
     });
+    const creditData = await creditR.json();
+    if (!creditR.ok) {
+      // Signup itself still succeeded — only the free credit was refused
+      // (e.g. disposable email, or this device/email already claimed one).
+      // Let the user know clearly rather than silently showing "success".
+      statusEl.textContent = creditData.error || 'Account created, but the free credit could not be granted.';
+      statusEl.className = 'status err';
+      setTimeout(() => window.location.href = '/dashboard.html', 2000);
+      return;
+    }
 
     statusEl.textContent = '✓ Account created! You have 1 free credit. Redirecting...';
     statusEl.className = 'status ok';
