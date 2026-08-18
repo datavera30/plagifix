@@ -12,6 +12,9 @@
 body{font-family:'Plus Jakarta Sans',sans-serif;background:#f7f8fa;color:#101828;min-height:100vh;display:flex;flex-direction:column;}
 a{color:#2563eb;text-decoration:none;}
 nav{height:64px;background:#fff;border-bottom:1px solid #eaecf0;display:flex;align-items:center;justify-content:space-between;padding:0 48px;}
+.nav-c{display:flex;gap:18px;align-items:center;}
+.nav-c a{font-size:0.875rem;font-weight:700;color:#101828;transition:color .15s;}
+.nav-c a:hover{color:#2563eb;}
 .logo{font-size:1.25rem;font-weight:800;letter-spacing:-0.03em;color:#101828;}
 .logo span{color:#2563eb;}
 .nav-right{display:flex;align-items:center;gap:16px;}
@@ -116,6 +119,13 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 <div class="loading-gate" id="loading-gate"><div class="spin"></div></div>
 <nav>
   <a href="/" class="logo" style="display:flex;align-items:center;gap:0;"><img src="/images/logo.png" alt="PlagiFix logo" style="width:32px;height:32px;border-radius:50%;"/>Plagi<span>Fix</span></a>
+  <div class="nav-c">
+    <a href="/">Home</a>
+    <a href="/#how">AI & Plag Fix</a>
+    <a href="/turnitin-report.html">Turnitin Report</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/#faq">FAQ</a>
+  </div>
   <div class="nav-right">
     <span class="nav-name" id="nav-name"></span>
     <button class="logout-btn" onclick="logout()">Sign out</button>
