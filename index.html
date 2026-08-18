@@ -109,11 +109,15 @@ h1 .blue{color:var(--blue);}
 .ai-tools-lbl{font-size:0.78rem;color:var(--muted);align-self:center;margin-right:6px;font-weight:500;}
 
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-top:44px;}
-.step{background:#fff;padding:30px 26px;}
+.step{background:#fff;padding:30px 26px;transition:all .2s;cursor:default;}
+.step:hover{background:var(--blue-l);}
+.step:hover .step-n{color:var(--blue-d);}
+.step:hover h4{color:var(--blue-d);}
+.step:hover .step-ic-wrap{transform:scale(1.08);}
 .step-n{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--blue);margin-bottom:16px;}
-.step-ic-wrap{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.step-ic-wrap{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px;transition:transform .2s;}
 .step-ic{font-size:1.7rem;display:block;}
-.step h4{font-size:1rem;font-weight:700;margin-bottom:8px;}
+.step h4{font-size:1rem;font-weight:700;margin-bottom:8px;transition:color .2s;}
 .step p{font-size:0.82rem;color:var(--muted);line-height:1.7;}
 .feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:44px;}
 .feat{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;transition:all .15s;}
