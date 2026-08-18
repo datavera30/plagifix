@@ -99,9 +99,9 @@ h1 .blue{color:var(--blue);}
 .sec-s{font-size:0.93rem;color:var(--muted);max-width:480px;line-height:1.75;}
 .rule{border:none;border-top:1px solid var(--border);}
 .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:44px;}
-.why-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;transition:all .15s;}
-.why-card:hover{border-color:var(--border2);box-shadow:0 4px 20px rgba(37,99,235,0.07);}
-.why-ic{width:42px;height:42px;background:var(--red-l);color:var(--red);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:14px;}
+.why-card{background:linear-gradient(160deg,#fef2f2 0%,#fff7ed 100%);border:1px solid #fecaca;border-radius:12px;padding:24px;transition:all .15s;}
+.why-card:hover{border-color:#fca5a5;box-shadow:0 4px 20px rgba(220,38,38,0.08);}
+.why-ic{width:42px;height:42px;background:#fff;color:var(--red);border:1px solid #fecaca;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;margin-bottom:14px;box-shadow:0 1px 3px rgba(220,38,38,0.06);}
 .why-card h4{font-size:0.95rem;font-weight:700;margin-bottom:8px;}
 .why-card p{font-size:0.83rem;color:var(--muted);line-height:1.7;}
 .ai-tools-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:36px;padding-top:28px;border-top:1px dashed var(--border);}
@@ -111,7 +111,8 @@ h1 .blue{color:var(--blue);}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-top:44px;}
 .step{background:#fff;padding:30px 26px;}
 .step-n{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--blue);margin-bottom:16px;}
-.step-ic{font-size:2rem;margin-bottom:14px;display:block;}
+.step-ic-wrap{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.step-ic{font-size:1.7rem;display:block;}
 .step h4{font-size:1rem;font-weight:700;margin-bottom:8px;}
 .step p{font-size:0.82rem;color:var(--muted);line-height:1.7;}
 .feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:44px;}
@@ -344,9 +345,9 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
     <div class="sec-t">How Plagiarism & AI Removal works</div>
     <p class="sec-s">From upload to a clean, submission-ready document faster than you think.</p>
     <div class="steps">
-      <div class="step"><div class="step-n">Step 01</div><span class="step-ic">🎯</span><h4>Choose your plan</h4><p>Select the plan that fits your needs. Pay securely via UPI, card or net banking. Credits are available immediately after payment.</p></div>
-      <div class="step"><div class="step-n">Step 02</div><span class="step-ic">📄</span><h4>Upload your document</h4><p>Upload your .docx thesis, dissertation, or research paper. Any length, any subject, any language is fully supported.</p></div>
-      <div class="step"><div class="step-n">Step 03</div><span class="step-ic">⬇️</span><h4>Download and submit</h4><p>Your cleaned document downloads in under 2 minutes. Submit to Turnitin or iThenticate with zero integrity flags.</p></div>
+      <div class="step"><div class="step-n">Step 01</div><div class="step-ic-wrap" style="background:var(--blue-l);"><span class="step-ic">🎯</span></div><h4>Choose your plan</h4><p>Select the plan that fits your needs. Pay securely via UPI, card or net banking. Credits are available immediately after payment.</p></div>
+      <div class="step"><div class="step-n">Step 02</div><div class="step-ic-wrap" style="background:#ede9fe;"><span class="step-ic">📄</span></div><h4>Upload your document</h4><p>Upload your .docx thesis, dissertation, or research paper. Any length, any subject, any language is fully supported.</p></div>
+      <div class="step"><div class="step-n">Step 03</div><div class="step-ic-wrap" style="background:var(--green-l);"><span class="step-ic">⬇️</span></div><h4>Download and submit</h4><p>Your cleaned document downloads in under 2 minutes. Submit to Turnitin or iThenticate with zero integrity flags.</p></div>
     </div>
   </div>
 </section>
