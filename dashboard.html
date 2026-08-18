@@ -74,6 +74,9 @@ h1{font-size:1.5rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px;}
 .badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:0.68rem;font-weight:600;}
 .badge.active{background:#ecfdf3;color:#027a48;}
 .badge.expired{background:#f2f4f7;color:#98a2b3;}
+.report-link{color:#2563eb;font-weight:600;white-space:nowrap;}
+.report-links-cell{display:flex;flex-direction:column;gap:4px;}
+.report-pending{color:#98a2b3;font-size:0.76rem;}
 .buy-more{background:linear-gradient(135deg,#1d4ed8,#2563eb);border-radius:12px;padding:22px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
 .buy-more-text h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:4px;}
 .buy-more-text p{font-size:0.78rem;color:rgba(255,255,255,0.7);}
@@ -300,11 +303,12 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
               <th>File</th>
               <th>Requested</th>
               <th>Status</th>
-              <th>Report</th>
+              <th>Similarity</th>
+              <th>AI Report</th>
             </tr>
           </thead>
           <tbody id="tr-requests-tbody">
-            <tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">Loading...</td></tr>
+            <tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">Loading...</td></tr>
           </tbody>
         </table>
       </div>
@@ -663,6 +667,24 @@ async function trRequestReport() {
   trProcBtn.innerHTML = 'Request report →';
 }
 
+// Renders one report-download cell (Similarity or AI). Shows a working
+// download link when the URL is present; otherwise shows a small
+// "Processing" or "—" placeholder depending on the overall row status,
+// so it's clear the report is still on its way rather than looking like
+// a permanent blank.
+function renderReportCell(url, overallStatus, label) {
+  if (url) {
+    return `<a href="${url}" target="_blank" rel="noopener" class="report-link">⬇ ${label}</a>`;
+  }
+  if (overallStatus === 'complete' || overallStatus === 'failed' || overallStatus === 'expired') {
+    // Finished one way or another and this particular report never
+    // showed up (e.g. Plagirazor didn't generate an AI report for
+    // this file) — nothing more to wait for.
+    return '<span class="report-pending">—</span>';
+  }
+  return '<span class="report-pending">Processing…</span>';
+}
+
 async function loadTurnitinRequests() {
   const tbody = document.getElementById('tr-requests-tbody');
   try {
@@ -670,28 +692,48 @@ async function loadTurnitinRequests() {
     const data = await r.json();
     const reqs = data.requests || [];
     if (reqs.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">No reports requested yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">No reports requested yet.</td></tr>';
       return;
     }
     tbody.innerHTML = reqs.map(r => {
       const date = r.requested_at ? new Date(r.requested_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '—';
       const statusBadge = r.status === 'complete'
         ? '<span class="badge active">Ready</span>'
-        : '<span class="badge expired">Processing</span>';
-      const reportCell = r.report_url
-        ? `<a href="${r.report_url}" target="_blank" rel="noopener" style="color:#2563eb;font-weight:600;">⬇ Download</a>`
-        : '<span style="color:#98a2b3;">—</span>';
+        : (r.status === 'failed' || r.status === 'expired' || r.status === 'error')
+          ? `<span class="badge expired">${r.status[0].toUpperCase()}${r.status.slice(1)}</span>`
+          : '<span class="badge expired">Processing</span>';
+
+      // Similarity and AI reports are shown as two separate cells/links,
+      // since the backend now tracks and delivers them independently —
+      // one can be ready while the other is still processing (or, for
+      // some files, an AI report may never be generated at all).
+      const similarityCell = renderReportCell(r.similarity_report_url, r.status, 'Similarity');
+      const aiCell = renderReportCell(r.ai_report_url, r.status, 'AI Report');
+
       return `<tr>
         <td>${r.filename || '—'}</td>
         <td>${date}</td>
         <td>${statusBadge}</td>
-        <td>${reportCell}</td>
+        <td>${similarityCell}</td>
+        <td>${aiCell}</td>
       </tr>`;
     }).join('');
   } catch(err) {
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">Could not load reports.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">Could not load reports.</td></tr>';
   }
 }
+
+// Auto-refresh the Turnitin requests table every 30s while the user is
+// on that tab, so a report that finishes in the background (reports can
+// take a while, per the note above the upload box) appears without the
+// user needing to manually reload the page or click away and back.
+setInterval(() => {
+  const turnitinTabVisible =
+    document.getElementById('tab-turnitin').style.display !== 'none';
+  if (turnitinTabVisible) {
+    loadTurnitinRequests();
+  }
+}, 30000);
 
 // ============================================================
 // BUY CREDITS MODAL — lets users purchase without leaving the dashboard
