@@ -20,6 +20,13 @@
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
 a{color:var(--blue);text-decoration:none;}
 nav{height:64px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 48px;}
+.nav-c{display:flex;gap:18px;align-items:center;}
+.nav-c a{font-size:0.875rem;font-weight:700;color:var(--text);transition:color .15s;}
+.nav-c a:hover{color:var(--blue);}
+.nav-c .btn-out{padding:9px 18px;border-radius:8px;font-size:0.85rem;font-weight:700;border:1.5px solid var(--border2);color:var(--text);}
+.nav-c .btn-out:hover{border-color:var(--blue);color:var(--blue);}
+.nav-c .btn-blue{padding:9px 18px;border-radius:8px;font-size:0.85rem;font-weight:700;background:var(--blue);color:#fff;}
+.nav-c .btn-blue:hover{background:var(--blue-d);}
 .logo{font-size:1.25rem;font-weight:800;letter-spacing:-0.03em;color:var(--text);text-decoration:none;}
 .logo span{color:var(--blue);}
 .nav-help{font-size:0.8rem;color:var(--muted);}
@@ -133,7 +140,15 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:var(--whi
 <body>
 <nav>
   <a href="/" class="logo">Plagi<span>Fix</span></a>
-  <div class="nav-help">Need help? <a href="mailto:support@plagifix.com">support@plagifix.com</a></div>
+  <div class="nav-c">
+    <a href="/">Home</a>
+    <a href="/#how">AI & Plag Fix</a>
+    <a href="/turnitin-report.html">Turnitin Report</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="/#faq">FAQ</a>
+    <a href="/login.html" class="btn-out">Sign in</a>
+    <a href="/register.html" class="btn-blue">Register →</a>
+  </div>
 </nav>
 
 <main>
