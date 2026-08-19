@@ -672,9 +672,21 @@ async function trRequestReport() {
 // "Processing" or "—" placeholder depending on the overall row status,
 // so it's clear the report is still on its way rather than looking like
 // a permanent blank.
+// Backend returns relative paths (e.g. "/turnitin-report/17/similarity?email=...")
+// since it has no way to know what domain the frontend is hosted on. The
+// dashboard itself is served from a different domain (GitHub Pages) than
+// the API (Render) — so a relative link resolves against the dashboard's
+// own domain and 404s. Prefixing with BACKEND here fixes that.
+function toAbsoluteBackendUrl(path) {
+  if (!path) return path;
+  if (/^https?:\/\//i.test(path)) return path; // already absolute, leave as-is
+  return BACKEND + path;
+}
+
 function renderReportCell(url, overallStatus, label) {
   if (url) {
-    return `<a href="${url}" target="_blank" rel="noopener" class="report-link">⬇ ${label}</a>`;
+    const absoluteUrl = toAbsoluteBackendUrl(url);
+    return `<a href="${absoluteUrl}" target="_blank" rel="noopener" class="report-link">⬇ ${label}</a>`;
   }
   if (overallStatus === 'complete' || overallStatus === 'failed' || overallStatus === 'expired') {
     // Finished one way or another and this particular report never
