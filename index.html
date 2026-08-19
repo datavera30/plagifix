@@ -45,20 +45,27 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:0 64px
 .btn-xl{padding:15px 32px;font-size:1rem;border-radius:9px;}
 .btn-white{background:#fff;color:var(--blue);font-weight:700;}
 .btn-white:hover{background:#f0f7ff;}
-.free-banner{background:linear-gradient(90deg,#16a34a,#15803d);padding:10px 64px;text-align:center;display:flex;align-items:center;justify-content:center;gap:12px;}
-.free-banner span{color:#fff;font-size:0.82rem;font-weight:600;}
-.free-banner a{color:#fff;text-decoration:underline;font-weight:700;font-size:0.82rem;}
+.free-banner{background:linear-gradient(90deg,#16a34a,#15803d);padding:10px 0;text-align:center;display:flex;align-items:center;overflow:hidden;white-space:nowrap;}
+.free-banner-track{display:inline-flex;align-items:center;gap:60px;animation:marquee 18s linear infinite;}
+.free-banner-track span{color:#fff;font-size:0.82rem;font-weight:600;white-space:nowrap;display:inline-flex;align-items:center;gap:12px;}
+.free-banner-track a{color:#fff;text-decoration:underline;font-weight:700;font-size:0.82rem;}
+@keyframes marquee{
+  0%{transform:translateX(-50%);}
+  100%{transform:translateX(0);}
+}
 .hero{background:linear-gradient(160deg,#eef2ff 0%,#f8f9fe 50%,#fff 100%);padding:88px 64px 0;border-bottom:1px solid var(--border);}
 .hero-in{max-width:880px;margin:0 auto;text-align:center;}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border2);color:var(--blue);font-size:0.77rem;font-weight:700;padding:7px 16px;border-radius:100px;margin-bottom:28px;box-shadow:0 2px 12px rgba(37,99,235,0.1);}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border2);color:var(--blue);font-size:0.77rem;font-weight:700;padding:7px 16px;border-radius:100px;box-shadow:0 2px 12px rgba(37,99,235,0.1);}
+.hero-badge-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
+.hero-badge.orange{background:#fff7ed;border-color:#fdba74;color:#c2410c;box-shadow:0 2px 12px rgba(234,88,12,0.1);}
 .live{width:7px;height:7px;border-radius:50%;background:var(--green);animation:livep 1.8s infinite;}
 @keyframes livep{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.4}}
 h1{font-size:3.8rem;font-weight:800;line-height:1.08;letter-spacing:-0.04em;color:var(--text);margin-bottom:22px;}
 h1 .blue{color:var(--blue);}
-.hero-sub{font-size:1.05rem;color:var(--muted);max-width:580px;margin:0 auto 36px;line-height:1.75;font-weight:400;}
+.hero-sub{font-size:0.9rem;color:var(--text);max-width:580px;margin:0 auto 36px;line-height:1.75;font-weight:400;}
 .hero-tagline{font-size:1.1rem;font-weight:700;color:var(--text);max-width:600px;margin:0 auto 14px;line-height:1.5;}
 .hero-tagline .t-blue{color:var(--blue);}
-.hero-tagline .t-green{color:var(--green);}
+.hero-tagline .t-green{color:#ca8a04;}
 .hero-acts{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;}
 .hero-trust{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-bottom:52px;}
 .ht{display:flex;align-items:center;gap:6px;font-size:0.79rem;font-weight:500;color:var(--muted);}
@@ -207,7 +214,7 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
 .float-btn.visible{opacity:1;pointer-events:auto;transform:translateY(0);}
 .float-btn:hover{background:var(--blue-d);transform:translateY(-2px);}
 @media(max-width:960px){
-  nav,.hero,.sec,.stats,.logos,.guarantee,.cta,footer,.free-banner{padding-left:24px;padding-right:24px;}
+  nav,.hero,.sec,.stats,.logos,.guarantee,.cta,footer{padding-left:24px;padding-right:24px;}
   h1{font-size:2.6rem;}
   .price-grid,.rev-grid,.rev-grid-2,.stats-in,.lang-grid,.why-grid{grid-template-columns:1fr 1fr;}
   .feat-grid{grid-template-columns:1fr 1fr;}
@@ -227,8 +234,10 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
 <body>
 
 <div class="free-banner">
-  <span>🎉 New! Register for a free account and get 1 free credit to try PlagiFix.</span>
-  <a href="/register.html">Register free →</a>
+  <div class="free-banner-track">
+    <span>🎉 New! Register for a free account and get 1 free credit to try PlagiFix. <a href="/register.html">Register free →</a></span>
+    <span>🎉 New! Register for a free account and get 1 free credit to try PlagiFix. <a href="/register.html">Register free →</a></span>
+  </div>
 </div>
 
 <button class="float-btn" id="float-btn" onclick="window.location.href='/upload.html'">✦ Fix my document</button>
@@ -248,13 +257,16 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
 
 <section class="hero">
   <div class="hero-in">
-    <div class="hero-badge"><div class="live"></div> #1 Plagiarism & AI Flag Remover</div>
-    <h1>Remove Turnitin flags.<br><span class="blue">Instantly.</span></h1>
+    <div class="hero-badge-row">
+      <div class="hero-badge"><div class="live"></div> #1 Turnitin Flags Remover</div>
+      <div class="hero-badge orange">Trusted by Researchers and Students Worldwide</div>
+    </div>
+    <h1>Remove AI and Plagiarism Flags<br><span class="blue">Instantly.</span></h1>
     <p class="hero-tagline"><span class="t-blue">Plagiarism & AI Removal</span> + <span class="t-green">Official Turnitin Reports</span>. All in one place.</p>
     <p class="hero-sub">PlagiFix removes plagiarism and AI detection flags from your thesis or research paper without changing a single word of your content.<br>Want to see your real score first? Get an official Turnitin Similarity &amp; AI Detection report before you decide.</p>
     <div class="hero-acts">
       <button onclick="window.location.href='/turnitin-report.html#ai-plagfix'" class="btn btn-blue btn-xl">Fix my document</button>
-      <a href="/turnitin-report.html#turnitin-report" class="btn btn-out btn-lg">Get Turnitin Report</a>
+      <a href="/turnitin-report.html#turnitin-report" class="btn btn-lg" style="background:#ca8a04;color:#fff;transition:background .15s;" onmouseover="this.style.background='#a16207'" onmouseout="this.style.background='#ca8a04'">Get Turnitin Report</a>
     </div>
     <div class="hero-trust">
       <div class="ht"><span class="ht-check">✓</span> Works with Turnitin, iThenticate and more</div>
