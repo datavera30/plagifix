@@ -43,7 +43,7 @@ nav{height:64px;background:#fff;border-bottom:1px solid var(--border);display:fl
 
 /* ---------- section shell ---------- */
 .section{max-width:1080px;margin:0 auto;padding:64px 24px;}
-.section+.section{border-top:1px solid var(--border);}
+.section-band+.section-band{border-top:1px solid var(--border);}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border-radius:100px;border:1px solid var(--border);background:#fff;font-size:0.78rem;font-weight:700;color:var(--muted);margin-bottom:22px;}
 .dot{width:7px;height:7px;border-radius:50%;}
 .dot-blue{background:var(--blue);}
@@ -168,11 +168,12 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
 </nav>
 
 <!-- ================= SECTION 1 — AI & PLAG FIX ================= -->
+<div class="section-band" style="background:#eff6ff;">
 <section class="section" id="ai-plagfix">
   <div class="section-head">
     <div class="eyebrow"><span class="dot dot-blue"></span> AI & Plag Fix</div>
-    <h1 class="hero">Remove AI and Plagiarism Flags<br><span>Instantly.</span></h1>
-    <p class="lede">PlagiFix rewrites the flagged passages in your thesis or paper so plagiarism and AI-detection scores drop, without changing the meaning of a single sentence. Register free for your first credit and a dashboard to track it, or pay per document with just an email.</p>
+    <h1 class="hero">Remove AI and plagiarism flags.<br><span>In under 2 minutes.</span></h1>
+    <p class="lede">PlagiFix works beneath the surface of your document, not on its wording. Our StructureShield engine locates exactly which passages triggered the Turnitin similarity and AI-detection flags and neutralizes them at the formatting and structural level. Not a single word you wrote is changed. Upload once, and your document comes back clean in under 2 minutes.</p>
   </div>
 
   <p class="options-label">Choose a credit option</p>
@@ -260,13 +261,15 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
     <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> 100% lossless, content unchanged</span>
   </div>
 </section>
+</div>
 
 <!-- ================= SECTION 2 — TURNITIN REPORT ================= -->
+<div class="section-band" style="background:linear-gradient(160deg,#fef2f2 0%,#fff7ed 100%);">
 <section class="section" id="turnitin-report">
   <div class="section-head">
     <div class="eyebrow"><span class="dot dot-green"></span> Turnitin Report</div>
     <h1 class="hero">Get your official<br>Turnitin <span>Similarity & AI report.</span></h1>
-    <p class="lede">See your real score before you decide anything. Every report is generated directly through Turnitin, so credits apply here too — there's no free report, but a single credit or any package covers it.</p>
+    <p class="lede">This isn't a lookalike checker. Your document goes straight into Turnitin's own database and comes back as an official Similarity & AI Writing report, the same one your university sees. No free report here, but a single credit or any package covers it, and it's usually ready in under 10 minutes.</p>
   </div>
 
   <p class="options-label">Choose a credit option</p>
@@ -341,6 +344,7 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
     <p class="credit-note">Uses <strong>1 credit</strong> from the option selected above. <span id="turnitin-selection-note">Select an option to continue.</span></p>
   </div>
 </section>
+</div>
 
 <a class="btn btn-blue fab" href="#ai-plagfix">✦ Fix my document</a>
 
