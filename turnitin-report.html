@@ -58,6 +58,29 @@ h1.hero span{color:var(--blue);}
 
 /* ---------- mini plan cards ---------- */
 .options-label{font-size:0.72rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;}
+.process-heading{font-size:0.95rem;font-weight:800;color:var(--text);margin:0 0 24px;}
+.process-timeline{display:flex;align-items:flex-start;margin-bottom:34px;}
+.process-step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;padding:0 10px;}
+.process-line{flex:0 0 auto;width:100%;max-width:120px;height:2px;background:var(--border2);margin-top:23px;position:relative;top:0;}
+.process-ic-wrap{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:1.35rem;border:2px solid #fff;box-shadow:0 0 0 2px var(--border2);position:relative;z-index:2;transition:all .2s;}
+.process-step:hover .process-ic-wrap{transform:scale(1.1);}
+.pic-1{background:#eff6ff;}
+.process-step:hover .pic-1{background:#93c5fd;box-shadow:0 0 0 2px #60a5fa;}
+.pic-2{background:#ede9fe;}
+.process-step:hover .pic-2{background:#c4b5fd;box-shadow:0 0 0 2px #a78bfa;}
+.pic-3{background:#f0fdf4;}
+.process-step:hover .pic-3{background:#86efac;box-shadow:0 0 0 2px #4ade80;}
+.pic-4{background:#fef2f2;}
+.process-step:hover .pic-4{background:#fca5a5;box-shadow:0 0 0 2px #f87171;}
+.pic-5{background:#fff7ed;}
+.process-step:hover .pic-5{background:#fdba74;box-shadow:0 0 0 2px #fb923c;}
+.pic-6{background:#fefce8;}
+.process-step:hover .pic-6{background:#fde047;box-shadow:0 0 0 2px #facc15;}
+.pic-7{background:#f5f3ff;}
+.process-step:hover .pic-7{background:#c4b5fd;box-shadow:0 0 0 2px #a78bfa;}
+.process-title{font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:5px;transition:color .2s;}
+.process-step:hover .process-title{color:var(--blue);}
+.process-desc{font-size:0.78rem;color:var(--muted);line-height:1.55;max-width:190px;}
 .mini-plans{display:grid;gap:14px;margin-bottom:16px;}
 .mini-plans.cols-4{grid-template-columns:repeat(4,1fr);}
 .mini-plans.cols-3{grid-template-columns:repeat(3,1fr);}
@@ -139,6 +162,11 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
   nav .nav-c a:not(.btn){display:none;}
   h1.hero{font-size:2.1rem;}
   .mini-plans.cols-4,.mini-plans.cols-3{grid-template-columns:1fr 1fr;}
+  .process-timeline{flex-direction:column;align-items:stretch;}
+  .process-step{flex-direction:row;text-align:left;padding:0;margin-bottom:18px;}
+  .process-ic-wrap{margin-bottom:0;margin-right:14px;flex:none;}
+  .process-line{display:none;}
+  .process-desc{max-width:none;}
   .steps-row{flex-direction:column;align-items:flex-start;gap:12px;}
   .payg-bar{flex-wrap:wrap;}
 }
@@ -174,6 +202,27 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
     <div class="eyebrow"><span class="dot dot-blue"></span> AI & Plag Fix</div>
     <h1 class="hero">Remove AI and plagiarism flags.<br><span>In under 2 minutes.</span></h1>
     <p class="lede">PlagiFix works beneath the surface of your document, not on its wording. Our StructureShield engine locates exactly which passages triggered the Turnitin similarity and AI-detection flags and neutralizes them at the formatting and structural level. Not a single word you wrote is changed. Upload once, and your document comes back clean in under 2 minutes.</p>
+  </div>
+
+  <div class="process-heading">From upload to clean, in three steps.</div>
+  <div class="process-timeline">
+    <div class="process-step">
+      <div class="process-ic-wrap pic-1">🎯</div>
+      <div class="process-title">1. Choose your plan</div>
+      <div class="process-desc">Pick a credit option that fits — free, a single credit, or a package.</div>
+    </div>
+    <div class="process-line"></div>
+    <div class="process-step">
+      <div class="process-ic-wrap pic-2">📄</div>
+      <div class="process-title">2. Upload the document</div>
+      <div class="process-desc">Drop in your .docx or .pdf — thesis, paper, or assignment, any length.</div>
+    </div>
+    <div class="process-line"></div>
+    <div class="process-step">
+      <div class="process-ic-wrap pic-3">⬇️</div>
+      <div class="process-title">3. Download, clean</div>
+      <div class="process-desc">Your document comes back in under 2 minutes, word-for-word unchanged.</div>
+    </div>
   </div>
 
   <p class="options-label">Choose a credit option</p>
@@ -270,6 +319,33 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
     <div class="eyebrow"><span class="dot dot-green"></span> Turnitin Report</div>
     <h1 class="hero">Get your official<br>Turnitin <span>Similarity & AI report.</span></h1>
     <p class="lede">This isn't a lookalike checker. Your document goes straight into Turnitin's own database and comes back as an official Similarity & AI Writing report, the same one your university sees. No free report here, but a single credit or any package covers it, and it's usually ready in under 10 minutes.</p>
+  </div>
+
+  <div class="process-heading">Four steps to your official report.</div>
+  <div class="process-timeline">
+    <div class="process-step">
+      <div class="process-ic-wrap pic-4">🎯</div>
+      <div class="process-title">1. Choose your plan</div>
+      <div class="process-desc">Pick a credit option — a single report, or a package that covers more.</div>
+    </div>
+    <div class="process-line"></div>
+    <div class="process-step">
+      <div class="process-ic-wrap pic-5">📄</div>
+      <div class="process-title">2. Upload the document</div>
+      <div class="process-desc">Drop in your .docx or .pdf — thesis, paper, or assignment.</div>
+    </div>
+    <div class="process-line"></div>
+    <div class="process-step">
+      <div class="process-ic-wrap pic-7">🎓</div>
+      <div class="process-title">3. Turnitin server</div>
+      <div class="process-desc">Sent directly to Turnitin's official server — the same one your university uses.</div>
+    </div>
+    <div class="process-line"></div>
+    <div class="process-step">
+      <div class="process-ic-wrap pic-6">⬇️</div>
+      <div class="process-title">4. Download your report</div>
+      <div class="process-desc">Your real Similarity & AI Writing report, usually ready in under 10 minutes.</div>
+    </div>
   </div>
 
   <p class="options-label">Choose a credit option</p>
