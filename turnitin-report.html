@@ -52,6 +52,11 @@ nav{height:64px;background:#fff;border-bottom:1px solid var(--border);display:fl
 h1.hero{font-size:2.8rem;line-height:1.1;font-weight:800;letter-spacing:-0.03em;margin:0 0 16px;color:var(--text);}
 h1.hero span{color:var(--blue);}
 .lede{font-size:1rem;line-height:1.7;color:var(--muted);max-width:620px;margin:0 0 28px;}
+.lede-highlight{display:flex;gap:20px;flex-wrap:wrap;margin-top:4px;}
+.lede-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:0.95rem;}
+.lede-badge.blue{color:#ea580c;}
+.lede-badge.green{color:var(--green);}
+.lede-badge svg{width:16px;height:16px;flex:none;}
 .checks{display:flex;gap:22px;flex-wrap:wrap;margin-top:28px;}
 .checks span{font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:6px;font-weight:600;}
 .checks svg{width:14px;height:14px;color:var(--green);flex:none;}
@@ -61,23 +66,16 @@ h1.hero span{color:var(--blue);}
 .process-heading{font-size:0.95rem;font-weight:800;color:var(--text);margin:0 0 24px;}
 .process-timeline{display:flex;align-items:flex-start;margin-bottom:34px;}
 .process-step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;padding:0 10px;}
-.process-line{flex:0 0 auto;width:100%;max-width:120px;height:2px;background:var(--border2);margin-top:23px;position:relative;top:0;}
+.process-line{flex:0 0 auto;width:100%;max-width:120px;height:2px;background:var(--blue);margin-top:23px;position:relative;top:0;}
 .process-ic-wrap{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:1.35rem;border:2px solid #fff;box-shadow:0 0 0 2px var(--border2);position:relative;z-index:2;transition:all .2s;}
 .process-step:hover .process-ic-wrap{transform:scale(1.1);}
-.pic-1{background:#eff6ff;}
-.process-step:hover .pic-1{background:#93c5fd;box-shadow:0 0 0 2px #60a5fa;}
-.pic-2{background:#ede9fe;}
-.process-step:hover .pic-2{background:#c4b5fd;box-shadow:0 0 0 2px #a78bfa;}
-.pic-3{background:#f0fdf4;}
-.process-step:hover .pic-3{background:#86efac;box-shadow:0 0 0 2px #4ade80;}
-.pic-4{background:#fef2f2;}
-.process-step:hover .pic-4{background:#fca5a5;box-shadow:0 0 0 2px #f87171;}
-.pic-5{background:#fff7ed;}
-.process-step:hover .pic-5{background:#fdba74;box-shadow:0 0 0 2px #fb923c;}
-.pic-6{background:#fefce8;}
-.process-step:hover .pic-6{background:#fde047;box-shadow:0 0 0 2px #facc15;}
-.pic-7{background:#f5f3ff;}
-.process-step:hover .pic-7{background:#c4b5fd;box-shadow:0 0 0 2px #a78bfa;}
+.pic-1{background:#93c5fd;box-shadow:0 0 0 2px #60a5fa;}
+.pic-2{background:#c4b5fd;box-shadow:0 0 0 2px #a78bfa;}
+.pic-3{background:#86efac;box-shadow:0 0 0 2px #4ade80;}
+.pic-4{background:#fca5a5;box-shadow:0 0 0 2px #f87171;}
+.pic-5{background:#fdba74;box-shadow:0 0 0 2px #fb923c;}
+.pic-6{background:#fde047;box-shadow:0 0 0 2px #facc15;}
+.pic-7{background:#c4b5fd;box-shadow:0 0 0 2px #a78bfa;}
 .process-title{font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:5px;transition:color .2s;}
 .process-step:hover .process-title{color:var(--blue);}
 .process-desc{font-size:0.78rem;color:var(--muted);line-height:1.55;max-width:190px;}
@@ -85,13 +83,18 @@ h1.hero span{color:var(--blue);}
 .mini-plans.cols-4{grid-template-columns:repeat(4,1fr);}
 .mini-plans.cols-3{grid-template-columns:repeat(3,1fr);}
 .mini-plan{background:#fff;border:1.5px solid var(--blue);border-radius:13px;padding:18px;text-align:center;cursor:pointer;transition:.15s;position:relative;}
-.mini-plan.free{border-color:var(--green);}
+.mini-plan.free{border-color:var(--green);background:var(--green-l);}
 .mini-plan:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(37,99,235,0.16);border-color:var(--blue-d);background:var(--blue-l);}
 .mini-plan.free:hover{box-shadow:0 4px 14px rgba(22,163,74,0.16);border-color:#15803d;background:var(--green-l);}
-.mini-plan.popular{border-color:var(--blue);box-shadow:0 6px 18px rgba(37,99,235,0.14);}
+.mini-plan.popular{border-color:var(--blue);box-shadow:0 6px 18px rgba(37,99,235,0.14);background:var(--blue-l);animation:popular-bounce 2.4s ease-in-out infinite;}
+@keyframes popular-bounce{
+  0%,100%{transform:translateY(0) scale(1);}
+  50%{transform:translateY(-6px) scale(1.02);}
+}
 .mini-tag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);font-size:0.65rem;font-weight:800;padding:4px 10px;border-radius:100px;white-space:nowrap;}
 .mini-tag.green{background:var(--green);color:#fff;}
 .mini-tag.blue{background:var(--blue);color:#fff;}
+.mini-tag.red{background:#dc2626;color:#fff;}
 .mini-name{font-size:0.68rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin:6px 0 6px;}
 .mini-price{font-size:1.6rem;font-weight:800;color:var(--text);line-height:1;}
 .mini-meta{font-size:0.72rem;color:var(--muted);margin:6px 0 14px;}
@@ -201,23 +204,29 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
 <div class="section-band" style="background:#eff6ff;">
 <section class="section" id="ai-plagfix">
   <div class="section-head">
-    <div class="eyebrow"><span class="dot dot-blue"></span> AI & Plag Fix</div>
-    <h1 class="hero">Remove AI and plagiarism flags.<br><span>In under 2 minutes.</span></h1>
-    <p class="lede">PlagiFix works beneath the surface of your document, not on its wording. Our StructureShield engine locates exactly which passages triggered the Turnitin similarity and AI-detection flags and neutralizes them at the formatting and structural level. Not a single word you wrote is changed. Upload once, and your document comes back clean in under 2 minutes.</p>
+    <div class="eyebrow" style="background:#fefce8;border-color:#fde047;color:#a16207;"><span class="dot dot-blue"></span> AI & Plag Fix</div>
+    <h1 class="hero">Remove AI and plagiarism flags.</h1>
+    <p class="lede" style="margin-bottom:8px;">PlagiFix works beneath the surface of your document, not on its wording. Our StructureShield engine finds exactly which passages triggered Turnitin's similarity and AI-detection flags, then neutralizes them at the structural level.</p>
+    <div class="lede-highlight">
+      <span class="lede-badge blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Ready in under 2 minutes</span>
+      <span class="lede-badge green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Not a single word you wrote is unchanged</span>
+    </div>
   </div>
+
+  <hr style="border:none;border-top:2px solid var(--border2);margin:36px 0 32px;"/>
 
   <div class="process-heading">From upload to clean, in three steps.</div>
   <div class="process-timeline">
     <div class="process-step">
       <div class="process-ic-wrap pic-1">🎯</div>
       <div class="process-title">1. Choose your plan</div>
-      <div class="process-desc">Pick a credit option that fits — free, a single credit, or a package.</div>
+      <div class="process-desc">Pick a credit option that fits, free, a single credit, or a package.</div>
     </div>
     <div class="process-line"></div>
     <div class="process-step">
       <div class="process-ic-wrap pic-2">📄</div>
       <div class="process-title">2. Upload the document</div>
-      <div class="process-desc">Drop in your .docx or .pdf — thesis, paper, or assignment, any length.</div>
+      <div class="process-desc">Drop in your thesis, paper, or assignment of any length, in .docx format.</div>
     </div>
     <div class="process-line"></div>
     <div class="process-step">
@@ -226,6 +235,8 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
       <div class="process-desc">Your document comes back in under 2 minutes, word-for-word unchanged.</div>
     </div>
   </div>
+
+  <hr style="border:none;border-top:2px solid var(--border2);margin:0 0 36px;"/>
 
   <p class="options-label">Choose a credit option</p>
   <div class="mini-plans cols-4">
@@ -240,10 +251,10 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
       <div class="mini-name">Starter</div>
       <div class="mini-price">$2</div>
       <div class="mini-meta">1 credit, either service</div>
-      <span class="btn btn-out btn-sm btn-block">Get Starter</span>
+      <span class="btn btn-blue btn-sm btn-block">Get Starter</span>
     </div>
     <div class="mini-plan popular" onclick="window.location.href='/register.html'">
-      <span class="mini-tag blue">Combo · most popular</span>
+      <span class="mini-tag red">Combo · Most popular</span>
       <div class="mini-name">Classic</div>
       <div class="mini-price">$20</div>
       <div class="mini-meta">10 AI + 8 Turnitin credits</div>
@@ -253,22 +264,12 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
       <div class="mini-name">Pro</div>
       <div class="mini-price">$45</div>
       <div class="mini-meta">25 credits, either service</div>
-      <span class="btn btn-out btn-sm btn-block">Get Pro</span>
+      <span class="btn btn-blue btn-sm btn-block">Get Pro</span>
     </div>
   </div>
 
-  <p class="free-note">⚠️ Whether you take the free credit or buy a package, an account is required — that's what gives you the dashboard to track balance and downloads. Only "Continue with email" below skips registration.</p>
 
-  <div class="payg-bar" data-group="ai" data-value="email" onclick="selectOption('ai','email')">
-    <div class="radio"></div>
-    <div class="payg-text"><strong>Continue with email</strong> — no account needed, download right here after processing, nothing saved to a dashboard</div>
-    <div class="payg-price">$2 <small>/ 1 credit</small></div>
-  </div>
 
-  <div class="email-row" id="ai-email-row">
-    <input type="email" placeholder="you@email.com — used as your receipt, download happens on this page"/>
-    <a class="btn btn-blue">Continue</a>
-  </div>
 
   <div class="workflow">
     <div class="steps-row">
@@ -280,7 +281,7 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
     <div class="dropzone" id="ai-dropzone" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'ai')" onclick="document.getElementById('ai-file').click()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
       <h4>Drag & drop your thesis or paper</h4>
-      <p>.docx or .pdf — up to 40 MB</p>
+      <p>.docx — up to 40 MB</p>
       <span class="btn btn-out">Browse files</span>
       <input type="file" id="ai-file" onchange="handleFile(event,'ai')"/>
     </div>
@@ -318,29 +319,31 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
 <div class="section-band" style="background:linear-gradient(160deg,#fef2f2 0%,#fff7ed 100%);">
 <section class="section" id="turnitin-report">
   <div class="section-head">
-    <div class="eyebrow"><span class="dot dot-green"></span> Turnitin Report</div>
+    <div class="eyebrow" style="background:#fefce8;border-color:#fde047;color:#a16207;"><span class="dot dot-green"></span> Turnitin Report</div>
     <h1 class="hero">Get your official<br>Turnitin <span>Similarity & AI report.</span></h1>
     <p class="lede">This isn't a lookalike checker. Your document goes straight into Turnitin's own database and comes back as an official Similarity & AI Writing report, the same one your university sees. No free report here, but a single credit or any package covers it, and it's usually ready in under 10 minutes.</p>
   </div>
+
+  <hr style="border:none;border-top:2px solid var(--border2);margin:36px 0 32px;"/>
 
   <div class="process-heading">Four steps to your official report.</div>
   <div class="process-timeline">
     <div class="process-step">
       <div class="process-ic-wrap pic-4">🎯</div>
       <div class="process-title">1. Choose your plan</div>
-      <div class="process-desc">Pick a credit option — a single report, or a package that covers more.</div>
+      <div class="process-desc">Pick a credit option, a single report, or a package that covers more.</div>
     </div>
     <div class="process-line"></div>
     <div class="process-step">
       <div class="process-ic-wrap pic-5">📄</div>
       <div class="process-title">2. Upload the document</div>
-      <div class="process-desc">Drop in your .docx or .pdf — thesis, paper, or assignment.</div>
+      <div class="process-desc">Drop in your .docx, thesis, paper, or assignment.</div>
     </div>
     <div class="process-line"></div>
     <div class="process-step">
       <div class="process-ic-wrap pic-7">🎓</div>
       <div class="process-title">3. Turnitin server</div>
-      <div class="process-desc">Sent directly to Turnitin's official server — the same one your university uses.</div>
+      <div class="process-desc">Sent directly to Turnitin's official server, the same one your university uses.</div>
     </div>
     <div class="process-line"></div>
     <div class="process-step">
@@ -350,16 +353,18 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
     </div>
   </div>
 
+  <hr style="border:none;border-top:2px solid var(--border2);margin:0 0 36px;"/>
+
   <p class="options-label">Choose a credit option</p>
   <div class="mini-plans cols-3">
     <div class="mini-plan" onclick="window.location.href='/register.html'">
       <div class="mini-name">Starter</div>
       <div class="mini-price">$2</div>
       <div class="mini-meta">1 credit, either service</div>
-      <span class="btn btn-out btn-sm btn-block">Get Starter</span>
+      <span class="btn btn-blue btn-sm btn-block">Get Starter</span>
     </div>
     <div class="mini-plan popular" onclick="window.location.href='/register.html'">
-      <span class="mini-tag blue">Combo · most popular</span>
+      <span class="mini-tag red">Combo · Most popular</span>
       <div class="mini-name">Classic</div>
       <div class="mini-price">$20</div>
       <div class="mini-meta">10 AI + 8 Turnitin credits</div>
@@ -369,58 +374,17 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
       <div class="mini-name">Pro</div>
       <div class="mini-price">$45</div>
       <div class="mini-meta">25 credits, either service</div>
-      <span class="btn btn-out btn-sm btn-block">Get Pro</span>
+      <span class="btn btn-blue btn-sm btn-block">Get Pro</span>
     </div>
   </div>
 
-  <p class="free-note">⚠️ The free credit only applies to <strong>AI & Plag Fix</strong> — it can't be used for a Turnitin Report. Both the free credit and every package here require an account, since credits are tracked in your dashboard. Only "Continue with email" below skips registration.</p>
-
-  <div class="payg-bar" data-group="turnitin" data-value="email" onclick="selectOption('turnitin','email')">
-    <div class="radio"></div>
-    <div class="payg-text"><strong>Continue with email</strong> — no account needed, download right here after processing, nothing saved to a dashboard</div>
-    <div class="payg-price">$2 <small>/ 1 credit</small></div>
+  <div style="text-align:center;max-width:480px;margin:44px auto 0;">
+    <h3 style="font-size:1.3rem;font-weight:800;color:var(--text);margin-bottom:8px;">Get Your Turnitin Report</h3>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:20px;">Requires a PlagiFix account.</p>
+    <a href="/register.html" class="btn btn-xl" style="background:#ea580c;color:#fff;width:100%;justify-content:center;padding:15px;font-size:0.95rem;">Create Account &amp; Get Report →</a>
+    <p style="font-size:0.82rem;color:var(--muted);margin-top:14px;">Already have an account? <a href="/login.html" style="color:var(--blue);font-weight:700;text-decoration:underline;">Login here</a></p>
   </div>
 
-  <div class="email-row" id="turnitin-email-row">
-    <input type="email" placeholder="you@email.com — used as your receipt, download happens on this page"/>
-    <a class="btn btn-blue">Continue</a>
-  </div>
-
-  <div class="workflow">
-    <div class="steps-row">
-      <div class="wstep active" id="turnitin-step-1"><span class="num">1</span><span class="label">Upload document</span></div>
-      <div class="wstep" id="turnitin-step-2"><span class="num">2</span><span class="label">Report generating</span></div>
-      <div class="wstep" id="turnitin-step-3"><span class="num">3</span><span class="label">Download report</span></div>
-    </div>
-
-    <div class="dropzone" id="turnitin-dropzone" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'turnitin')" onclick="document.getElementById('turnitin-file').click()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
-      <h4>Drag & drop your thesis or paper</h4>
-      <p>.docx or .pdf — up to 40 MB</p>
-      <span class="btn btn-out">Browse files</span>
-      <input type="file" id="turnitin-file" onchange="handleFile(event,'turnitin')"/>
-    </div>
-
-    <div class="file-row" id="turnitin-file-row">
-      <div class="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span id="turnitin-filename">document.docx</span></div>
-      <span class="remove" onclick="resetFile('turnitin')">Remove</span>
-    </div>
-
-    <div class="progress-wrap" id="turnitin-progress">
-      <div class="progress-bar"><div id="turnitin-progress-bar"></div></div>
-      <div class="ptext" id="turnitin-progress-text">Submitting to Turnitin…</div>
-    </div>
-
-    <div class="result-row" id="turnitin-result">
-      <div class="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Report ready — Similarity 18% · AI writing 4%</span></div>
-      <a class="btn btn-blue">Download report</a>
-    </div>
-
-    <div class="workflow-actions">
-      <a class="btn btn-blue" id="turnitin-process-btn" onclick="startProcess('turnitin')" disabled>Get Turnitin Report</a>
-    </div>
-    <p class="credit-note">Uses <strong>1 credit</strong> from the option selected above. <span id="turnitin-selection-note">Select an option to continue.</span></p>
-  </div>
 </section>
 </div>
 
