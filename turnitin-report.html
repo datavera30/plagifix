@@ -341,7 +341,8 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
   <div class="section-head">
     <div class="eyebrow" style="background:#fefce8;border-color:#fde047;color:#a16207;"><span class="dot dot-green"></span> Turnitin Report</div>
     <h1 class="hero">Get your official<br>Turnitin <span>Similarity & AI report.</span></h1>
-    <p class="lede">This isn't a lookalike checker. Your document goes straight into Turnitin's own database and comes back as an official Similarity & AI Writing report, the same one your university sees. No free report here, but a single credit or any package covers it, and it's usually ready in under 10 minutes.</p>
+    <p class="lede">This isn't a lookalike checker. Your document goes straight into Turnitin's own database and comes back as an official Similarity & AI Writing report, the same one your university sees.</p>
+    <p style="font-weight:700;color:var(--text);font-size:1rem;margin-top:-16px;margin-bottom:28px;">Get your report for just $2, or pick any package that suits you best!</p>
   </div>
 
   <hr style="border:none;border-top:2px solid var(--border2);margin:36px 0 32px;"/>
@@ -394,7 +395,9 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
 
 <script>
 // ---------- upload workflow (AI & Plag Fix section only) ----------
+const BACKEND = 'https://file-processor-3i33.onrender.com';
 let aiEmail = '';
+let aiSelectedFile = null;
 const RAZORPAY_KEY = 'rzp_live_St689tKeuE962U';
 
 function aiEmailNext(){
@@ -418,10 +421,11 @@ function aiGoBackToEmail(){
   setStep('ai', 1);
 }
 
-function handleFile(e, group){ const file=e.target.files[0]; if(!file) return; setFile(group,file.name); }
-function handleDrop(e, group){ e.preventDefault(); e.currentTarget.classList.remove('drag'); const file=e.dataTransfer.files[0]; if(!file) return; setFile(group,file.name); }
-function setFile(group,name){
-  document.getElementById(group+'-filename').textContent=name;
+function handleFile(e, group){ const file=e.target.files[0]; if(!file) return; setFile(group,file); }
+function handleDrop(e, group){ e.preventDefault(); e.currentTarget.classList.remove('drag'); const file=e.dataTransfer.files[0]; if(!file) return; setFile(group,file); }
+function setFile(group,file){
+  if(group === 'ai') aiSelectedFile = file;
+  document.getElementById(group+'-filename').textContent=file.name;
   document.getElementById(group+'-file-row').classList.add('show');
   document.getElementById(group+'-dropzone').style.display='none';
   document.getElementById(group+'-result').classList.remove('show');
@@ -429,6 +433,7 @@ function setFile(group,name){
   if(btn) btn.removeAttribute('disabled');
 }
 function resetFile(group){
+  if(group === 'ai') aiSelectedFile = null;
   document.getElementById(group+'-file-row').classList.remove('show');
   document.getElementById(group+'-dropzone').style.display='block';
   document.getElementById(group+'-progress').classList.remove('show');
@@ -461,7 +466,7 @@ function aiStartPayment(){
     name: 'PlagiFix',
     description: '1 document — Plagiarism & AI Removal',
     handler: function(response){
-      aiProcessAfterPayment();
+      aiProcessAfterPayment(response.razorpay_payment_id);
     },
     prefill: { email: aiEmail },
     theme: { color: '#2563eb' },
@@ -476,28 +481,67 @@ function aiStartPayment(){
   rzp.open();
 }
 
-// Step 2: payment succeeded — run the (currently simulated) fix process,
-// then reveal the download result. Real backend wiring comes later.
-function aiProcessAfterPayment(){
+// Step 2: payment succeeded — confirm it with the backend (grants 1
+// flexible credit), then immediately spend that credit processing the
+// real uploaded file, and show the real cleaned document for download.
+async function aiProcessAfterPayment(paymentId){
   document.getElementById('ai-upload-block').style.display = 'none';
   const btn = document.getElementById('ai-process-btn');
   btn.innerHTML = 'Fixing your document...';
   const progress=document.getElementById('ai-progress');
   const bar=document.getElementById('ai-progress-bar');
+  const progLabel=document.getElementById('ai-progress-text');
   progress.classList.add('show');
-  let pct=0;
-  const timer=setInterval(()=>{
-    pct+=Math.random()*18;
-    if(pct>=100){
-      pct=100; clearInterval(timer);
-      setTimeout(()=>{
-        progress.classList.remove('show');
-        document.getElementById('ai-result').classList.add('show');
-        setStep('ai',3);
-      },300);
+  bar.style.width = '15%';
+  if (progLabel) progLabel.textContent = 'Confirming payment…';
+
+  try {
+    await fetch(`${BACKEND}/confirm-payment`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email: aiEmail, payment_id: paymentId, plan: 'buy' })
+    });
+
+    bar.style.width = '40%';
+    if (progLabel) progLabel.textContent = 'Fixing your document…';
+
+    const formData = new FormData();
+    formData.append('file', aiSelectedFile);
+    formData.append('email', aiEmail);
+    const r = await fetch(`${BACKEND}/process`, { method: 'POST', body: formData });
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      throw new Error(err.error || 'Processing failed');
     }
-    bar.style.width=pct+'%';
-  },260);
+
+    bar.style.width = '100%';
+    const blob = await r.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    const filename = 'fixed_' + (aiSelectedFile ? aiSelectedFile.name : 'document.docx');
+
+    setTimeout(() => {
+      progress.classList.remove('show');
+      const resultEl = document.getElementById('ai-result');
+      resultEl.classList.add('show');
+      const dlBtn = resultEl.querySelector('a.btn');
+      if (dlBtn) {
+        dlBtn.href = downloadUrl;
+        dlBtn.download = filename;
+        dlBtn.removeAttribute('onclick');
+      }
+      setStep('ai',3);
+    }, 300);
+
+  } catch (err) {
+    progress.classList.remove('show');
+    document.getElementById('ai-upload-block').style.display = 'block';
+    btn.innerHTML = 'Pay & Fix Document →';
+    btn.removeAttribute('disabled');
+    alert(
+      (err.message || 'Something went wrong while processing your document.') +
+      '\n\nYour payment was confirmed but processing failed — please contact support@plagifix.com with this payment ID: ' + paymentId
+    );
+  }
 }
 </script>
 </body>
