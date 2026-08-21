@@ -741,36 +741,37 @@ const RAZORPAY_KEY = 'rzp_live_St689tKeuE962U';
 // AI Removal credits; 'turnitin' plans grant Turnitin Report credits; the
 // Classic plan grants both at once and is shown in both modals since it's
 // the one plan that works across both tabs.
-const dashPlans = {
-  clean: [
-    { key: 'buy', amount: 19900, name: 'Starter', price: '$2', meta: '1 credit, 20-day validity',
-      features: ['1 Plagiarism & AI Removal credit', 'Fast processing'] },
-    { key: 'starter', amount: 199900, name: 'Classic', price: '$20', meta: '18 credits total · one purchase, two credit types', popular: true,
-      features: ['10 Plagiarism & AI Removal credits', '8 Turnitin Report credits included', 'Priority support'] },
-    { key: 'pro', amount: 449900, name: 'Pro', price: '$45', meta: '25 credits, 60-day validity',
-      features: ['25 Plagiarism & AI Removal credits', 'Instant processing'] }
-  ],
-  turnitin: [
-    { key: 'tr_single', amount: 19900, name: 'Starter', price: '$2', meta: '1 report credit',
-      features: ['1 Turnitin Report credit', 'Typically ready within a few hours'] },
-    { key: 'starter', amount: 199900, name: 'Classic', price: '$20', meta: '18 credits total · one purchase, two credit types', popular: true,
-      features: ['8 Turnitin Report credits included', '10 Plagiarism & AI Removal credits', 'Priority support'] },
-    { key: 'tr_research', amount: 449900, name: 'Pro', price: '$45', meta: '25 report credits',
-      features: ['25 Turnitin Report credits', 'Priority delivery'] }
-  ]
-};
+// NOTE — depends on a matching backend change not made yet:
+// This modal intentionally shows ONE unified plan list, regardless of
+// which tab (AI & Plag Fix or Turnitin Report) the user clicked "Buy
+// Credits" from — Starter and Pro are meant to be spendable on EITHER
+// service, and Classic already correctly grants both credit types in
+// one purchase. This matches the homepage's single pricing table.
+//
+// IMPORTANT: as of now, server.py's PLANS still defines 'buy' and 'pro'
+// as granting credit_type:'clean' only (not a flexible/either type), and
+// get_available_credits() does an exact credit_type match with no
+// flexible fallback. Until that backend change is made, a Starter/Pro
+// credit bought here will only actually work for AI & Plag Fix, even
+// though this UI implies it works for either — don't ship this without
+// the corresponding server.py update.
+const dashPlans = [
+  { key: 'buy', amount: 19900, name: 'Starter', price: '$2', meta: '1 credit — use for either service',
+    features: ['1 credit', 'Use for AI & Plag Fix or Turnitin Report', 'Fast processing'] },
+  { key: 'starter', amount: 199900, name: 'Classic', price: '$20', meta: '18 credits total · one purchase, two credit types', popular: true,
+    features: ['10 Plagiarism & AI Removal credits', '8 Turnitin Report credits included', 'Priority support'] },
+  { key: 'pro', amount: 449900, name: 'Pro', price: '$45', meta: '25 credits — use for either service',
+    features: ['25 credits', 'Use for AI & Plag Fix or Turnitin Report', 'Instant processing'] }
+];
 
 let currentModalContext = 'clean'; // tracks which tab opened the modal, so we know what to refresh after payment
 
 function openBuyModal(context) {
   currentModalContext = context;
-  document.getElementById('modal-title').textContent = context === 'clean'
-    ? 'Buy Plagiarism & AI Removal Credits'
-    : 'Buy Turnitin Report Credits';
+  document.getElementById('modal-title').textContent = 'Buy Credits';
 
-  const plans = dashPlans[context];
   const container = document.getElementById('modal-plans');
-  container.innerHTML = plans.map(p => `
+  container.innerHTML = dashPlans.map(p => `
     <div class="modal-plan ${p.popular ? 'pop' : ''}">
       ${p.popular ? '<div class="modal-plan-badge">Most popular</div>' : ''}
       <div class="modal-plan-top">
