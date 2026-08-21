@@ -9,7 +9,7 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:#f7f8fa;color:#101828;min-height:100vh;display:flex;flex-direction:column;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#eef2f9;color:#101828;min-height:100vh;display:flex;flex-direction:column;}
 a{color:#2563eb;text-decoration:none;}
 nav{height:64px;background:#fff;border-bottom:1px solid #eaecf0;display:flex;align-items:center;justify-content:space-between;padding:0 48px;}
 .nav-c{display:flex;gap:18px;align-items:center;}
@@ -23,9 +23,16 @@ nav{height:64px;background:#fff;border-bottom:1px solid #eaecf0;display:flex;ali
 .logout-btn:hover{border-color:#2563eb;color:#2563eb;}
 main{flex:1;padding:40px 48px;max-width:900px;margin:0 auto;width:100%;}
 h1{font-size:1.5rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px;}
+#greeting{animation:slideInGreeting .6s cubic-bezier(.16,1,.3,1);}
+@keyframes slideInGreeting{
+  0%{opacity:0;transform:translateX(-24px);}
+  100%{opacity:1;transform:translateX(0);}
+}
 .welcome{font-size:0.88rem;color:#667085;margin-bottom:28px;}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
-.stat-card{background:#fff;border:1px solid #eaecf0;border-radius:12px;padding:20px;}
+.stat-card{background:#fff;border:1.5px solid #2563eb;border-radius:12px;padding:20px;transition:all .15s;}
+.stat-card:hover{transform:translateY(-1px);}
+.stat-card.active-tab{background:#eff6ff;}
 .stat-label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:#98a2b3;margin-bottom:8px;}
 .stat-value{font-size:2rem;font-weight:800;letter-spacing:-0.03em;color:#101828;line-height:1;}
 .stat-value.blue{color:#2563eb;}
@@ -136,37 +143,44 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 </nav>
 
 <main>
-  <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
-    <h1 id="greeting">Welcome back!</h1>
-    <button class="buy-more-btn" id="top-buy-btn" style="background:#2563eb;color:#fff;" onclick="openBuyModal(document.getElementById('tab-turnitin').style.display === 'none' ? 'clean' : 'turnitin')">Buy Credits →</button>
-  </div>
-  <div class="welcome" id="welcome-sub">Loading your account...</div>
-
-  <div class="stats" style="grid-template-columns:repeat(2,1fr);">
-    <div class="stat-card">
-      <div class="stat-label">Credits Available</div>
-      <div class="stat-value blue" id="stat-credits">—</div>
-      <div class="stat-sub">Ready to use</div>
+  <div style="background:#2563eb;border:1px solid #2563eb;border-radius:16px;padding:28px;margin-bottom:28px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+      <h1 id="greeting" style="color:#fff;">Welcome back!</h1>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div style="background:#fff7ed;border:1px solid #fdba74;border-radius:10px;padding:10px 16px;text-align:right;">
+          <div class="stat-label" style="margin-bottom:2px;color:#101828;">Active Plan</div>
+          <div class="stat-value" id="stat-plan" style="font-size:1.1rem;line-height:1.2;color:#c2410c;">—</div>
+        </div>
+        <button class="buy-more-btn" id="top-buy-btn" style="background:#fff;color:#2563eb;" onclick="openBuyModal(document.getElementById('tab-turnitin').style.display === 'none' ? 'clean' : 'turnitin')">Buy Credits →</button>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">Active Plan</div>
-      <div class="stat-value green" id="stat-plan" style="font-size:1.2rem;margin-top:4px;">—</div>
-      <div class="stat-sub" id="stat-expiry"></div>
-    </div>
-  </div>
+    <div class="welcome" id="welcome-sub" style="color:rgba(255,255,255,0.8);">Loading your account...</div>
 
-  <div class="dash-tabs">
-    <button class="dash-tab active" id="tab-btn-clean" onclick="switchTab('clean')">📝 Plagiarism & AI Remover</button>
-    <button class="dash-tab" id="tab-btn-turnitin" onclick="switchTab('turnitin')">📊 Turnitin Report</button>
+    <p style="color:rgba(255,255,255,0.85);font-size:0.78rem;font-weight:600;margin:16px 0 10px;">👇 Click a box below to switch between services</p>
+
+    <div class="stats" style="grid-template-columns:repeat(2,1fr);margin-bottom:0;">
+      <div class="stat-card active-tab" id="card-tab-clean" onclick="switchTab('clean')" style="cursor:pointer;position:relative;">
+        <div class="stat-label" style="color:#101828;font-weight:800;">AI & Plag Fix</div>
+        <div class="stat-value blue" id="stat-credits">—</div>
+        <div class="stat-sub" style="color:#101828;">Credits ready to use</div>
+        <div id="indicator-clean" style="position:absolute;top:14px;right:16px;font-size:0.7rem;font-weight:700;color:#2563eb;">Viewing</div>
+      </div>
+      <div class="stat-card" id="card-tab-turnitin" onclick="switchTab('turnitin')" style="cursor:pointer;position:relative;">
+        <div class="stat-label" style="color:#101828;font-weight:800;">Turnitin Report</div>
+        <div class="stat-value blue" id="stat-credits-turnitin">—</div>
+        <div class="stat-sub" style="color:#101828;">Credits ready to use</div>
+        <div id="indicator-turnitin" style="position:absolute;top:14px;right:16px;font-size:0.7rem;font-weight:700;color:#2563eb;">Open →</div>
+      </div>
+    </div>
   </div>
 
   <div id="tab-clean">
-    <div class="section">
-      <div class="section-header">
-        <div class="section-title">Process a Document</div>
-        <span style="font-size:0.75rem;color:#98a2b3;" id="credits-label"></span>
+    <div class="section" style="box-shadow:0 12px 32px rgba(16,24,40,0.16),0 4px 10px rgba(16,24,40,0.08);border-color:#d0d5dd;">
+      <div style="padding:32px 28px 8px;text-align:center;">
+        <div class="section-title" style="font-size:1.15rem;">🛡️ AI and Plagiarism Remover</div>
+        <p style="font-size:0.85rem;color:#667085;margin-top:8px;line-height:1.6;max-width:480px;margin-left:auto;margin-right:auto;">Upload your document and your fixed document will appear automatically in under 2 minutes, ready to download. Uses 1 credit per document.</p>
       </div>
-      <div class="section-body">
+      <div class="section-body" style="padding:24px 28px 28px;">
         <div id="no-credits-msg" style="display:none;text-align:center;padding:20px;">
           <div style="font-size:1.5rem;margin-bottom:10px;">😔</div>
           <div style="font-size:0.88rem;font-weight:600;margin-bottom:6px;">No credits remaining</div>
@@ -192,7 +206,7 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
           </div>
 
           <button class="proc-btn" id="proc-btn" onclick="startProcessing()" disabled>
-            Process document →
+            Fix document →
           </button>
 
           <div class="prog-wrap" id="prog-wrap">
@@ -235,12 +249,13 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
   </div>
 
   <div id="tab-turnitin" style="display:none;">
-    <div class="section">
-      <div class="section-header">
-        <div class="section-title">Request a Turnitin Report</div>
-        <span style="font-size:0.75rem;color:#98a2b3;" id="tr-credits-label"></span>
+    <div class="section" style="box-shadow:0 12px 32px rgba(16,24,40,0.16),0 4px 10px rgba(16,24,40,0.08);border-color:#d0d5dd;">
+      <div style="padding:32px 28px 8px;text-align:center;">
+        <div class="section-title" style="font-size:1.15rem;">📊 Turnitin Report</div>
+        <p style="font-size:0.85rem;color:#667085;margin-top:8px;line-height:1.6;max-width:480px;margin-left:auto;margin-right:auto;">Upload the document and get an official Similarity and AI Detection report, typically ready within a few hours.</p>
+        <p style="font-size:0.85rem;color:#667085;margin-top:4px;line-height:1.6;">Pay per document, 1 credit per request.</p>
       </div>
-      <div class="section-body">
+      <div class="section-body" style="padding:24px 28px 28px;">
         <div id="tr-no-credits-msg" style="display:none;text-align:center;padding:20px;">
           <div style="font-size:1.5rem;margin-bottom:10px;">😔</div>
           <div style="font-size:0.88rem;font-weight:600;margin-bottom:6px;">No credits remaining</div>
@@ -249,7 +264,6 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
         </div>
 
         <div id="tr-upload-section">
-          <p style="font-size:0.8rem;color:#667085;margin-bottom:14px;line-height:1.6;">Upload your document to request an official Similarity and AI Detection report. Reports are typically delivered within a few hours — you'll see it appear below once ready.</p>
           <div class="drop" id="tr-drop" onclick="document.getElementById('tr-file-input').click()">
             <span class="drop-icon">📄</span>
             <div class="drop-title">Drop your .docx file here</div>
@@ -407,8 +421,10 @@ async function verifySession() {
 function switchTab(tab) {
   document.getElementById('tab-clean').style.display = tab === 'clean' ? 'block' : 'none';
   document.getElementById('tab-turnitin').style.display = tab === 'turnitin' ? 'block' : 'none';
-  document.getElementById('tab-btn-clean').classList.toggle('active', tab === 'clean');
-  document.getElementById('tab-btn-turnitin').classList.toggle('active', tab === 'turnitin');
+  document.getElementById('card-tab-clean').classList.toggle('active-tab', tab === 'clean');
+  document.getElementById('card-tab-turnitin').classList.toggle('active-tab', tab === 'turnitin');
+  document.getElementById('indicator-clean').textContent = tab === 'clean' ? 'Viewing' : 'Open →';
+  document.getElementById('indicator-turnitin').textContent = tab === 'turnitin' ? 'Viewing' : 'Open →';
   if (tab === 'turnitin') loadTurnitinRequests();
 }
 
@@ -428,20 +444,16 @@ async function loadDashboard() {
     turnitinCredits = data.turnitin_credits ?? 0;
 
     document.getElementById('stat-credits').textContent = userCredits;
-    document.getElementById('welcome-sub').textContent = `${email} · ${userCredits} removal credit${userCredits !== 1 ? 's' : ''}, ${turnitinCredits} Turnitin credit${turnitinCredits !== 1 ? 's' : ''}`;
-    document.getElementById('credits-label').textContent = `${userCredits} credit${userCredits !== 1 ? 's' : ''} remaining`;
-    document.getElementById('tr-credits-label').textContent = `${turnitinCredits} credit${turnitinCredits !== 1 ? 's' : ''} remaining`;
+    document.getElementById('stat-credits-turnitin').textContent = turnitinCredits;
+    document.getElementById('welcome-sub').textContent = email;
 
     const cleanDetails = (data.details || []).filter(d => (d.type || 'clean') === 'clean');
     const turnitinDetails = (data.details || []).filter(d => d.type === 'turnitin');
 
     if (cleanDetails.length > 0) {
       document.getElementById('stat-plan').textContent = cleanDetails[0].plan;
-      const exp = new Date(cleanDetails[0].expires).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
-      document.getElementById('stat-expiry').textContent = `Expires ${exp}`;
     } else {
       document.getElementById('stat-plan').textContent = 'No plan';
-      document.getElementById('stat-expiry').textContent = 'Purchase a plan to get started';
     }
 
     // Plagiarism & AI Removal tab — reacts only to userCredits (clean pool)
@@ -548,7 +560,6 @@ async function startProcessing() {
     const blob = await r.blob();
     userCredits--;
     document.getElementById('stat-credits').textContent = userCredits;
-    document.getElementById('credits-label').textContent = `${userCredits} credit${userCredits !== 1 ? 's' : ''} remaining`;
 
     downloadUrl = window.URL.createObjectURL(blob);
     const filename = 'processed_' + selectedFile.name;
@@ -566,7 +577,7 @@ async function startProcessing() {
     statusEl.textContent = err.message || 'Something went wrong. Please try again.';
     statusEl.className = 'status err';
     procBtn.disabled = false;
-    procBtn.innerHTML = 'Process document →';
+    procBtn.innerHTML = 'Fix document →';
   }
 }
 
@@ -576,7 +587,7 @@ function processAnother() {
   removeFile();
   progWrap.classList.remove('show');
   progFill.style.width = '0%';
-  procBtn.innerHTML = 'Process document →';
+  procBtn.innerHTML = 'Fix document →';
   if (downloadUrl) { window.URL.revokeObjectURL(downloadUrl); downloadUrl = null; }
   if (userCredits <= 0) {
     document.getElementById('no-credits-msg').style.display = 'block';
