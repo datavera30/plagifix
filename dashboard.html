@@ -136,19 +136,17 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 </nav>
 
 <main>
-  <h1 id="greeting">Welcome back!</h1>
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
+    <h1 id="greeting">Welcome back!</h1>
+    <button class="buy-more-btn" id="top-buy-btn" style="background:#2563eb;color:#fff;" onclick="openBuyModal(document.getElementById('tab-turnitin').style.display === 'none' ? 'clean' : 'turnitin')">Buy Credits →</button>
+  </div>
   <div class="welcome" id="welcome-sub">Loading your account...</div>
 
-  <div class="stats">
+  <div class="stats" style="grid-template-columns:repeat(2,1fr);">
     <div class="stat-card">
       <div class="stat-label">Credits Available</div>
       <div class="stat-value blue" id="stat-credits">—</div>
       <div class="stat-sub">Ready to use</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Documents Processed</div>
-      <div class="stat-value" id="stat-processed">—</div>
-      <div class="stat-sub">Total all time</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Active Plan</div>
@@ -163,14 +161,6 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
   </div>
 
   <div id="tab-clean">
-    <div class="buy-more" id="buy-more-banner" style="display:none;">
-      <div class="buy-more-text">
-        <h3>Running low on credits?</h3>
-        <p>Top up your Plagiarism &amp; AI Removal credits.</p>
-      </div>
-      <button class="buy-more-btn" onclick="openBuyModal('clean')">Buy Credits →</button>
-    </div>
-
     <div class="section">
       <div class="section-header">
         <div class="section-title">Process a Document</div>
@@ -245,14 +235,6 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
   </div>
 
   <div id="tab-turnitin" style="display:none;">
-    <div class="buy-more" id="tr-buy-more-banner" style="display:none;">
-      <div class="buy-more-text">
-        <h3>Running low on report credits?</h3>
-        <p>Top up your Turnitin Report credits.</p>
-      </div>
-      <button class="buy-more-btn" onclick="openBuyModal('turnitin')">Buy Credits →</button>
-    </div>
-
     <div class="section">
       <div class="section-header">
         <div class="section-title">Request a Turnitin Report</div>
@@ -462,16 +444,9 @@ async function loadDashboard() {
       document.getElementById('stat-expiry').textContent = 'Purchase a plan to get started';
     }
 
-    const usageR = await fetch(`${SUPABASE_URL}/rest/v1/usage_log?email=eq.${encodeURIComponent(email)}&select=id`, {
-      headers: {'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`}
-    });
-    const usage = await usageR.json();
-    document.getElementById('stat-processed').textContent = Array.isArray(usage) ? usage.length : 0;
-
     // Plagiarism & AI Removal tab — reacts only to userCredits (clean pool)
     document.getElementById('no-credits-msg').style.display = userCredits <= 0 ? 'block' : 'none';
     document.getElementById('upload-section').style.display = userCredits <= 0 ? 'none' : 'block';
-    document.getElementById('buy-more-banner').style.display = userCredits <= 2 ? 'flex' : 'none';
 
     // Turnitin Report tab — reacts only to turnitinCredits (turnitin pool)
     // TEMPORARY: while the Turnitin Report integration is still being
@@ -488,7 +463,6 @@ async function loadDashboard() {
       document.getElementById('tr-no-credits-msg').style.display = turnitinCredits <= 0 ? 'block' : 'none';
       document.getElementById('tr-upload-section').style.display = turnitinCredits <= 0 ? 'none' : 'block';
     }
-    document.getElementById('tr-buy-more-banner').style.display = (!TURNITIN_TEST_MODE && turnitinCredits <= 2) ? 'flex' : 'none';
 
     renderCreditsTable('clean-credits-tbody', cleanDetails, '/#pricing');
     renderCreditsTable('turnitin-credits-tbody', turnitinDetails, '/#turnitin-pricing');
