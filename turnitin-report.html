@@ -7,6 +7,7 @@
 <meta name="description" content="Remove plagiarism and AI detection flags, or get an official Turnitin Similarity & AI report — both from one PlagiFix account."/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 :root{
   --bg:#f7f8fa;--white:#fff;
@@ -36,6 +37,8 @@ nav{height:64px;background:#fff;border-bottom:1px solid var(--border);display:fl
 .nav-c a{font-size:0.875rem;font-weight:700;color:var(--text);transition:color .15s;}
 .nav-c a:hover{color:var(--blue);}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:10px 20px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.875rem;font-weight:700;cursor:pointer;border:1.5px solid transparent;transition:all .15s;}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;}
+@keyframes sp{to{transform:rotate(360deg)}}
 .btn-blue{background:var(--blue);color:#fff;}
 .btn-blue:hover{background:var(--blue-d);}
 .btn-out{background:#fff;border-color:var(--border2);color:var(--text);}
@@ -55,7 +58,7 @@ h1.hero span{color:var(--blue);}
 .lede-highlight{display:flex;gap:20px;flex-wrap:wrap;margin-top:4px;}
 .lede-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:0.9rem;background:#fff;border:1px solid var(--border2);border-radius:100px;padding:8px 18px;}
 .lede-badge.blue{color:#ea580c;}
-.lede-badge.green{color:var(--green);border-color:#86efac;}
+.lede-badge.green{color:#c2410c;background:#fff7ed;border-color:#fdba74;}
 .lede-badge svg{width:16px;height:16px;flex:none;}
 .checks{display:flex;gap:22px;flex-wrap:wrap;margin-top:28px;}
 .checks span{font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:6px;font-weight:600;}
@@ -209,7 +212,7 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
     <h1 class="hero">Remove AI and plagiarism flags.<br><span>In under 2 minutes.</span></h1>
     <p class="lede" style="margin-bottom:8px;">PlagiFix works beneath the surface of your document, not on its wording. Our StructureShield engine finds exactly which passages triggered Turnitin's similarity and AI-detection flags, then neutralizes them at the structural level.</p>
     <div class="lede-highlight">
-      <span class="lede-badge green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Not a single word you wrote is changed</span>
+      <span class="lede-badge green"><span style="width:8px;height:8px;border-radius:50%;background:#d97706;flex:none;"></span> Not a single word you wrote is changed</span>
     </div>
   </div>
 
@@ -220,8 +223,8 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
   <div class="process-timeline">
     <div class="process-step">
       <div class="process-ic-wrap pic-1">🎯</div>
-      <div class="process-title">1. Choose your plan</div>
-      <div class="process-desc">Pick a credit option that fits, free, a single credit, or a package.</div>
+      <div class="process-title">1. Enter your details</div>
+      <div class="process-desc">Just your email to get started, no account or sign-up required.</div>
     </div>
     <div class="process-line"></div>
     <div class="process-step">
@@ -269,43 +272,59 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
     </div>
   </div>
 
+  <hr style="border:none;border-top:2px solid var(--border2);margin:36px 0;"/>
 
-
+  <div style="text-align:center;margin-bottom:24px;">
+    <h3 style="font-size:1.3rem;font-weight:800;color:var(--text);margin-bottom:6px;">Fix your document instantly</h3>
+    <p style="font-size:0.85rem;color:var(--muted);">No account. Fastest option. No free credits.</p>
+  </div>
 
   <div class="workflow">
     <div class="steps-row">
-      <div class="wstep active" id="ai-step-1"><span class="num">1</span><span class="label">Upload document</span></div>
-      <div class="wstep" id="ai-step-2"><span class="num">2</span><span class="label">Fix in progress</span></div>
+      <div class="wstep active" id="ai-step-1"><span class="num">1</span><span class="label">Enter email</span></div>
+      <div class="wstep" id="ai-step-2"><span class="num">2</span><span class="label">Upload document</span></div>
       <div class="wstep" id="ai-step-3"><span class="num">3</span><span class="label">Download result</span></div>
     </div>
 
-    <div class="dropzone" id="ai-dropzone" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'ai')" onclick="document.getElementById('ai-file').click()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
-      <h4>Drag & drop your thesis or paper</h4>
-      <p>.docx — up to 40 MB</p>
-      <span class="btn btn-out">Browse files</span>
-      <input type="file" id="ai-file" onchange="handleFile(event,'ai')"/>
+    <!-- Step 1: Email -->
+    <div id="ai-email-block">
+      <div style="margin-bottom:14px;">
+        <input type="email" id="ai-email-input" placeholder="you@email.com" style="width:100%;padding:12px 15px;border-radius:9px;border:1.5px solid var(--border2);font-size:0.85rem;font-family:inherit;"/>
+        <div id="ai-email-error" style="display:none;color:#dc2626;font-size:0.78rem;margin-top:6px;">Please enter a valid email address.</div>
+      </div>
+      <a class="btn btn-blue btn-block" onclick="aiEmailNext()">Next →</a>
     </div>
 
-    <div class="file-row" id="ai-file-row">
-      <div class="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span id="ai-filename">document.docx</span></div>
-      <span class="remove" onclick="resetFile('ai')">Remove</span>
+    <!-- Step 2: Upload + Pay -->
+    <div id="ai-upload-block" style="display:none;">
+      <a href="javascript:void(0)" onclick="aiGoBackToEmail()" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--muted);font-weight:700;margin-bottom:14px;">← Back</a>
+      <div class="dropzone" id="ai-dropzone" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'ai')" onclick="document.getElementById('ai-file').click()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 8l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+        <h4>Drag & drop your thesis or paper</h4>
+        <p>.docx — up to 40 MB</p>
+        <span class="btn btn-out">Browse files</span>
+        <input type="file" id="ai-file" onchange="handleFile(event,'ai')"/>
+      </div>
+
+      <div class="file-row" id="ai-file-row">
+        <div class="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg><span id="ai-filename">document.docx</span></div>
+        <span class="remove" onclick="resetFile('ai')">Remove</span>
+      </div>
+
+      <div class="workflow-actions">
+        <a class="btn btn-blue" id="ai-process-btn" onclick="aiStartPayment()" disabled>Pay & Fix Document →</a>
+      </div>
     </div>
 
     <div class="progress-wrap" id="ai-progress">
       <div class="progress-bar"><div id="ai-progress-bar"></div></div>
-      <div class="ptext" id="ai-progress-text">Scanning for flagged passages…</div>
+      <div class="ptext" id="ai-progress-text">Fixing your document…</div>
     </div>
 
     <div class="result-row" id="ai-result">
       <div class="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Fixed — similarity score reduced, wording preserved</span></div>
       <a class="btn btn-blue">Download document</a>
     </div>
-
-    <div class="workflow-actions">
-      <a class="btn btn-blue" id="ai-process-btn" onclick="startProcess('ai')" disabled>Fix my document</a>
-    </div>
-    <p class="credit-note">Uses <strong>1 credit</strong> from the option selected above. <span id="ai-selection-note">Select an option to continue.</span></p>
   </div>
 
   <div class="checks">
@@ -327,12 +346,12 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
 
   <hr style="border:none;border-top:2px solid var(--border2);margin:36px 0 32px;"/>
 
-  <div class="process-heading">Four steps to your official report.</div>
+  <div class="process-heading" style="margin-bottom:24px;">Four steps to your official report.</div>
   <div class="process-timeline">
     <div class="process-step">
       <div class="process-ic-wrap pic-4">🎯</div>
-      <div class="process-title">1. Choose your plan</div>
-      <div class="process-desc">Pick a credit option, a single report, or a package that covers more.</div>
+      <div class="process-title">1. Enter your details</div>
+      <div class="process-desc">Create your account with just your email, takes under 30 seconds.</div>
     </div>
     <div class="process-line"></div>
     <div class="process-step">
@@ -354,30 +373,7 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
     </div>
   </div>
 
-  <hr style="border:none;border-top:2px solid var(--border2);margin:0 0 36px;"/>
-
-  <p class="options-label">Choose a credit option</p>
-  <div class="mini-plans cols-3">
-    <div class="mini-plan" onclick="window.location.href='/register.html'">
-      <div class="mini-name">Starter</div>
-      <div class="mini-price">$2</div>
-      <div class="mini-meta">1 credit, either service</div>
-      <span class="btn btn-blue btn-sm btn-block">Get Starter</span>
-    </div>
-    <div class="mini-plan popular" onclick="window.location.href='/register.html'">
-      <span class="mini-tag red">Combo · Most popular</span>
-      <div class="mini-name">Classic</div>
-      <div class="mini-price">$20</div>
-      <div class="mini-meta">10 AI + 8 Turnitin credits</div>
-      <span class="btn btn-blue btn-sm btn-block">Get Classic</span>
-    </div>
-    <div class="mini-plan" onclick="window.location.href='/register.html'">
-      <div class="mini-name">Pro</div>
-      <div class="mini-price">$45</div>
-      <div class="mini-meta">25 credits, either service</div>
-      <span class="btn btn-blue btn-sm btn-block">Get Pro</span>
-    </div>
-  </div>
+  <hr style="border:none;border-top:2px solid var(--border2);margin:36px 0 0;"/>
 
   <div style="text-align:center;max-width:480px;margin:44px auto 0;">
     <h3 style="font-size:1.3rem;font-weight:800;color:var(--text);margin-bottom:8px;">Get Your Turnitin Report</h3>
@@ -397,28 +393,31 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
 </footer>
 
 <script>
-// ---------- credit option selection (guest "continue with email" row) ----------
-function selectOption(group, value){
-  document.querySelectorAll('.payg-bar[data-group="'+group+'"]').forEach(el=>{
-    el.classList.toggle('selected', el.dataset.value===value);
-  });
-  const emailRow = document.getElementById(group+'-email-row');
-  if(emailRow) emailRow.classList.toggle('show', value==='email');
-  const note = document.getElementById(group+'-selection-note');
-  if(note) note.textContent = 'Email credit selected — 1 credit ready to use.';
-  updateProcessButton(group);
+// ---------- upload workflow (AI & Plag Fix section only) ----------
+let aiEmail = '';
+const RAZORPAY_KEY = 'rzp_live_St689tKeuE962U';
+
+function aiEmailNext(){
+  const input = document.getElementById('ai-email-input');
+  const email = input.value.trim().toLowerCase();
+  const errorEl = document.getElementById('ai-email-error');
+  if(!email || !email.includes('@')){
+    errorEl.style.display = 'block';
+    return;
+  }
+  errorEl.style.display = 'none';
+  aiEmail = email;
+  document.getElementById('ai-email-block').style.display = 'none';
+  document.getElementById('ai-upload-block').style.display = 'block';
+  setStep('ai', 2);
 }
 
-function updateProcessButton(group){
-  const hasOption = !!document.querySelector('.payg-bar[data-group="'+group+'"].selected');
-  const fileRow = document.getElementById(group+'-file-row');
-  const hasFile = fileRow ? fileRow.classList.contains('show') : false;
-  const btn = document.getElementById(group+'-process-btn');
-  if(!btn) return;
-  if(hasOption && hasFile){ btn.removeAttribute('disabled'); } else { btn.setAttribute('disabled','true'); }
+function aiGoBackToEmail(){
+  document.getElementById('ai-upload-block').style.display = 'none';
+  document.getElementById('ai-email-block').style.display = 'block';
+  setStep('ai', 1);
 }
 
-// ---------- upload workflow (shared by both sections) ----------
 function handleFile(e, group){ const file=e.target.files[0]; if(!file) return; setFile(group,file.name); }
 function handleDrop(e, group){ e.preventDefault(); e.currentTarget.classList.remove('drag'); const file=e.dataTransfer.files[0]; if(!file) return; setFile(group,file.name); }
 function setFile(group,name){
@@ -426,8 +425,8 @@ function setFile(group,name){
   document.getElementById(group+'-file-row').classList.add('show');
   document.getElementById(group+'-dropzone').style.display='none';
   document.getElementById(group+'-result').classList.remove('show');
-  setStep(group,1);
-  updateProcessButton(group);
+  const btn=document.getElementById(group+'-process-btn');
+  if(btn) btn.removeAttribute('disabled');
 }
 function resetFile(group){
   document.getElementById(group+'-file-row').classList.remove('show');
@@ -435,8 +434,8 @@ function resetFile(group){
   document.getElementById(group+'-progress').classList.remove('show');
   document.getElementById(group+'-result').classList.remove('show');
   document.getElementById(group+'-file').value='';
-  setStep(group,1);
-  updateProcessButton(group);
+  const btn=document.getElementById(group+'-process-btn');
+  if(btn) btn.setAttribute('disabled','true');
 }
 function setStep(group,n){
   for(let i=1;i<=3;i++){
@@ -446,23 +445,56 @@ function setStep(group,n){
     if(i===n) el.classList.add('active');
   }
 }
-// NOTE: this is a visual placeholder only — no real upload/processing
-// happens yet. Backend wiring (real credit checks, real file processing,
-// real Turnitin report generation) comes in a later pass.
-function startProcess(group){
-  const btn=document.getElementById(group+'-process-btn');
+
+// Step 1 of paying: open real Razorpay checkout for $2. Actual document
+// processing only starts once payment succeeds — see aiProcessAfterPayment.
+function aiStartPayment(){
+  const btn = document.getElementById('ai-process-btn');
   if(btn.hasAttribute('disabled')) return;
-  setStep(group,2);
-  const progress=document.getElementById(group+'-progress');
-  const bar=document.getElementById(group+'-progress-bar');
-  progress.classList.add('show');
   btn.setAttribute('disabled','true');
+  btn.innerHTML = '<span class="spin"></span> Opening payment...';
+
+  const options = {
+    key: RAZORPAY_KEY,
+    amount: 19900, // ₹199 ≈ $2
+    currency: 'INR',
+    name: 'PlagiFix',
+    description: '1 document — Plagiarism & AI Removal',
+    handler: function(response){
+      aiProcessAfterPayment();
+    },
+    prefill: { email: aiEmail },
+    theme: { color: '#2563eb' },
+    modal: {
+      ondismiss: function(){
+        btn.removeAttribute('disabled');
+        btn.innerHTML = 'Pay & Fix Document →';
+      }
+    }
+  };
+  const rzp = new Razorpay(options);
+  rzp.open();
+}
+
+// Step 2: payment succeeded — run the (currently simulated) fix process,
+// then reveal the download result. Real backend wiring comes later.
+function aiProcessAfterPayment(){
+  document.getElementById('ai-upload-block').style.display = 'none';
+  const btn = document.getElementById('ai-process-btn');
+  btn.innerHTML = 'Fixing your document...';
+  const progress=document.getElementById('ai-progress');
+  const bar=document.getElementById('ai-progress-bar');
+  progress.classList.add('show');
   let pct=0;
   const timer=setInterval(()=>{
     pct+=Math.random()*18;
     if(pct>=100){
       pct=100; clearInterval(timer);
-      setTimeout(()=>{ progress.classList.remove('show'); document.getElementById(group+'-result').classList.add('show'); setStep(group,3); },300);
+      setTimeout(()=>{
+        progress.classList.remove('show');
+        document.getElementById('ai-result').classList.add('show');
+        setStep('ai',3);
+      },300);
     }
     bar.style.width=pct+'%';
   },260);
