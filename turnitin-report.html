@@ -51,7 +51,7 @@ nav{height:64px;background:#fff;border-bottom:1px solid var(--border);display:fl
 .section-head{max-width:680px;}
 h1.hero{font-size:2.8rem;line-height:1.1;font-weight:800;letter-spacing:-0.03em;margin:0 0 16px;color:var(--text);}
 h1.hero span{color:var(--blue);}
-.lede{font-size:1rem;line-height:1.7;color:var(--muted);max-width:620px;margin:0 0 28px;}
+.lede{font-size:1rem;line-height:1.7;color:var(--text);max-width:620px;margin:0 0 28px;}
 .lede-highlight{display:flex;gap:20px;flex-wrap:wrap;margin-top:4px;}
 .lede-badge{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:0.95rem;}
 .lede-badge.blue{color:#ea580c;}
@@ -63,7 +63,8 @@ h1.hero span{color:var(--blue);}
 
 /* ---------- mini plan cards ---------- */
 .options-label{font-size:0.72rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin:0 0 12px;}
-.process-heading{font-size:0.95rem;font-weight:800;color:var(--text);margin:0 0 24px;}
+.process-heading{font-size:1.4rem;font-weight:800;color:var(--text);margin:0 0 4px;}
+.process-subheading{font-size:0.82rem;color:var(--muted);margin:0 0 24px;}
 .process-timeline{display:flex;align-items:flex-start;margin-bottom:34px;}
 .process-step{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;padding:0 10px;}
 .process-line{flex:0 0 auto;width:100%;max-width:120px;height:2px;background:var(--blue);margin-top:23px;position:relative;top:0;}
@@ -95,9 +96,9 @@ h1.hero span{color:var(--blue);}
 .mini-tag.green{background:var(--green);color:#fff;}
 .mini-tag.blue{background:var(--blue);color:#fff;}
 .mini-tag.red{background:#dc2626;color:#fff;}
-.mini-name{font-size:0.68rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin:6px 0 6px;}
+.mini-name{font-size:0.68rem;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:var(--text);margin:6px 0 6px;}
 .mini-price{font-size:1.6rem;font-weight:800;color:var(--text);line-height:1;}
-.mini-meta{font-size:0.72rem;color:var(--muted);margin:6px 0 14px;}
+.mini-meta{font-size:0.72rem;color:var(--text);margin:6px 0 14px;}
 .btn-sm{padding:8px 14px;font-size:0.78rem;border-radius:8px;}
 .btn-block{width:100%;}
 .btn-green{background:var(--green);color:#fff;}
@@ -215,7 +216,8 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
 
   <hr style="border:none;border-top:2px solid var(--border2);margin:36px 0 32px;"/>
 
-  <div class="process-heading">From upload to clean, in three steps.</div>
+  <div class="process-heading">Hi, ready to get your clean document?</div>
+  <div class="process-subheading">Three steps, about 2 minutes start to finish.</div>
   <div class="process-timeline">
     <div class="process-step">
       <div class="process-ic-wrap pic-1">🎯</div>
@@ -244,7 +246,7 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
       <span class="mini-tag green">1 free credit</span>
       <div class="mini-name">Free</div>
       <div class="mini-price">$0</div>
-      <div class="mini-meta">1 credit, AI & Plag Fix only</div>
+      <div class="mini-meta">1 credit (1 document), AI & Plag Fix only</div>
       <span class="btn btn-green btn-sm btn-block">Create free account</span>
     </div>
     <div class="mini-plan" onclick="window.location.href='/register.html'">
