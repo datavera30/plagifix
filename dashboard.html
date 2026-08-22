@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -46,8 +46,8 @@ h1{font-size:2rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px;}
 .section-header{padding:18px 22px;border-bottom:1px solid #eaecf0;display:flex;align-items:center;justify-content:space-between;}
 .section-title{font-size:0.95rem;font-weight:700;}
 .section-body{padding:22px;}
-.drop{border:1.5px dashed #d0d5dd;border-radius:10px;padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;background:#f7f8fa;margin-bottom:14px;}
-.drop:hover,.drop.drag{border-color:#2563eb;background:#eff6ff;}
+.drop{border:1.5px dashed #2563eb;border-radius:10px;padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;background:#eff6ff;margin-bottom:14px;}
+.drop:hover,.drop.drag{border-color:#1d4ed8;background:#dbeafe;}
 .drop-icon{font-size:2rem;margin-bottom:8px;display:block;}
 .drop-title{font-size:0.88rem;font-weight:600;margin-bottom:4px;}
 .drop-sub{font-size:0.75rem;color:#667085;}
@@ -253,7 +253,7 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
       <div style="padding:32px 28px 8px;text-align:center;">
         <div class="section-title" style="font-size:1.15rem;">📊 Turnitin Report</div>
         <p style="font-size:0.85rem;color:#667085;margin-top:8px;line-height:1.6;max-width:480px;margin-left:auto;margin-right:auto;">Upload the document and get an official Similarity and AI Detection report, typically ready within a few hours.</p>
-        <p style="font-size:0.85rem;color:#667085;margin-top:4px;line-height:1.6;">Pay per document, 1 credit per request.</p>
+
       </div>
       <div class="section-body" style="padding:24px 28px 28px;">
         <div id="tr-no-credits-msg" style="display:none;text-align:center;padding:20px;">
@@ -485,8 +485,14 @@ async function loadDashboard() {
     document.getElementById('stat-credits-turnitin').textContent = turnitinCredits;
     document.getElementById('welcome-sub').textContent = email;
 
-    const cleanDetails = (data.details || []).filter(d => (d.type || 'clean') === 'clean');
-    const turnitinDetails = (data.details || []).filter(d => d.type === 'turnitin');
+    // Flexible credits (from Starter/Pro) are included in BOTH lists —
+    // matching the backend, where a flexible credit genuinely counts as
+    // available for either service until it's actually spent. Without
+    // this, a Starter/Pro-only buyer's plan name would fail to show in
+    // the Active Plan box, since their credit row's type is 'flexible',
+    // not literally 'clean'.
+    const cleanDetails = (data.details || []).filter(d => (d.type || 'clean') === 'clean' || d.type === 'flexible');
+    const turnitinDetails = (data.details || []).filter(d => d.type === 'turnitin' || d.type === 'flexible');
 
     if (cleanDetails.length > 0) {
       document.getElementById('stat-plan').textContent = cleanDetails[0].plan;
@@ -527,7 +533,12 @@ function renderCreditsTable(tbodyId, rows, purchaseLink) {
     tbody.innerHTML = rows.map(row => {
       const exp = new Date(row.expires);
       const expired = exp < new Date();
-      const expStr = exp.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
+      // Credits are lifetime — the backend still stores a distant expiry
+      // date internally (100 years out) so the existing "still valid"
+      // query logic doesn't need to change, but showing that raw date to
+      // the user would look strange. Show "Lifetime" instead.
+      const yearsOut = (exp.getFullYear() - new Date().getFullYear());
+      const expStr = yearsOut >= 50 ? 'Lifetime' : exp.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
       return `<tr>
         <td>${row.plan}</td>
         <td>${row.remaining}</td>
@@ -683,7 +694,19 @@ async function trRequestReport() {
     loadTurnitinRequests();
     loadDashboard(); // refresh credit count since a credit was used
   } catch(err) {
-    trStatusEl.textContent = err.message || 'Something went wrong. Please try again.';
+    const msg = err.message || 'Something went wrong. Please try again.';
+    // Special-case only this known message so "Buy Credits" becomes a
+    // real clickable link to the same modal the top-of-page button
+    // opens — using innerHTML safely here since we're inserting fixed,
+    // known text ourselves, not raw backend/user input.
+    if (msg.includes('Buy Credits')) {
+      trStatusEl.innerHTML = msg.replace(
+        'Buy Credits',
+        '<a href="javascript:void(0)" onclick="openBuyModal(\'turnitin\')" style="color:#2563eb;font-weight:700;text-decoration:underline;">Buy Credits</a>'
+      );
+    } else {
+      trStatusEl.textContent = msg;
+    }
     trStatusEl.className = 'status err';
   }
   trProcBtn.disabled = false;
