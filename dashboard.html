@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -147,7 +147,7 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
     <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
       <h1 id="greeting" style="color:#fff;">Welcome back!</h1>
       <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-        <div style="background:rgba(234,88,12,0.25);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.3);border-radius:10px;padding:10px 16px;text-align:right;">
+        <div style="background:rgba(234,88,12,0.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.35);border-radius:10px;padding:10px 16px;text-align:right;">
           <div class="stat-label" style="margin-bottom:2px;color:#fff;">Active Plan</div>
           <div class="stat-value" id="stat-plan" style="font-size:1.1rem;line-height:1.2;color:#fff;">—</div>
         </div>
@@ -566,8 +566,14 @@ async function startProcessing() {
 
     setProgress(100, 'Complete!');
     const blob = await r.blob();
-    userCredits--;
-    document.getElementById('stat-credits').textContent = userCredits;
+    // BUG FIX: previously this only manually decremented and updated
+    // 'stat-credits' (the AI & Plag Fix box), leaving 'stat-credits-turnitin'
+    // showing a stale number until the next full page reload. Since credits
+    // can be flexible (shared between both services), spending one here can
+    // also reduce the Turnitin box's real balance — so both need to refresh
+    // together. Re-fetching via loadDashboard() keeps them in sync without
+    // requiring a manual page refresh.
+    loadDashboard();
 
     downloadUrl = window.URL.createObjectURL(blob);
     const filename = 'processed_' + selectedFile.name;
