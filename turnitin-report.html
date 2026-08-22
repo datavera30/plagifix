@@ -492,23 +492,19 @@ async function aiProcessAfterPayment(paymentId){
   const bar=document.getElementById('ai-progress-bar');
   const progLabel=document.getElementById('ai-progress-text');
   progress.classList.add('show');
-  bar.style.width = '15%';
-  if (progLabel) progLabel.textContent = 'Confirming payment…';
+  bar.style.width = '20%';
+  if (progLabel) progLabel.textContent = 'Fixing your document…';
 
   try {
-    await fetch(`${BACKEND}/confirm-payment`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ email: aiEmail, payment_id: paymentId, plan: 'buy' })
-    });
-
-    bar.style.width = '40%';
-    if (progLabel) progLabel.textContent = 'Fixing your document…';
-
+    // Uses /instant-process — a standalone endpoint that never touches
+    // credits, PLANS, or the dashboard. This is a one-off $2 payment for
+    // this single document, not a credit purchase, even if the email
+    // entered matches an existing registered account.
     const formData = new FormData();
     formData.append('file', aiSelectedFile);
     formData.append('email', aiEmail);
-    const r = await fetch(`${BACKEND}/process`, { method: 'POST', body: formData });
+    formData.append('payment_id', paymentId);
+    const r = await fetch(`${BACKEND}/instant-process`, { method: 'POST', body: formData });
     if (!r.ok) {
       const err = await r.json().catch(() => ({}));
       throw new Error(err.error || 'Processing failed');
