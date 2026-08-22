@@ -318,12 +318,15 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
 
     <div class="progress-wrap" id="ai-progress">
       <div class="progress-bar"><div id="ai-progress-bar"></div></div>
-      <div class="ptext" id="ai-progress-text">Fixing your document…</div>
+      <div class="ptext" id="ai-progress-text">Fixing, Please wait…</div>
     </div>
 
     <div class="result-row" id="ai-result">
-      <div class="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Fixed — similarity score reduced, wording preserved</span></div>
+      <div class="meta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span>Congratulations 🎊, you're all set! Your document's ready to download.</span></div>
       <a class="btn btn-blue">Download document</a>
+    </div>
+    <div id="ai-result-back" style="display:none;text-align:center;margin-top:12px;">
+      <a href="javascript:void(0)" onclick="aiResetInstantFlow()" style="display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--muted);font-weight:700;">← Back</a>
     </div>
   </div>
 
@@ -421,6 +424,23 @@ function aiGoBackToEmail(){
   setStep('ai', 1);
 }
 
+// Resets the whole instant-fix flow back to the email step, so someone
+// can fix another document from scratch after downloading their result.
+function aiResetInstantFlow(){
+  document.getElementById('ai-result').classList.remove('show');
+  document.getElementById('ai-result-back').style.display = 'none';
+  resetFile('ai');
+  document.getElementById('ai-email-input').value = '';
+  document.getElementById('ai-email-block').style.display = 'block';
+  document.getElementById('ai-upload-block').style.display = 'none';
+  const btn = document.getElementById('ai-process-btn');
+  btn.innerHTML = 'Pay & Fix Document →';
+  btn.removeAttribute('disabled');
+  aiEmail = '';
+  aiSelectedFile = null;
+  setStep('ai', 1);
+}
+
 function handleFile(e, group){ const file=e.target.files[0]; if(!file) return; setFile(group,file); }
 function handleDrop(e, group){ e.preventDefault(); e.currentTarget.classList.remove('drag'); const file=e.dataTransfer.files[0]; if(!file) return; setFile(group,file); }
 function setFile(group,file){
@@ -487,13 +507,13 @@ function aiStartPayment(){
 async function aiProcessAfterPayment(paymentId){
   document.getElementById('ai-upload-block').style.display = 'none';
   const btn = document.getElementById('ai-process-btn');
-  btn.innerHTML = 'Fixing your document...';
+  btn.innerHTML = 'Fixing, Please wait…';
   const progress=document.getElementById('ai-progress');
   const bar=document.getElementById('ai-progress-bar');
   const progLabel=document.getElementById('ai-progress-text');
   progress.classList.add('show');
   bar.style.width = '20%';
-  if (progLabel) progLabel.textContent = 'Fixing your document…';
+  if (progLabel) progLabel.textContent = 'Fixing, Please wait…';
 
   try {
     // Uses /instant-process — a standalone endpoint that never touches
@@ -525,6 +545,7 @@ async function aiProcessAfterPayment(paymentId){
         dlBtn.download = filename;
         dlBtn.removeAttribute('onclick');
       }
+      document.getElementById('ai-result-back').style.display = 'block';
       setStep('ai',3);
     }, 300);
 
