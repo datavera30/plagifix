@@ -32,10 +32,10 @@ h1{font-size:2rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px;}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
 .stat-card{background:#fff;border:1.5px solid #2563eb;border-radius:12px;padding:20px;transition:all .15s;}
 .stat-card:hover{transform:translateY(-1px);}
-.stat-card.active-tab{background:#eff6ff;}
+.stat-card.active-tab{background:#fefce8;border-color:#eab308;}
 .stat-label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:#98a2b3;margin-bottom:8px;}
 .stat-value{font-size:2rem;font-weight:800;letter-spacing:-0.03em;color:#101828;line-height:1;}
-.stat-value.blue{color:#2563eb;}
+.stat-value.blue{color:#ea580c;}
 .stat-value.green{color:#027a48;}
 .stat-sub{font-size:0.72rem;color:#98a2b3;margin-top:4px;}
 .dash-tabs{display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid #eaecf0;}
@@ -143,13 +143,13 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 </nav>
 
 <main>
-  <div style="background:#2563eb;border:1px solid #2563eb;border-radius:16px;padding:28px;margin-bottom:28px;">
+  <div style="background:#2563eb;border:1px solid #2563eb;border-radius:16px;padding:18px 44px;margin:0 -40px 28px -40px;">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
       <h1 id="greeting" style="color:#fff;">Welcome back!</h1>
       <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-        <div style="background:#fff7ed;border:1px solid #fdba74;border-radius:10px;padding:10px 16px;text-align:right;">
-          <div class="stat-label" style="margin-bottom:2px;color:#101828;">Active Plan</div>
-          <div class="stat-value" id="stat-plan" style="font-size:1.1rem;line-height:1.2;color:#c2410c;">—</div>
+        <div style="background:#ea580c;border:1px solid #ea580c;border-radius:10px;padding:10px 16px;text-align:right;">
+          <div class="stat-label" style="margin-bottom:2px;color:#fff;">Active Plan</div>
+          <div class="stat-value" id="stat-plan" style="font-size:1.1rem;line-height:1.2;color:#fff;">—</div>
         </div>
         <button class="buy-more-btn" id="top-buy-btn" style="background:#fff;color:#2563eb;" onclick="openBuyModal(document.getElementById('tab-turnitin').style.display === 'none' ? 'clean' : 'turnitin')">Buy Credits →</button>
       </div>
@@ -175,7 +175,7 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
   </div>
 
   <div id="tab-clean">
-    <div class="section" style="box-shadow:0 12px 32px rgba(16,24,40,0.16),0 4px 10px rgba(16,24,40,0.08);border-color:#d0d5dd;">
+    <div class="section" style="box-shadow:0 0 24px rgba(37,99,235,0.25),0 0 44px rgba(37,99,235,0.15),0 24px 48px rgba(16,24,40,0.22),0 8px 18px rgba(16,24,40,0.14);transform:translateY(-6px) scaleX(1.06) scaleY(1.06);">
       <div style="padding:32px 28px 8px;text-align:center;">
         <div class="section-title" style="font-size:1.15rem;">🛡️ AI and Plagiarism Remover</div>
         <p style="font-size:0.85rem;color:#667085;margin-top:8px;line-height:1.6;max-width:480px;margin-left:auto;margin-right:auto;">Upload your document and your fixed document will appear automatically in under 2 minutes, ready to download. Uses 1 credit per document.</p>
@@ -225,31 +225,10 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
         </div>
       </div>
     </div>
-
-    <div class="section">
-      <div class="section-header">
-        <div class="section-title">Your Plagiarism & AI Removal Credits</div>
-      </div>
-      <div class="section-body" style="padding:0;">
-        <table class="credit-table">
-          <thead>
-            <tr>
-              <th>Plan</th>
-              <th>Credits Remaining</th>
-              <th>Expires</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="clean-credits-tbody">
-            <tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">Loading...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
 
   <div id="tab-turnitin" style="display:none;">
-    <div class="section" style="box-shadow:0 12px 32px rgba(16,24,40,0.16),0 4px 10px rgba(16,24,40,0.08);border-color:#d0d5dd;">
+    <div class="section" style="box-shadow:0 0 24px rgba(37,99,235,0.25),0 0 44px rgba(37,99,235,0.15),0 24px 48px rgba(16,24,40,0.22),0 8px 18px rgba(16,24,40,0.14);transform:translateY(-6px) scaleX(1.06) scaleY(1.06);">
       <div style="padding:32px 28px 8px;text-align:center;">
         <div class="section-title" style="font-size:1.15rem;">📊 Turnitin Report</div>
         <p style="font-size:0.85rem;color:#667085;margin-top:8px;line-height:1.6;max-width:480px;margin-left:auto;margin-right:auto;">Upload the document and get an official Similarity and AI Detection report, typically ready within a few hours.</p>
@@ -312,27 +291,6 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
           <span id="tr-page-label" style="font-size:0.8rem;color:#667085;font-weight:600;">Page 1 of 1</span>
           <button id="tr-page-next" onclick="trChangePage(1)" style="background:#fff;border:1px solid #d0d5dd;border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:0.9rem;color:#344054;">›</button>
         </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-header">
-        <div class="section-title">Your Turnitin Report Credits</div>
-      </div>
-      <div class="section-body" style="padding:0;">
-        <table class="credit-table">
-          <thead>
-            <tr>
-              <th>Plan</th>
-              <th>Credits Remaining</th>
-              <th>Expires</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="turnitin-credits-tbody">
-            <tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">Loading...</td></tr>
-          </tbody>
-        </table>
       </div>
     </div>
   </div>
@@ -520,8 +478,9 @@ async function loadDashboard() {
       document.getElementById('tr-upload-section').style.display = turnitinCredits <= 0 ? 'none' : 'block';
     }
 
-    renderCreditsTable('clean-credits-tbody', cleanDetails, '/#pricing');
-    renderCreditsTable('turnitin-credits-tbody', turnitinDetails, '/#turnitin-pricing');
+    // renderCreditsTable calls removed — the credit breakdown tables
+    // ("Your Plagiarism & AI Removal Credits" and "Your Turnitin Report
+    // Credits") were removed from the page entirely.
   } catch(err) {
     document.getElementById('welcome-sub').textContent = 'Error loading account data.';
   }
