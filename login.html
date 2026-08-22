@@ -3,920 +3,273 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PlagiFix — Dashboard</title>
+<title>PlagiFix — Sign In</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://openfpcdn.io/fingerprintjs/v4/iife.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:#eef2f9;color:#101828;min-height:100vh;display:flex;flex-direction:column;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#f7f8fa;color:#101828;min-height:100vh;display:flex;flex-direction:column;}
 a{color:#2563eb;text-decoration:none;}
 nav{height:64px;background:#fff;border-bottom:1px solid #eaecf0;display:flex;align-items:center;justify-content:space-between;padding:0 48px;}
 .nav-c{display:flex;gap:18px;align-items:center;}
 .nav-c a{font-size:0.875rem;font-weight:700;color:#101828;transition:color .15s;}
 .nav-c a:hover{color:#2563eb;}
+.nav-c .btn-out{padding:9px 18px;border-radius:8px;font-size:0.85rem;font-weight:700;border:1.5px solid #d0d5dd;color:#101828;}
+.nav-c .btn-out:hover{border-color:#2563eb;color:#2563eb;}
+.nav-c .btn-blue{padding:9px 18px;border-radius:8px;font-size:0.85rem;font-weight:700;background:#2563eb;color:#fff;}
+.nav-c .btn-blue:hover{background:#1d4ed8;}
 .logo{font-size:1.25rem;font-weight:800;letter-spacing:-0.03em;color:#101828;}
 .logo span{color:#2563eb;}
-.nav-right{display:flex;align-items:center;gap:16px;}
-.nav-name{font-size:0.82rem;color:#667085;}
-.logout-btn{font-size:0.78rem;font-weight:600;color:#667085;background:none;border:1px solid #d0d5dd;border-radius:7px;padding:6px 12px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
-.logout-btn:hover{border-color:#2563eb;color:#2563eb;}
-main{flex:1;padding:40px 48px;max-width:900px;margin:0 auto;width:100%;}
-h1{font-size:2rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px;}
-#greeting{animation:slideInGreeting .6s cubic-bezier(.16,1,.3,1);}
-@keyframes slideInGreeting{
-  0%{opacity:0;transform:translateX(-24px);}
-  100%{opacity:1;transform:translateX(0);}
-}
-.welcome{font-size:0.88rem;color:#667085;margin-bottom:28px;}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;}
-.stat-card{background:#fff;border:1.5px solid #2563eb;border-radius:12px;padding:20px;transition:all .15s;}
-.stat-card:hover{transform:translateY(-1px);}
-.stat-card.active-tab{background:#eff6ff;}
-.stat-label{font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:#98a2b3;margin-bottom:8px;}
-.stat-value{font-size:2rem;font-weight:800;letter-spacing:-0.03em;color:#101828;line-height:1;}
-.stat-value.blue{color:#2563eb;}
-.stat-value.green{color:#027a48;}
-.stat-sub{font-size:0.72rem;color:#98a2b3;margin-top:4px;}
-.dash-tabs{display:flex;gap:8px;margin-bottom:20px;border-bottom:1px solid #eaecf0;}
-.dash-tab{background:none;border:none;padding:12px 4px;margin-right:20px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:600;color:#98a2b3;cursor:pointer;border-bottom:2.5px solid transparent;transition:all .15s;}
-.dash-tab:hover{color:#667085;}
-.dash-tab.active{color:#2563eb;border-bottom-color:#2563eb;}
-.section{background:#fff;border:1px solid #eaecf0;border-radius:12px;margin-bottom:20px;}
-.section-header{padding:18px 22px;border-bottom:1px solid #eaecf0;display:flex;align-items:center;justify-content:space-between;}
-.section-title{font-size:0.95rem;font-weight:700;}
-.section-body{padding:22px;}
-.drop{border:1.5px dashed #d0d5dd;border-radius:10px;padding:32px 20px;text-align:center;cursor:pointer;transition:all .2s;background:#f7f8fa;margin-bottom:14px;}
-.drop:hover,.drop.drag{border-color:#2563eb;background:#eff6ff;}
-.drop-icon{font-size:2rem;margin-bottom:8px;display:block;}
-.drop-title{font-size:0.88rem;font-weight:600;margin-bottom:4px;}
-.drop-sub{font-size:0.75rem;color:#667085;}
-.drop-sub b{color:#2563eb;cursor:pointer;}
-.file-row{display:none;align-items:center;gap:12px;background:#f7f8fa;border:1px solid #eaecf0;border-radius:9px;padding:10px 14px;margin-bottom:14px;}
-.file-row.show{display:flex;}
-.file-name{font-size:0.82rem;font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.file-size{font-size:0.7rem;color:#98a2b3;}
-.file-rm{background:none;border:none;cursor:pointer;color:#98a2b3;font-size:0.85rem;padding:2px 6px;}
-.file-rm:hover{color:#b42318;}
-.proc-btn{width:100%;padding:12px;background:#101828;color:#fff;border:none;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px;}
-.proc-btn:hover:not(:disabled){background:#1d2939;}
-.proc-btn:disabled{opacity:.35;cursor:not-allowed;}
-.prog-wrap{display:none;margin-top:12px;}
-.prog-wrap.show{display:block;}
-.prog-info{display:flex;justify-content:space-between;font-size:0.7rem;color:#667085;margin-bottom:5px;}
-.prog-track{height:4px;background:#eaecf0;border-radius:100px;overflow:hidden;}
-.prog-fill{height:100%;background:#2563eb;border-radius:100px;transition:width .5s;width:0%;}
-.status{margin-top:10px;font-size:0.75rem;text-align:center;}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:48px 24px;}
+.card{background:#fff;border:1px solid #eaecf0;border-radius:16px;padding:36px;width:100%;max-width:420px;box-shadow:0 1px 3px rgba(16,24,40,0.06);}
+.card-icon{font-size:2rem;margin-bottom:16px;text-align:center;}
+h1{font-size:1.4rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:6px;text-align:center;}
+.sub{font-size:0.82rem;color:#667085;text-align:center;margin-bottom:28px;line-height:1.6;}
+.field{margin-bottom:16px;}
+label{display:block;font-size:0.78rem;font-weight:600;color:#344054;margin-bottom:6px;}
+.label-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.label-row label{margin-bottom:0;}
+input{width:100%;padding:11px 14px;border:1.5px solid #d0d5dd;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;color:#101828;outline:none;transition:border-color .15s;}
+input:focus{border-color:#2563eb;}
+.pw-wrap{position:relative;}
+.pw-wrap input{padding-right:44px;}
+.pw-toggle{position:absolute;right:0;top:0;height:100%;width:40px;display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;color:#98a2b3;padding:0;}
+.pw-toggle:hover{color:#667085;}
+.pw-toggle svg{width:18px;height:18px;}
+.btn{width:100%;padding:13px;background:#2563eb;color:#fff;border:none;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:4px;}
+.btn:hover:not(:disabled){background:#1d4ed8;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.divider{text-align:center;font-size:0.78rem;color:#98a2b3;margin:16px 0;}
+.link-btn{width:100%;padding:11px;background:#fff;color:#101828;border:1.5px solid #d0d5dd;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all .2s;text-align:center;display:block;}
+.link-btn:hover{border-color:#2563eb;color:#2563eb;}
+.status{margin-top:14px;font-size:0.78rem;text-align:center;min-height:18px;}
 .status.err{color:#b42318;}
 .status.ok{color:#027a48;font-weight:600;}
-.download-box{background:#ecfdf3;border:1px solid #6ce9a6;border-radius:10px;padding:18px;text-align:center;display:none;}
-.download-box.show{display:block;}
-.dl-btn{display:inline-flex;align-items:center;gap:8px;background:#027a48;color:#fff;padding:10px 24px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:700;border:none;cursor:pointer;margin-top:10px;}
-.dl-btn:hover{background:#05603a;}
-.again-btn{display:block;margin-top:8px;font-size:0.75rem;color:#2563eb;cursor:pointer;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;}
-.credit-table{width:100%;border-collapse:collapse;}
-.credit-table th{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#98a2b3;text-align:left;padding:8px 12px;border-bottom:1px solid #eaecf0;}
-.credit-table td{font-size:0.82rem;padding:10px 12px;border-bottom:1px solid #f2f4f7;color:#344054;}
-.credit-table tr:last-child td{border-bottom:none;}
-.badge{display:inline-block;padding:2px 8px;border-radius:100px;font-size:0.68rem;font-weight:600;}
-.badge.active{background:#ecfdf3;color:#027a48;}
-.badge.expired{background:#f2f4f7;color:#98a2b3;}
-.report-link{color:#2563eb;font-weight:600;white-space:nowrap;}
-.report-links-cell{display:flex;flex-direction:column;gap:4px;}
-.report-pending{color:#98a2b3;font-size:0.76rem;}
-.buy-more{background:linear-gradient(135deg,#1d4ed8,#2563eb);border-radius:12px;padding:22px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-.buy-more-text h3{font-size:1rem;font-weight:700;color:#fff;margin-bottom:4px;}
-.buy-more-text p{font-size:0.78rem;color:rgba(255,255,255,0.7);}
-.buy-more-btn{background:#fff;color:#2563eb;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:700;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;}
-.buy-more-btn:hover{background:#f0f7ff;}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite;}
 @keyframes sp{to{transform:rotate(360deg)}}
-#file-input{display:none;}
-#tr-file-input{display:none;}
+.checking-gate{position:fixed;inset:0;background:#f7f8fa;display:flex;align-items:center;justify-content:center;z-index:999;}
+.checking-gate .spin{width:26px;height:26px;border-width:3px;border-color:rgba(37,99,235,0.2);border-top-color:#2563eb;}
 footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:flex;align-items:center;justify-content:space-between;}
 .f-logo{font-size:0.9rem;font-weight:800;color:#101828;}
 .f-logo span{color:#2563eb;}
 .f-copy{font-size:0.7rem;color:#98a2b3;}
-.loading-gate{position:fixed;inset:0;background:#f7f8fa;display:flex;align-items:center;justify-content:center;z-index:999;}
-.loading-gate .spin{width:28px;height:28px;border-width:3px;border-color:rgba(37,99,235,0.2);border-top-color:#2563eb;}
-.modal-overlay{position:fixed;inset:0;background:rgba(16,24,40,0.5);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;}
-.modal-box{background:#fff;border-radius:14px;max-width:480px;width:100%;max-height:85vh;overflow-y:auto;}
-.modal-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid #eaecf0;position:sticky;top:0;background:#fff;}
-.modal-header h3{font-size:1.05rem;font-weight:800;}
-.modal-close{background:none;border:none;font-size:1rem;color:#98a2b3;cursor:pointer;padding:4px;}
-.modal-close:hover{color:#101828;}
-.modal-body{padding:20px 24px;}
-.modal-plan{border:1.5px solid #eaecf0;border-radius:12px;padding:18px;margin-bottom:14px;position:relative;}
-.modal-plan.pop{border-color:#2563eb;box-shadow:0 4px 16px rgba(37,99,235,0.1);}
-.modal-plan-badge{position:absolute;top:-11px;left:18px;background:#2563eb;color:#fff;font-size:0.62rem;font-weight:700;padding:3px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:0.06em;}
-.modal-plan-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;}
-.modal-plan-name{font-size:0.95rem;font-weight:700;}
-.modal-plan-price{font-size:1.5rem;font-weight:800;color:#101828;}
-.modal-plan-meta{font-size:0.78rem;color:#667085;margin-bottom:12px;}
-.modal-plan-list{list-style:none;margin-bottom:14px;}
-.modal-plan-list li{font-size:0.78rem;color:#344054;padding:3px 0;}
-.modal-plan-list li::before{content:'✓ ';color:#027a48;font-weight:700;}
-.modal-plan-btn{width:100%;padding:11px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;border:none;background:#2563eb;color:#fff;}
-.modal-plan-btn:hover{background:#1d4ed8;}
-@media(max-width:700px){
-  nav,main,footer{padding-left:20px;padding-right:20px;}
-  .stats{grid-template-columns:1fr 1fr;}
-  .buy-more{flex-direction:column;gap:14px;text-align:center;}
-}
 </style>
 </head>
 <body>
-<div class="loading-gate" id="loading-gate"><div class="spin"></div></div>
+<!--
+  Shown only very briefly, while we silently check whether an existing
+  localStorage token (if any) still works — see the note above
+  checkExistingSession() below for why this replaced a blind redirect.
+-->
+<div class="checking-gate" id="checking-gate"><div class="spin"></div></div>
+
 <nav>
-  <a href="/" class="logo" style="display:flex;align-items:center;gap:0;"><img src="/images/logo.png" alt="PlagiFix logo" style="width:32px;height:32px;border-radius:50%;"/>Plagi<span>Fix</span></a>
+  <a href="/" class="logo">Plagi<span>Fix</span></a>
   <div class="nav-c">
     <a href="/">Home</a>
     <a href="/#how">AI & Plag Fix</a>
     <a href="/turnitin-report.html">Turnitin Report</a>
     <a href="/#pricing">Pricing</a>
     <a href="/#faq">FAQ</a>
-  </div>
-  <div class="nav-right">
-    <span class="nav-name" id="nav-name"></span>
-    <button class="logout-btn" onclick="logout()">Sign out</button>
+    <a href="/register.html" class="btn-blue">Register →</a>
   </div>
 </nav>
-
 <main>
-  <div style="background:#2563eb;border:1px solid #2563eb;border-radius:16px;padding:28px;margin-bottom:28px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
-      <h1 id="greeting" style="color:#fff;">Welcome back!</h1>
-      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-        <div style="background:#fff7ed;border:1px solid #fdba74;border-radius:10px;padding:10px 16px;text-align:right;">
-          <div class="stat-label" style="margin-bottom:2px;color:#101828;">Active Plan</div>
-          <div class="stat-value" id="stat-plan" style="font-size:1.1rem;line-height:1.2;color:#c2410c;">—</div>
-        </div>
-        <button class="buy-more-btn" id="top-buy-btn" style="background:#fff;color:#2563eb;" onclick="openBuyModal(document.getElementById('tab-turnitin').style.display === 'none' ? 'clean' : 'turnitin')">Buy Credits →</button>
+  <div class="card">
+    <div class="card-icon">👋</div>
+    <h1>Welcome back</h1>
+    <p class="sub">Sign in to access your credits and process documents.</p>
+    <div class="field">
+      <label>Email address</label>
+      <input type="email" id="email" placeholder="you@university.edu"/>
+    </div>
+    <div class="field">
+      <div class="label-row">
+        <label>Password</label>
+        <a href="/forgot-password.html" style="font-size:0.75rem;">Forgot password?</a>
+      </div>
+      <div class="pw-wrap">
+        <input type="password" id="password" placeholder="Your password" onkeydown="if(event.key==='Enter')login()"/>
+        <button type="button" class="pw-toggle" onclick="togglePw('password', this)" aria-label="Show password">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
       </div>
     </div>
-    <div class="welcome" id="welcome-sub" style="color:rgba(255,255,255,0.8);">Loading your account...</div>
-
-    <p style="color:rgba(255,255,255,0.85);font-size:0.78rem;font-weight:600;margin:16px 0 10px;">👇 Click a box below to switch between services</p>
-
-    <div class="stats" style="grid-template-columns:repeat(2,1fr);margin-bottom:0;">
-      <div class="stat-card active-tab" id="card-tab-clean" onclick="switchTab('clean')" style="cursor:pointer;position:relative;">
-        <div class="stat-label" style="color:#101828;font-weight:800;">AI & Plag Fix</div>
-        <div class="stat-value blue" id="stat-credits">—</div>
-        <div class="stat-sub" style="color:#101828;">Credits ready to use</div>
-        <div id="indicator-clean" style="position:absolute;top:14px;right:16px;font-size:0.7rem;font-weight:700;color:#2563eb;">Viewing</div>
-      </div>
-      <div class="stat-card" id="card-tab-turnitin" onclick="switchTab('turnitin')" style="cursor:pointer;position:relative;">
-        <div class="stat-label" style="color:#101828;font-weight:800;">Turnitin Report</div>
-        <div class="stat-value blue" id="stat-credits-turnitin">—</div>
-        <div class="stat-sub" style="color:#101828;">Credits ready to use</div>
-        <div id="indicator-turnitin" style="position:absolute;top:14px;right:16px;font-size:0.7rem;font-weight:700;color:#2563eb;">Open →</div>
-      </div>
-    </div>
-  </div>
-
-  <div id="tab-clean">
-    <div class="section" style="box-shadow:0 12px 32px rgba(16,24,40,0.16),0 4px 10px rgba(16,24,40,0.08);border-color:#d0d5dd;">
-      <div style="padding:32px 28px 8px;text-align:center;">
-        <div class="section-title" style="font-size:1.15rem;">🛡️ AI and Plagiarism Remover</div>
-        <p style="font-size:0.85rem;color:#667085;margin-top:8px;line-height:1.6;max-width:480px;margin-left:auto;margin-right:auto;">Upload your document and your fixed document will appear automatically in under 2 minutes, ready to download. Uses 1 credit per document.</p>
-      </div>
-      <div class="section-body" style="padding:24px 28px 28px;">
-        <div id="no-credits-msg" style="display:none;text-align:center;padding:20px;">
-          <div style="font-size:1.5rem;margin-bottom:10px;">😔</div>
-          <div style="font-size:0.88rem;font-weight:600;margin-bottom:6px;">No credits remaining</div>
-          <div style="font-size:0.78rem;color:#667085;margin-bottom:14px;">Purchase a plan to process more documents.</div>
-          <a href="javascript:void(0)" onclick="openBuyModal('clean')" style="display:inline-block;background:#2563eb;color:#fff;padding:9px 20px;border-radius:8px;font-weight:600;font-size:0.82rem;">Buy Credits →</a>
-        </div>
-
-        <div id="upload-section">
-          <div class="drop" id="drop" onclick="document.getElementById('file-input').click()">
-            <span class="drop-icon">📄</span>
-            <div class="drop-title">Drop your .docx file here</div>
-            <p class="drop-sub">or <b onclick="event.stopPropagation();document.getElementById('file-input').click()">browse to upload</b></p>
-          </div>
-          <input type="file" id="file-input" accept=".docx"/>
-
-          <div class="file-row" id="file-row">
-            <span style="font-size:1.2rem;">📝</span>
-            <div style="flex:1;min-width:0;">
-              <div class="file-name" id="file-name-el"></div>
-              <div class="file-size" id="file-size-el"></div>
-            </div>
-            <button class="file-rm" onclick="removeFile()">✕</button>
-          </div>
-
-          <button class="proc-btn" id="proc-btn" onclick="startProcessing()" disabled>
-            Fix document →
-          </button>
-
-          <div class="prog-wrap" id="prog-wrap">
-            <div class="prog-info"><span id="prog-label">Processing...</span><span id="prog-pct">0%</span></div>
-            <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
-          </div>
-          <div class="status" id="status"></div>
-        </div>
-
-        <div class="download-box" id="download-box">
-          <div style="font-size:1.5rem;margin-bottom:8px;">✅</div>
-          <div style="font-weight:700;margin-bottom:4px;">Your document is ready!</div>
-          <div style="font-size:0.78rem;color:#027a48;">All flags removed. Content unchanged.</div>
-          <button class="dl-btn" id="dl-btn">⬇ Download document</button>
-          <button class="again-btn" onclick="processAnother()">Process another document</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-header">
-        <div class="section-title">Your Plagiarism & AI Removal Credits</div>
-      </div>
-      <div class="section-body" style="padding:0;">
-        <table class="credit-table">
-          <thead>
-            <tr>
-              <th>Plan</th>
-              <th>Credits Remaining</th>
-              <th>Expires</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="clean-credits-tbody">
-            <tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">Loading...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <div id="tab-turnitin" style="display:none;">
-    <div class="section" style="box-shadow:0 12px 32px rgba(16,24,40,0.16),0 4px 10px rgba(16,24,40,0.08);border-color:#d0d5dd;">
-      <div style="padding:32px 28px 8px;text-align:center;">
-        <div class="section-title" style="font-size:1.15rem;">📊 Turnitin Report</div>
-        <p style="font-size:0.85rem;color:#667085;margin-top:8px;line-height:1.6;max-width:480px;margin-left:auto;margin-right:auto;">Upload the document and get an official Similarity and AI Detection report, typically ready within a few hours.</p>
-        <p style="font-size:0.85rem;color:#667085;margin-top:4px;line-height:1.6;">Pay per document, 1 credit per request.</p>
-      </div>
-      <div class="section-body" style="padding:24px 28px 28px;">
-        <div id="tr-no-credits-msg" style="display:none;text-align:center;padding:20px;">
-          <div style="font-size:1.5rem;margin-bottom:10px;">😔</div>
-          <div style="font-size:0.88rem;font-weight:600;margin-bottom:6px;">No credits remaining</div>
-          <div style="font-size:0.78rem;color:#667085;margin-bottom:14px;">Purchase a plan to request Turnitin reports.</div>
-          <a href="javascript:void(0)" onclick="openBuyModal('turnitin')" style="display:inline-block;background:#2563eb;color:#fff;padding:9px 20px;border-radius:8px;font-weight:600;font-size:0.82rem;">Buy Credits →</a>
-        </div>
-
-        <div id="tr-upload-section">
-          <div class="drop" id="tr-drop" onclick="document.getElementById('tr-file-input').click()">
-            <span class="drop-icon">📄</span>
-            <div class="drop-title">Drop your .docx file here</div>
-            <p class="drop-sub">or <b onclick="event.stopPropagation();document.getElementById('tr-file-input').click()">browse to upload</b></p>
-          </div>
-          <input type="file" id="tr-file-input" accept=".docx"/>
-
-          <div class="file-row" id="tr-file-row">
-            <span style="font-size:1.2rem;">📝</span>
-            <div style="flex:1;min-width:0;">
-              <div class="file-name" id="tr-file-name-el"></div>
-              <div class="file-size" id="tr-file-size-el"></div>
-            </div>
-            <button class="file-rm" onclick="trRemoveFile()">✕</button>
-          </div>
-
-          <button class="proc-btn" id="tr-proc-btn" onclick="trRequestReport()" disabled>
-            Request report →
-          </button>
-          <div class="status" id="tr-status"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-header">
-        <div class="section-title">Your Turnitin Reports</div>
-      </div>
-      <div class="section-body" style="padding:0;">
-        <table class="credit-table">
-          <thead>
-            <tr>
-              <th>File</th>
-              <th>Requested</th>
-              <th>Status</th>
-              <th>Similarity</th>
-              <th>AI Report</th>
-            </tr>
-          </thead>
-          <tbody id="tr-requests-tbody">
-            <tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">Loading...</td></tr>
-          </tbody>
-        </table>
-        <div id="tr-pagination" style="display:none;align-items:center;justify-content:center;gap:14px;padding:16px 22px;border-top:1px solid #eaecf0;">
-          <button id="tr-page-prev" onclick="trChangePage(-1)" style="background:#fff;border:1px solid #d0d5dd;border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:0.9rem;color:#344054;">‹</button>
-          <span id="tr-page-label" style="font-size:0.8rem;color:#667085;font-weight:600;">Page 1 of 1</span>
-          <button id="tr-page-next" onclick="trChangePage(1)" style="background:#fff;border:1px solid #d0d5dd;border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:0.9rem;color:#344054;">›</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="section">
-      <div class="section-header">
-        <div class="section-title">Your Turnitin Report Credits</div>
-      </div>
-      <div class="section-body" style="padding:0;">
-        <table class="credit-table">
-          <thead>
-            <tr>
-              <th>Plan</th>
-              <th>Credits Remaining</th>
-              <th>Expires</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="turnitin-credits-tbody">
-            <tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">Loading...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <button class="btn" id="login-btn" onclick="login()">Sign in</button>
+    <div class="status" id="status"></div>
+    <div class="divider">Don't have an account?</div>
+    <a href="/register.html" class="link-btn">Create account</a>
   </div>
 </main>
-
-<div class="modal-overlay" id="buy-modal" style="display:none;">
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3 id="modal-title">Buy Credits</h3>
-      <button class="modal-close" onclick="closeBuyModal()">✕</button>
-    </div>
-    <div class="modal-body" id="modal-plans"></div>
-  </div>
-</div>
-
 <footer>
   <div class="f-logo">Plagi<span>Fix</span></div>
-  <div class="f-copy">© 2025 PlagiFix. All rights reserved.</div>
+  <div class="f-copy">© 2025 PlagiFix</div>
 </footer>
-
 <script>
-const BACKEND = 'https://file-processor-3i33.onrender.com';
-
-// TEMPORARY: set to false once the Turnitin Report integration is ready
-// to launch for real — see the note in loadDashboard() for details.
-const TURNITIN_TEST_MODE = true;
 const SUPABASE_URL = 'https://wrypnctfcwijglyivthg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I7NR_6S40Ydjyw44Ic26pw_I5-XUrTr';
+const BACKEND = 'https://file-processor-3i33.onrender.com';
 
-let token = localStorage.getItem('pf_token');
-let email = localStorage.getItem('pf_email');
-let name = localStorage.getItem('pf_name') || email;
-
-let userCredits = 0;
-let selectedFile = null;
-let downloadUrl = null;
-
-function clearSessionAndRedirect() {
-  localStorage.removeItem('pf_token');
-  localStorage.removeItem('pf_email');
-  localStorage.removeItem('pf_name');
-  window.location.href = '/login.html';
+function togglePw(id, btn) {
+  const input = document.getElementById(id);
+  const showing = input.type === 'text';
+  input.type = showing ? 'password' : 'text';
+  const eyeOpen = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/>';
+  const eyeOff = '<path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.6 18.6 0 0 1 4.22-5.36M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  btn.querySelector('svg').innerHTML = showing ? eyeOpen : eyeOff;
+  btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
 }
 
-// SECURITY FIX: the previous version only checked that pf_token/pf_email
-// existed in localStorage — it never confirmed the token was a real,
-// still-valid Supabase session, and every backend/Supabase call below is
-// keyed off the plain `email` string. That meant anyone could open dev
-// tools, manually set pf_token/pf_email to any value (including someone
-// else's real email), and load this page as if they were that user —
-// seeing their credit balance, plan, and processing history with no
-// password required.
+// BUG FIX: the previous version did this instead —
 //
-// Fix: before rendering anything, verify the token against Supabase's
-// /auth/v1/user endpoint. This confirms (a) the token is a real, unexpired
-// session issued by Supabase, and (b) the email baked into that session
-// actually matches the email we're about to use for every subsequent call.
-// If either check fails, the stored session is wiped and the user is sent
-// back to login — no dashboard content is ever rendered in that case.
-async function verifySession() {
-  if (!token || !email) {
-    clearSessionAndRedirect();
-    return false;
-  }
+//   if (localStorage.getItem('pf_token')) {
+//     window.location.href = '/dashboard.html';
+//   }
+//
+// — which redirected to the dashboard just because *some* string was
+// sitting in localStorage under pf_token, without ever checking whether
+// that token was still valid. Supabase access tokens expire after about
+// an hour. So any returning user whose last session was more than an
+// hour old (i.e. almost every returning user) got sent straight to
+// dashboard.html on a dead token, which correctly rejected it and sent
+// them right back here — with no explanation. From their side, it just
+// looked like "I try to sign in and it shows me the sign-in page again,"
+// even for a fully confirmed, paying, existing account. They'd never
+// even see the login form on that first load.
+//
+// Fix: actually verify the token against Supabase first. Only skip the
+// login form and go straight to the dashboard if the token is genuinely
+// still valid right now. If it's missing, expired, or invalid, quietly
+// clear it and show the normal login form — no error message needed,
+// since this is just what a logged-out visitor looks like.
+async function checkExistingSession() {
+  const existingToken = localStorage.getItem('pf_token');
+  const existingEmail = localStorage.getItem('pf_email');
 
-  // BUG FIX: the previous version treated every kind of failure here
-  // identically — a genuinely invalid/expired token, and a harmless
-  // transient network hiccup (very possible right after the redirect
-  // from login.html, while the browser is still opening a fresh
-  // connection to Supabase), both wiped the valid session and bounced
-  // straight back to login. That's why signing in would occasionally
-  // require two attempts: the first landed on dashboard.html, hit a
-  // one-off network blip on this very first verification call, and got
-  // silently logged out — even though the token itself was fine. The
-  // second attempt then worked simply because the connection was warm.
-  //
-  // Fix: only treat this as "the session is genuinely invalid" when
-  // Supabase actually responds and says so (an HTTP response comes
-  // back with a non-OK status). If the fetch itself fails outright (no
-  // response at all — a real connectivity issue, not an auth verdict),
-  // retry once before giving up, since that failure says nothing about
-  // whether the token is actually valid.
-  for (let attempt = 1; attempt <= 2; attempt++) {
-    try {
-      const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
-        headers: {
-          'apikey': SUPABASE_KEY,
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (!r.ok) {
-        // Supabase itself rejected the token — this is a genuine,
-        // conclusive "the session is invalid" answer. Don't retry.
-        throw new Error('invalid or expired session');
-      }
-      const user = await r.json();
-      if (!user.email || user.email.toLowerCase() !== email.toLowerCase()) {
-        throw new Error('session/email mismatch');
-      }
-      if (!user.email_confirmed_at && !user.confirmed_at) {
-        throw new Error('email not confirmed');
-      }
-      // Keep name/email in sync with the verified session, not just
-      // whatever was last written to localStorage.
-      name = user.user_metadata?.full_name || name || user.email;
-      email = user.email;
-      return true;
-    } catch (err) {
-      const isNetworkFailure = err instanceof TypeError; // fetch() throws
-      // a plain TypeError specifically when the request never got a
-      // response at all (DNS/connection failure) — anything else here
-      // (invalid session, email mismatch, unconfirmed email) is a real,
-      // conclusive rejection and should not be retried.
-      if (isNetworkFailure && attempt === 1) {
-        await new Promise(res => setTimeout(res, 600));
-        continue; // try once more before giving up
-      }
-      clearSessionAndRedirect();
-      return false;
-    }
-  }
-}
-
-function switchTab(tab) {
-  document.getElementById('tab-clean').style.display = tab === 'clean' ? 'block' : 'none';
-  document.getElementById('tab-turnitin').style.display = tab === 'turnitin' ? 'block' : 'none';
-  document.getElementById('card-tab-clean').classList.toggle('active-tab', tab === 'clean');
-  document.getElementById('card-tab-turnitin').classList.toggle('active-tab', tab === 'turnitin');
-  document.getElementById('indicator-clean').textContent = tab === 'clean' ? 'Viewing' : 'Open →';
-  document.getElementById('indicator-turnitin').textContent = tab === 'turnitin' ? 'Viewing' : 'Open →';
-  if (tab === 'turnitin') loadTurnitinRequests();
-}
-
-let turnitinCredits = 0;
-
-async function loadDashboard() {
-  try {
-    const r = await fetch(`${BACKEND}/credits?email=${encodeURIComponent(email)}`);
-    const data = await r.json();
-
-    // The backend now tracks two genuinely separate credit pools —
-    // clean_credits (Plagiarism & AI Removal) and turnitin_credits
-    // (Turnitin Report). Each tab only ever reflects its own pool, so a
-    // free/removal credit never appears as available Turnitin credit,
-    // and using a removal credit never touches the Turnitin count.
-    userCredits = data.clean_credits ?? data.total_credits ?? 0;
-    turnitinCredits = data.turnitin_credits ?? 0;
-
-    document.getElementById('stat-credits').textContent = userCredits;
-    document.getElementById('stat-credits-turnitin').textContent = turnitinCredits;
-    document.getElementById('welcome-sub').textContent = email;
-
-    const cleanDetails = (data.details || []).filter(d => (d.type || 'clean') === 'clean');
-    const turnitinDetails = (data.details || []).filter(d => d.type === 'turnitin');
-
-    if (cleanDetails.length > 0) {
-      document.getElementById('stat-plan').textContent = cleanDetails[0].plan;
-    } else {
-      document.getElementById('stat-plan').textContent = 'No plan';
-    }
-
-    // Plagiarism & AI Removal tab — reacts only to userCredits (clean pool)
-    document.getElementById('no-credits-msg').style.display = userCredits <= 0 ? 'block' : 'none';
-    document.getElementById('upload-section').style.display = userCredits <= 0 ? 'none' : 'block';
-
-    // Turnitin Report tab — reacts only to turnitinCredits (turnitin pool)
-    // TEMPORARY: while the Turnitin Report integration is still being
-    // built/tested, credit gating on this tab is bypassed entirely —
-    // matching the backend's REQUIRE_TURNITIN_PAYMENT=false test mode.
-    // Set TURNITIN_TEST_MODE to false (and flip REQUIRE_TURNITIN_PAYMENT
-    // back to true on Render) once the integration is ready to launch
-    // for real, so both the frontend and backend re-enforce payment
-    // together rather than one being locked and the other not.
-    if (TURNITIN_TEST_MODE) {
-      document.getElementById('tr-no-credits-msg').style.display = 'none';
-      document.getElementById('tr-upload-section').style.display = 'block';
-    } else {
-      document.getElementById('tr-no-credits-msg').style.display = turnitinCredits <= 0 ? 'block' : 'none';
-      document.getElementById('tr-upload-section').style.display = turnitinCredits <= 0 ? 'none' : 'block';
-    }
-
-    renderCreditsTable('clean-credits-tbody', cleanDetails, '/#pricing');
-    renderCreditsTable('turnitin-credits-tbody', turnitinDetails, '/#turnitin-pricing');
-  } catch(err) {
-    document.getElementById('welcome-sub').textContent = 'Error loading account data.';
-  }
-}
-
-function renderCreditsTable(tbodyId, rows, purchaseLink) {
-  const tbody = document.getElementById(tbodyId);
-  if (rows.length > 0) {
-    tbody.innerHTML = rows.map(row => {
-      const exp = new Date(row.expires);
-      const expired = exp < new Date();
-      const expStr = exp.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
-      return `<tr>
-        <td>${row.plan}</td>
-        <td>${row.remaining}</td>
-        <td>${expStr}</td>
-        <td><span class="badge ${expired ? 'expired' : 'active'}">${expired ? 'Expired' : 'Active'}</span></td>
-      </tr>`;
-    }).join('');
-  } else {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">No credits found. <a href="${purchaseLink}">Purchase a plan</a></td></tr>`;
-  }
-}
-
-const drop = document.getElementById('drop');
-const fileInput = document.getElementById('file-input');
-const fileRow = document.getElementById('file-row');
-const procBtn = document.getElementById('proc-btn');
-const progWrap = document.getElementById('prog-wrap');
-const progFill = document.getElementById('prog-fill');
-const progLabel = document.getElementById('prog-label');
-const progPct = document.getElementById('prog-pct');
-const statusEl = document.getElementById('status');
-
-drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('drag'); });
-drop.addEventListener('dragleave', () => drop.classList.remove('drag'));
-drop.addEventListener('drop', e => { e.preventDefault(); drop.classList.remove('drag'); if (e.dataTransfer.files[0]) setFile(e.dataTransfer.files[0]); });
-fileInput.addEventListener('change', () => { if (fileInput.files[0]) setFile(fileInput.files[0]); });
-
-function setFile(file) {
-  if (!file.name.endsWith('.docx')) { statusEl.textContent = 'Please upload a .docx file.'; statusEl.className = 'status err'; return; }
-  selectedFile = file;
-  document.getElementById('file-name-el').textContent = file.name;
-  document.getElementById('file-size-el').textContent = (file.size/1024/1024).toFixed(2) + ' MB';
-  fileRow.classList.add('show');
-  drop.style.display = 'none';
-  procBtn.disabled = false;
-  statusEl.textContent = '';
-}
-
-function removeFile() {
-  selectedFile = null; fileInput.value = '';
-  fileRow.classList.remove('show'); drop.style.display = '';
-  procBtn.disabled = true; statusEl.textContent = '';
-}
-
-function setProgress(pct, label) {
-  progWrap.classList.add('show');
-  progFill.style.width = pct + '%';
-  progLabel.textContent = label;
-  progPct.textContent = pct + '%';
-}
-
-async function startProcessing() {
-  if (!selectedFile) return;
-  procBtn.disabled = true;
-  procBtn.innerHTML = '<span class="spin"></span> Processing...';
-  statusEl.textContent = '';
-
-  try {
-    setProgress(30, 'Processing your document...');
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    formData.append('email', email);
-    const r = await fetch(`${BACKEND}/process`, { method: 'POST', body: formData });
-    if (r.status === 403) { const e = await r.json(); throw new Error(e.error); }
-    if (!r.ok) throw new Error('Processing failed');
-
-    setProgress(100, 'Complete!');
-    const blob = await r.blob();
-    userCredits--;
-    document.getElementById('stat-credits').textContent = userCredits;
-
-    downloadUrl = window.URL.createObjectURL(blob);
-    const filename = 'processed_' + selectedFile.name;
-    document.getElementById('dl-btn').onclick = () => {
-      const a = document.createElement('a'); a.href = downloadUrl; a.download = filename; a.click();
-    };
-
-    setTimeout(() => {
-      document.getElementById('upload-section').style.display = 'none';
-      document.getElementById('download-box').classList.add('show');
-    }, 500);
-
-  } catch(err) {
-    progWrap.classList.remove('show');
-    statusEl.textContent = err.message || 'Something went wrong. Please try again.';
-    statusEl.className = 'status err';
-    procBtn.disabled = false;
-    procBtn.innerHTML = 'Fix document →';
-  }
-}
-
-function processAnother() {
-  document.getElementById('upload-section').style.display = 'block';
-  document.getElementById('download-box').classList.remove('show');
-  removeFile();
-  progWrap.classList.remove('show');
-  progFill.style.width = '0%';
-  procBtn.innerHTML = 'Fix document →';
-  if (downloadUrl) { window.URL.revokeObjectURL(downloadUrl); downloadUrl = null; }
-  if (userCredits <= 0) {
-    document.getElementById('no-credits-msg').style.display = 'block';
-    document.getElementById('upload-section').style.display = 'none';
-  }
-}
-
-let trSelectedFile = null;
-
-const trDrop = document.getElementById('tr-drop');
-const trFileInput = document.getElementById('tr-file-input');
-const trFileRow = document.getElementById('tr-file-row');
-const trProcBtn = document.getElementById('tr-proc-btn');
-const trStatusEl = document.getElementById('tr-status');
-
-trDrop.addEventListener('dragover', e => { e.preventDefault(); trDrop.classList.add('drag'); });
-trDrop.addEventListener('dragleave', () => trDrop.classList.remove('drag'));
-trDrop.addEventListener('drop', e => { e.preventDefault(); trDrop.classList.remove('drag'); if (e.dataTransfer.files[0]) trSetFile(e.dataTransfer.files[0]); });
-trFileInput.addEventListener('change', () => { if (trFileInput.files[0]) trSetFile(trFileInput.files[0]); });
-
-function trSetFile(file) {
-  if (!file.name.endsWith('.docx')) { trStatusEl.textContent = 'Please upload a .docx file.'; trStatusEl.className = 'status err'; return; }
-  trSelectedFile = file;
-  document.getElementById('tr-file-name-el').textContent = file.name;
-  document.getElementById('tr-file-size-el').textContent = (file.size/1024/1024).toFixed(2) + ' MB';
-  trFileRow.classList.add('show');
-  trDrop.style.display = 'none';
-  trProcBtn.disabled = false;
-  trStatusEl.textContent = '';
-}
-
-function trRemoveFile() {
-  trSelectedFile = null; trFileInput.value = '';
-  trFileRow.classList.remove('show'); trDrop.style.display = '';
-  trProcBtn.disabled = true; trStatusEl.textContent = '';
-}
-
-async function trRequestReport() {
-  if (!trSelectedFile) return;
-  trProcBtn.disabled = true;
-  trProcBtn.innerHTML = '<span class="spin"></span> Sending request...';
-  trStatusEl.textContent = '';
-
-  try {
-    const formData = new FormData();
-    formData.append('file', trSelectedFile);
-    formData.append('email', email);
-    const r = await fetch(`${BACKEND}/request-turnitin-report`, { method: 'POST', body: formData });
-    const data = await r.json();
-    if (!r.ok) throw new Error(data.error || 'Request failed');
-
-    trStatusEl.textContent = '✓ ' + data.message;
-    trStatusEl.className = 'status ok';
-    trRemoveFile();
-    loadTurnitinRequests();
-    loadDashboard(); // refresh credit count since a credit was used
-  } catch(err) {
-    trStatusEl.textContent = err.message || 'Something went wrong. Please try again.';
-    trStatusEl.className = 'status err';
-  }
-  trProcBtn.disabled = false;
-  trProcBtn.innerHTML = 'Request report →';
-}
-
-// Renders one report-download cell (Similarity or AI). Shows a working
-// download link when the URL is present; otherwise shows a small
-// "Processing" or "—" placeholder depending on the overall row status,
-// so it's clear the report is still on its way rather than looking like
-// a permanent blank.
-// Backend returns relative paths (e.g. "/turnitin-report/17/similarity?email=...")
-// since it has no way to know what domain the frontend is hosted on. The
-// dashboard itself is served from a different domain (GitHub Pages) than
-// the API (Render) — so a relative link resolves against the dashboard's
-// own domain and 404s. Prefixing with BACKEND here fixes that.
-function toAbsoluteBackendUrl(path) {
-  if (!path) return path;
-  if (/^https?:\/\//i.test(path)) return path; // already absolute, leave as-is
-  return BACKEND + path;
-}
-
-function renderReportCell(url, overallStatus, label) {
-  if (url) {
-    const absoluteUrl = toAbsoluteBackendUrl(url);
-    return `<a href="${absoluteUrl}" target="_blank" rel="noopener" class="report-link">⬇ ${label}</a>`;
-  }
-  if (overallStatus === 'complete' || overallStatus === 'failed' || overallStatus === 'expired') {
-    // Finished one way or another and this particular report never
-    // showed up (e.g. Plagirazor didn't generate an AI report for
-    // this file) — nothing more to wait for.
-    return '<span class="report-pending">—</span>';
-  }
-  return '<span class="report-pending">Processing…</span>';
-}
-
-let trAllRequests = [];
-let trCurrentPage = 1;
-const TR_PAGE_SIZE = 5;
-
-async function loadTurnitinRequests() {
-  const tbody = document.getElementById('tr-requests-tbody');
-  try {
-    const r = await fetch(`${BACKEND}/turnitin-requests?email=${encodeURIComponent(email)}`);
-    const data = await r.json();
-    trAllRequests = data.requests || [];
-    trCurrentPage = 1;
-    trRenderPage();
-  } catch(err) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">Could not load reports.</td></tr>';
-    document.getElementById('tr-pagination').style.display = 'none';
-  }
-}
-
-function trRenderPage() {
-  const tbody = document.getElementById('tr-requests-tbody');
-  const pagination = document.getElementById('tr-pagination');
-
-  if (trAllRequests.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">No reports requested yet.</td></tr>';
-    pagination.style.display = 'none';
+  if (!existingToken || !existingEmail) {
+    document.getElementById('checking-gate').style.display = 'none';
     return;
   }
 
-  const totalPages = Math.max(1, Math.ceil(trAllRequests.length / TR_PAGE_SIZE));
-  trCurrentPage = Math.min(Math.max(1, trCurrentPage), totalPages);
-  const start = (trCurrentPage - 1) * TR_PAGE_SIZE;
-  const pageRows = trAllRequests.slice(start, start + TR_PAGE_SIZE);
+  try {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${existingToken}`
+      }
+    });
 
-  tbody.innerHTML = pageRows.map(r => {
-    const date = r.requested_at ? new Date(r.requested_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '—';
-    const statusBadge = r.status === 'complete'
-      ? '<span class="badge active">Ready</span>'
-      : (r.status === 'failed' || r.status === 'expired' || r.status === 'error')
-        ? `<span class="badge expired">${r.status[0].toUpperCase()}${r.status.slice(1)}</span>`
-        : '<span class="badge expired">Processing</span>';
+    if (r.ok) {
+      const user = await r.json();
+      if (user.email && user.email.toLowerCase() === existingEmail.toLowerCase()) {
+        // Token is genuinely still valid — safe to skip straight to
+        // the dashboard, same as before, just now actually verified.
+        window.location.href = '/dashboard.html';
+        return;
+      }
+    }
 
-    // Similarity and AI reports are shown as two separate cells/links,
-    // since the backend now tracks and delivers them independently —
-    // one can be ready while the other is still processing (or, for
-    // some files, an AI report may never be generated at all).
-    const similarityCell = renderReportCell(r.similarity_report_url, r.status, 'Similarity');
-    const aiCell = renderReportCell(r.ai_report_url, r.status, 'AI Report');
-
-    return `<tr>
-      <td>${r.filename || '—'}</td>
-      <td>${date}</td>
-      <td>${statusBadge}</td>
-      <td>${similarityCell}</td>
-      <td>${aiCell}</td>
-    </tr>`;
-  }).join('');
-
-  // Only show pagination controls at all once there's more than one page
-  // — no point cluttering the UI for someone with just 1-5 reports.
-  if (totalPages > 1) {
-    pagination.style.display = 'flex';
-    document.getElementById('tr-page-label').textContent = `Page ${trCurrentPage} of ${totalPages}`;
-    document.getElementById('tr-page-prev').disabled = trCurrentPage <= 1;
-    document.getElementById('tr-page-prev').style.opacity = trCurrentPage <= 1 ? '0.4' : '1';
-    document.getElementById('tr-page-prev').style.cursor = trCurrentPage <= 1 ? 'not-allowed' : 'pointer';
-    document.getElementById('tr-page-next').disabled = trCurrentPage >= totalPages;
-    document.getElementById('tr-page-next').style.opacity = trCurrentPage >= totalPages ? '0.4' : '1';
-    document.getElementById('tr-page-next').style.cursor = trCurrentPage >= totalPages ? 'not-allowed' : 'pointer';
-  } else {
-    pagination.style.display = 'none';
+    // Token missing/expired/invalid, or email mismatch — this is a
+    // stale session, not a real error. Clear it quietly and let the
+    // person log in fresh below.
+    localStorage.removeItem('pf_token');
+    localStorage.removeItem('pf_email');
+    localStorage.removeItem('pf_name');
+  } catch (err) {
+    // Network hiccup while checking — don't block the login form over
+    // this, just let them log in manually.
   }
+
+  document.getElementById('checking-gate').style.display = 'none';
 }
 
-function trChangePage(direction) {
-  trCurrentPage += direction;
-  trRenderPage();
+checkExistingSession();
+
+// Check if coming from payment
+const params = new URLSearchParams(window.location.search);
+const paymentId = params.get('payment_id');
+const planKey = params.get('plan');
+if (paymentId) {
+  document.getElementById('status').textContent = '✓ Payment confirmed! Sign in to access your credits.';
+  document.getElementById('status').className = 'status ok';
 }
 
+async function login() {
+  const email = document.getElementById('email').value.trim().toLowerCase();
+  const password = document.getElementById('password').value;
+  const statusEl = document.getElementById('status');
+  const btn = document.getElementById('login-btn');
 
-// Auto-refresh the Turnitin requests table every 30s while the user is
-// on that tab, so a report that finishes in the background (reports can
-// take a while, per the note above the upload box) appears without the
-// user needing to manually reload the page or click away and back.
-setInterval(() => {
-  const turnitinTabVisible =
-    document.getElementById('tab-turnitin').style.display !== 'none';
-  if (turnitinTabVisible) {
-    loadTurnitinRequests();
+  if (!email || !password) {
+    statusEl.textContent = 'Please enter your email and password.';
+    statusEl.className = 'status err'; return;
   }
-}, 30000);
 
-// ============================================================
-// BUY CREDITS MODAL — lets users purchase without leaving the dashboard
-// ============================================================
-const RAZORPAY_KEY = 'rzp_live_St689tKeuE962U';
+  btn.innerHTML = '<span class="spin"></span> Signing in...';
+  btn.disabled = true;
 
-// Mirrors the plans defined on index.html. 'clean' plans grant Plagiarism &
-// AI Removal credits; 'turnitin' plans grant Turnitin Report credits; the
-// Classic plan grants both at once and is shown in both modals since it's
-// the one plan that works across both tabs.
-// NOTE — depends on a matching backend change not made yet:
-// This modal intentionally shows ONE unified plan list, regardless of
-// which tab (AI & Plag Fix or Turnitin Report) the user clicked "Buy
-// Credits" from — Starter and Pro are meant to be spendable on EITHER
-// service, and Classic already correctly grants both credit types in
-// one purchase. This matches the homepage's single pricing table.
-//
-// IMPORTANT: as of now, server.py's PLANS still defines 'buy' and 'pro'
-// as granting credit_type:'clean' only (not a flexible/either type), and
-// get_available_credits() does an exact credit_type match with no
-// flexible fallback. Until that backend change is made, a Starter/Pro
-// credit bought here will only actually work for AI & Plag Fix, even
-// though this UI implies it works for either — don't ship this without
-// the corresponding server.py update.
-const dashPlans = [
-  { key: 'buy', amount: 19900, name: 'Starter', price: '$2', meta: '1 credit — use for either service',
-    features: ['1 credit', 'Use for AI & Plag Fix or Turnitin Report', 'Fast processing'] },
-  { key: 'starter', amount: 199900, name: 'Classic', price: '$20', meta: '18 credits total · one purchase, two credit types', popular: true,
-    features: ['10 Plagiarism & AI Removal credits', '8 Turnitin Report credits included', 'Priority support'] },
-  { key: 'pro', amount: 449900, name: 'Pro', price: '$45', meta: '25 credits — use for either service',
-    features: ['25 credits', 'Use for AI & Plag Fix or Turnitin Report', 'Instant processing'] }
-];
+  try {
+    const r = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'apikey': SUPABASE_KEY},
+      body: JSON.stringify({email, password})
+    });
+    const data = await r.json();
+    if (data.error) throw new Error(data.error_description || data.error);
 
-let currentModalContext = 'clean'; // tracks which tab opened the modal, so we know what to refresh after payment
+    localStorage.setItem('pf_token', data.access_token);
+    localStorage.setItem('pf_email', email);
+    localStorage.setItem('pf_name', data.user?.user_metadata?.full_name || email);
 
-function openBuyModal(context) {
-  currentModalContext = context;
-  document.getElementById('modal-title').textContent = 'Buy Credits';
-
-  const container = document.getElementById('modal-plans');
-  container.innerHTML = dashPlans.map(p => `
-    <div class="modal-plan ${p.popular ? 'pop' : ''}">
-      ${p.popular ? '<div class="modal-plan-badge">Most popular</div>' : ''}
-      <div class="modal-plan-top">
-        <span class="modal-plan-name">${p.name}</span>
-        <span class="modal-plan-price">${p.price}</span>
-      </div>
-      <div class="modal-plan-meta">${p.meta}</div>
-      <ul class="modal-plan-list">${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
-      <button class="modal-plan-btn" onclick="buyPlan('${p.key}', ${p.amount}, '${p.name}')">Get ${p.name} →</button>
-    </div>
-  `).join('');
-
-  document.getElementById('buy-modal').style.display = 'flex';
-}
-
-function closeBuyModal() {
-  document.getElementById('buy-modal').style.display = 'none';
-}
-
-function buyPlan(planKey, amount, planName) {
-  const options = {
-    key: RAZORPAY_KEY,
-    amount: amount,
-    currency: 'INR',
-    name: 'PlagiFix',
-    description: planName,
-    image: 'https://plagifix.com/favicon.ico',
-    handler: async function(response) {
-      // Already logged in — confirm the payment directly rather than
-      // sending the user through login.html like the homepage flow does.
+    // Grant the one-time free credit here, on first successful sign-in.
+    // This is the correct place for it now that email confirmation is
+    // required — signup alone no longer produces a usable session, so
+    // this is the first real moment a user has one. It's safe to call
+    // this on every single login (not just the first): the backend's
+    // /free-credit endpoint checks whether this email has ever had any
+    // credit row before, and does nothing if so — so a returning user,
+    // or someone who tries to sign up again with the same email, will
+    // never receive a second free credit no matter how many times this
+    // runs.
+    //
+    // device_id: reuse the fingerprint generated on register.html if it's
+    // already in localStorage; otherwise (e.g. someone lands directly on
+    // login.html) generate one fresh here so the same abuse checks apply.
+    let deviceId = localStorage.getItem('pf_device_id') || '';
+    if (!deviceId) {
       try {
-        await fetch(`${BACKEND}/confirm-payment`, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ email, payment_id: response.razorpay_payment_id, plan: planKey })
-        });
-      } catch (err) { /* fall through — dashboard refresh below will show current state either way */ }
+        const fp = await FingerprintJS.load();
+        const result = await fp.get();
+        deviceId = result.visitorId;
+        localStorage.setItem('pf_device_id', deviceId);
+      } catch (err) { /* fingerprinting unavailable — proceed without it */ }
+    }
+    fetch(`${BACKEND}/free-credit`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({email, device_id: deviceId})
+    }).catch(() => {}); // best-effort; don't block sign-in on this
 
-      closeBuyModal();
-      loadDashboard();
-      if (currentModalContext === 'turnitin') loadTurnitinRequests();
-    },
-    prefill: { name: name || '', email: email || '' },
-    notes: { plan: planName },
-    theme: { color: '#2563eb' },
-    modal: { ondismiss: function() {} }
-  };
-  const rzp = new Razorpay(options);
-  rzp.open();
+    // If coming from payment, confirm it first
+    if (paymentId && planKey) {
+      await fetch('https://file-processor-3i33.onrender.com/confirm-payment', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email, payment_id: paymentId, plan: planKey})
+      });
+    }
+
+    statusEl.textContent = '✓ Signed in! Redirecting...';
+    statusEl.className = 'status ok';
+    setTimeout(() => window.location.href = '/dashboard.html', 800);
+  } catch(err) {
+    statusEl.textContent = err.message || 'Sign in failed. Please check your credentials.';
+    statusEl.className = 'status err';
+    btn.innerHTML = 'Sign in';
+    btn.disabled = false;
+  }
 }
-
-function logout() {
-  localStorage.removeItem('pf_token');
-  localStorage.removeItem('pf_email');
-  localStorage.removeItem('pf_name');
-  window.location.href = '/';
-}
-
-(async () => {
-  const ok = await verifySession();
-  if (!ok) return; // verifySession already redirected to /login.html
-  document.getElementById('nav-name').textContent = name;
-  document.getElementById('greeting').textContent = `Welcome back, ${name.split(' ')[0]}!`;
-  document.getElementById('loading-gate').style.display = 'none';
-  loadDashboard();
-})();
 </script>
 </body>
 </html>
