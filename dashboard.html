@@ -307,6 +307,11 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
             <tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">Loading...</td></tr>
           </tbody>
         </table>
+        <div id="tr-pagination" style="display:none;align-items:center;justify-content:center;gap:14px;padding:16px 22px;border-top:1px solid #eaecf0;">
+          <button id="tr-page-prev" onclick="trChangePage(-1)" style="background:#fff;border:1px solid #d0d5dd;border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:0.9rem;color:#344054;">‹</button>
+          <span id="tr-page-label" style="font-size:0.8rem;color:#667085;font-weight:600;">Page 1 of 1</span>
+          <button id="tr-page-next" onclick="trChangePage(1)" style="background:#fff;border:1px solid #d0d5dd;border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:0.9rem;color:#344054;">›</button>
+        </div>
       </div>
     </div>
 
@@ -682,43 +687,84 @@ function renderReportCell(url, overallStatus, label) {
   return '<span class="report-pending">Processing…</span>';
 }
 
+let trAllRequests = [];
+let trCurrentPage = 1;
+const TR_PAGE_SIZE = 5;
+
 async function loadTurnitinRequests() {
   const tbody = document.getElementById('tr-requests-tbody');
   try {
     const r = await fetch(`${BACKEND}/turnitin-requests?email=${encodeURIComponent(email)}`);
     const data = await r.json();
-    const reqs = data.requests || [];
-    if (reqs.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">No reports requested yet.</td></tr>';
-      return;
-    }
-    tbody.innerHTML = reqs.map(r => {
-      const date = r.requested_at ? new Date(r.requested_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '—';
-      const statusBadge = r.status === 'complete'
-        ? '<span class="badge active">Ready</span>'
-        : (r.status === 'failed' || r.status === 'expired' || r.status === 'error')
-          ? `<span class="badge expired">${r.status[0].toUpperCase()}${r.status.slice(1)}</span>`
-          : '<span class="badge expired">Processing</span>';
-
-      // Similarity and AI reports are shown as two separate cells/links,
-      // since the backend now tracks and delivers them independently —
-      // one can be ready while the other is still processing (or, for
-      // some files, an AI report may never be generated at all).
-      const similarityCell = renderReportCell(r.similarity_report_url, r.status, 'Similarity');
-      const aiCell = renderReportCell(r.ai_report_url, r.status, 'AI Report');
-
-      return `<tr>
-        <td>${r.filename || '—'}</td>
-        <td>${date}</td>
-        <td>${statusBadge}</td>
-        <td>${similarityCell}</td>
-        <td>${aiCell}</td>
-      </tr>`;
-    }).join('');
+    trAllRequests = data.requests || [];
+    trCurrentPage = 1;
+    trRenderPage();
   } catch(err) {
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">Could not load reports.</td></tr>';
+    document.getElementById('tr-pagination').style.display = 'none';
   }
 }
+
+function trRenderPage() {
+  const tbody = document.getElementById('tr-requests-tbody');
+  const pagination = document.getElementById('tr-pagination');
+
+  if (trAllRequests.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">No reports requested yet.</td></tr>';
+    pagination.style.display = 'none';
+    return;
+  }
+
+  const totalPages = Math.max(1, Math.ceil(trAllRequests.length / TR_PAGE_SIZE));
+  trCurrentPage = Math.min(Math.max(1, trCurrentPage), totalPages);
+  const start = (trCurrentPage - 1) * TR_PAGE_SIZE;
+  const pageRows = trAllRequests.slice(start, start + TR_PAGE_SIZE);
+
+  tbody.innerHTML = pageRows.map(r => {
+    const date = r.requested_at ? new Date(r.requested_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '—';
+    const statusBadge = r.status === 'complete'
+      ? '<span class="badge active">Ready</span>'
+      : (r.status === 'failed' || r.status === 'expired' || r.status === 'error')
+        ? `<span class="badge expired">${r.status[0].toUpperCase()}${r.status.slice(1)}</span>`
+        : '<span class="badge expired">Processing</span>';
+
+    // Similarity and AI reports are shown as two separate cells/links,
+    // since the backend now tracks and delivers them independently —
+    // one can be ready while the other is still processing (or, for
+    // some files, an AI report may never be generated at all).
+    const similarityCell = renderReportCell(r.similarity_report_url, r.status, 'Similarity');
+    const aiCell = renderReportCell(r.ai_report_url, r.status, 'AI Report');
+
+    return `<tr>
+      <td>${r.filename || '—'}</td>
+      <td>${date}</td>
+      <td>${statusBadge}</td>
+      <td>${similarityCell}</td>
+      <td>${aiCell}</td>
+    </tr>`;
+  }).join('');
+
+  // Only show pagination controls at all once there's more than one page
+  // — no point cluttering the UI for someone with just 1-5 reports.
+  if (totalPages > 1) {
+    pagination.style.display = 'flex';
+    document.getElementById('tr-page-label').textContent = `Page ${trCurrentPage} of ${totalPages}`;
+    document.getElementById('tr-page-prev').disabled = trCurrentPage <= 1;
+    document.getElementById('tr-page-prev').style.opacity = trCurrentPage <= 1 ? '0.4' : '1';
+    document.getElementById('tr-page-prev').style.cursor = trCurrentPage <= 1 ? 'not-allowed' : 'pointer';
+    document.getElementById('tr-page-next').disabled = trCurrentPage >= totalPages;
+    document.getElementById('tr-page-next').style.opacity = trCurrentPage >= totalPages ? '0.4' : '1';
+    document.getElementById('tr-page-next').style.cursor = trCurrentPage >= totalPages ? 'not-allowed' : 'pointer';
+  } else {
+    pagination.style.display = 'none';
+  }
+}
+
+function trChangePage(direction) {
+  trCurrentPage += direction;
+  trRenderPage();
+}
+
 
 // Auto-refresh the Turnitin requests table every 30s while the user is
 // on that tab, so a report that finishes in the background (reports can
