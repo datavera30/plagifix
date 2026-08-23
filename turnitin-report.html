@@ -560,6 +560,33 @@ async function aiProcessAfterPayment(paymentId){
     );
   }
 }
+
+// BUG FIX: arriving here from a different page (e.g. clicking "Turnitin
+// Report" on the homepage, which links to
+// turnitin-report.html#turnitin-report) sometimes landed on the wrong
+// section instead of jumping straight to Turnitin Report. This is a
+// well-known interaction between the browser's automatic anchor-jump on
+// page load and `scroll-behavior:smooth` (set in the CSS above) — if
+// anything shifts the page's layout (a web font finishing loading, an
+// image loading in, etc.) while that initial jump is still animating,
+// the animation gets interrupted and the page ends up scrolled to the
+// wrong spot, usually near the top.
+//
+// Fix: once the page has fully finished loading (including fonts and
+// images), explicitly re-scroll to whatever section the URL's hash
+// points to. This corrects the position even if the automatic jump
+// landed somewhere wrong, without removing smooth scrolling for normal
+// in-page nav clicks.
+window.addEventListener('load', () => {
+  if (window.location.hash) {
+    const target = document.querySelector(window.location.hash);
+    if (target) {
+      setTimeout(() => {
+        target.scrollIntoView({ behavior: 'auto', block: 'start' });
+      }, 50);
+    }
+  }
+});
 </script>
 </body>
 </html>
