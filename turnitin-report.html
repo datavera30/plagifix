@@ -19,7 +19,7 @@
   --gold:#d97706;--gold-l:#fff8e6;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
+html{}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;}
 a{color:inherit;text-decoration:none;}
 ul{list-style:none;}
@@ -125,7 +125,7 @@ h1.hero span{color:var(--blue);}
 .email-row input:focus{outline:none;border-color:var(--blue);}
 
 /* ---------- workflow ---------- */
-.workflow{background:#fff;border:1px solid var(--border);border-radius:16px;padding:28px;}
+.workflow{background:#fff;border:1px solid var(--border);border-radius:16px;padding:28px;box-shadow:0 24px 48px rgba(16,24,40,0.16),0 8px 18px rgba(16,24,40,0.1);}
 .steps-row{display:flex;gap:0;margin-bottom:26px;}
 .wstep{flex:1;display:flex;align-items:center;gap:10px;position:relative;}
 .wstep .num{width:26px;height:26px;border-radius:50%;background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;color:var(--muted);flex:none;}
@@ -563,29 +563,30 @@ async function aiProcessAfterPayment(paymentId){
 
 // BUG FIX: arriving here from a different page (e.g. clicking "Turnitin
 // Report" on the homepage, which links to
-// turnitin-report.html#turnitin-report) sometimes landed on the wrong
-// section instead of jumping straight to Turnitin Report. This is a
-// well-known interaction between the browser's automatic anchor-jump on
-// page load and `scroll-behavior:smooth` (set in the CSS above) — if
-// anything shifts the page's layout (a web font finishing loading, an
-// image loading in, etc.) while that initial jump is still animating,
-// the animation gets interrupted and the page ends up scrolled to the
-// wrong spot, usually near the top.
+// turnitin-report.html#turnitin-report) was landing on the wrong section
+// instead of jumping straight to Turnitin Report. This was caused by
+// `scroll-behavior:smooth` in the CSS — it turned the browser's automatic
+// anchor-jump on page load into an animated scroll, and if anything
+// shifted the page's layout while that animation was still running (a
+// web font finishing loading, an image loading in, etc.), the animation
+// got interrupted and landed at the wrong spot, usually near the top.
+// `scroll-behavior:smooth` has been removed from the CSS entirely to fix
+// this at the root — the browser now jumps instantly and correctly on
+// page load, with no animation to interrupt.
 //
-// Fix: once the page has fully finished loading (including fonts and
-// images), explicitly re-scroll to whatever section the URL's hash
-// points to. This corrects the position even if the automatic jump
-// landed somewhere wrong, without removing smooth scrolling for normal
-// in-page nav clicks.
-window.addEventListener('load', () => {
-  if (window.location.hash) {
-    const target = document.querySelector(window.location.hash);
+// The only tradeoff: without that CSS, in-page nav clicks (someone
+// already on this page clicking "AI & Plag Fix" or "Turnitin Report" in
+// the nav) would now also jump instantly instead of scrolling smoothly.
+// This restores smooth scrolling specifically for those in-page clicks,
+// without touching the page-load behavior at all.
+document.querySelectorAll('a[href^="#"]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    const target = document.querySelector(link.getAttribute('href'));
     if (target) {
-      setTimeout(() => {
-        target.scrollIntoView({ behavior: 'auto', block: 'start' });
-      }, 50);
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }
+  });
 });
 </script>
 </body>
