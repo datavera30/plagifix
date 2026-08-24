@@ -143,13 +143,18 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 </nav>
 
 <main>
+  <div id="free-credit-denied-banner" style="display:none;background:#fff7ed;border:1px solid #fdba74;border-radius:12px;padding:14px 20px;margin-bottom:20px;font-size:0.85rem;color:#9a3412;text-align:center;">
+    ⚠️ You've already claimed a free credit on this device — please purchase a plan to continue.
+    <a href="javascript:void(0)" onclick="openBuyModal('clean')" style="color:#c2410c;font-weight:700;text-decoration:underline;margin-left:4px;">Buy Credits →</a>
+  </div>
+
   <div style="background:#2563eb;border:1px solid #2563eb;border-radius:16px;padding:18px 44px;margin:0 -40px 28px -40px;">
     <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;">
       <h1 id="greeting" style="color:#fff;">Welcome back!</h1>
       <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
-        <div style="background:#ea580c;border:1px solid #ea580c;border-radius:10px;padding:10px 16px;text-align:right;">
-          <div class="stat-label" style="margin-bottom:2px;color:#fff;">Active Plan</div>
-          <div class="stat-value" id="stat-plan" style="font-size:1.1rem;line-height:1.2;color:#fff;">—</div>
+        <div style="background:#fff7ed;border:1px solid #fdba74;border-radius:10px;padding:10px 16px;text-align:right;">
+          <div class="stat-label" style="margin-bottom:2px;color:#101828;">Active Plan</div>
+          <div class="stat-value" id="stat-plan" style="font-size:1.1rem;line-height:1.2;color:#c2410c;">—</div>
         </div>
         <button class="buy-more-btn" id="top-buy-btn" style="background:#fff;color:#2563eb;" onclick="openBuyModal(document.getElementById('tab-turnitin').style.display === 'none' ? 'clean' : 'turnitin')">Buy Credits →</button>
       </div>
@@ -438,6 +443,13 @@ async function loadDashboard() {
     // and using a removal credit never touches the Turnitin count.
     userCredits = data.clean_credits ?? data.total_credits ?? 0;
     turnitinCredits = data.turnitin_credits ?? 0;
+
+    // Show the free-credit-denied banner only while it's still relevant —
+    // if they've since bought any plan, both totals will be > 0 and this
+    // naturally stops showing without needing a separate "clear the flag"
+    // step on the backend.
+    const showDeniedBanner = data.free_credit_denied && userCredits <= 0 && turnitinCredits <= 0;
+    document.getElementById('free-credit-denied-banner').style.display = showDeniedBanner ? 'block' : 'none';
 
     document.getElementById('stat-credits').textContent = userCredits;
     document.getElementById('stat-credits-turnitin').textContent = turnitinCredits;
