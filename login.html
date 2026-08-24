@@ -147,7 +147,21 @@ async function login() {
       body: JSON.stringify({email, password})
     });
     const data = await r.json();
-    if (data.error) throw new Error(data.error_description || data.error);
+    // BUG FIX: previously this only checked `if (data.error)` — if
+    // Supabase's response ever didn't include that field in the exact
+    // expected shape (or the request failed in some other way), the code
+    // would fall through and treat it as a successful login, storing a
+    // missing/invalid token and showing "Signed in! Redirecting..." even
+    // though the credentials were wrong. The user would then get bounced
+    // back to login.html once dashboard.html's own session check caught
+    // the bad token — but with no visible error message explaining why.
+    //
+    // Fix: check the actual HTTP status AND confirm a real access_token
+    // is present before ever treating this as a success, instead of only
+    // checking for the absence of an error field.
+    if (!r.ok || data.error || !data.access_token) {
+      throw new Error(data.error_description || data.error || 'Invalid email or password.');
+    }
 
     localStorage.setItem('pf_token', data.access_token);
     localStorage.setItem('pf_email', email);
