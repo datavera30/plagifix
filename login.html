@@ -190,11 +190,30 @@ async function login() {
         localStorage.setItem('pf_device_id', deviceId);
       } catch (err) { /* fingerprinting unavailable — proceed without it */ }
     }
-    fetch(`${BACKEND}/free-credit`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({email, device_id: deviceId})
-    }).catch(() => {}); // best-effort; don't block sign-in on this
+    // BUG FIX: previously this fired the request and threw away the
+    // result entirely (`.catch(() => {})`, response never even read).
+    // That meant if this device had already claimed a free credit
+    // before (under a different email), the backend correctly blocked
+    // it — but the user was never told. They'd just quietly not receive
+    // a credit, with the first sign they'd notice being an unexplained
+    // 0 balance on their dashboard later.
+    //
+    // Fix: actually read the response. If it was blocked specifically
+    // due to the device already claiming a credit, show that clearly.
+    // Sign-in itself still proceeds either way — this is informational,
+    // not a reason to block someone from reaching their account.
+    let freeCreditNotice = '';
+    try {
+      const creditR = await fetch(`${BACKEND}/free-credit`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email, device_id: deviceId})
+      });
+      const creditData = await creditR.json();
+      if (!creditR.ok && creditData.error && creditData.error.toLowerCase().includes('device')) {
+        freeCreditNotice = " (You've already claimed a free credit on this device — please purchase a plan to continue.)";
+      }
+    } catch (err) { /* network issue reaching /free-credit — proceed silently, same as before */ }
 
     // If coming from payment, confirm it first
     if (paymentId && planKey) {
@@ -205,9 +224,9 @@ async function login() {
       });
     }
 
-    statusEl.textContent = '✓ Signed in! Redirecting...';
+    statusEl.textContent = '✓ Signed in! Redirecting...' + freeCreditNotice;
     statusEl.className = 'status ok';
-    setTimeout(() => window.location.href = '/dashboard.html', 800);
+    setTimeout(() => window.location.href = '/dashboard.html', freeCreditNotice ? 1800 : 800);
   } catch(err) {
     statusEl.textContent = err.message || 'Sign in failed. Please check your credentials.';
     statusEl.className = 'status err';
