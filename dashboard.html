@@ -340,44 +340,12 @@ function clearSessionAndRedirect() {
   window.location.href = '/login.html';
 }
 
-// SECURITY FIX: the previous version only checked that pf_token/pf_email
-// existed in localStorage — it never confirmed the token was a real,
-// still-valid Supabase session, and every backend/Supabase call below is
-// keyed off the plain `email` string. That meant anyone could open dev
-// tools, manually set pf_token/pf_email to any value (including someone
-// else's real email), and load this page as if they were that user —
-// seeing their credit balance, plan, and processing history with no
-// password required.
-//
-// Fix: before rendering anything, verify the token against Supabase's
-// /auth/v1/user endpoint. This confirms (a) the token is a real, unexpired
-// session issued by Supabase, and (b) the email baked into that session
-// actually matches the email we're about to use for every subsequent call.
-// If either check fails, the stored session is wiped and the user is sent
-// back to login — no dashboard content is ever rendered in that case.
 async function verifySession() {
   if (!token || !email) {
     clearSessionAndRedirect();
     return false;
   }
 
-  // BUG FIX: the previous version treated every kind of failure here
-  // identically — a genuinely invalid/expired token, and a harmless
-  // transient network hiccup (very possible right after the redirect
-  // from login.html, while the browser is still opening a fresh
-  // connection to Supabase), both wiped the valid session and bounced
-  // straight back to login. That's why signing in would occasionally
-  // require two attempts: the first landed on dashboard.html, hit a
-  // one-off network blip on this very first verification call, and got
-  // silently logged out — even though the token itself was fine. The
-  // second attempt then worked simply because the connection was warm.
-  //
-  // Fix: only treat this as "the session is genuinely invalid" when
-  // Supabase actually responds and says so (an HTTP response comes
-  // back with a non-OK status). If the fetch itself fails outright (no
-  // response at all — a real connectivity issue, not an auth verdict),
-  // retry once before giving up, since that failure says nothing about
-  // whether the token is actually valid.
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
       const r = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
@@ -387,8 +355,6 @@ async function verifySession() {
         }
       });
       if (!r.ok) {
-        // Supabase itself rejected the token — this is a genuine,
-        // conclusive "the session is invalid" answer. Don't retry.
         throw new Error('invalid or expired session');
       }
       const user = await r.json();
@@ -398,20 +364,14 @@ async function verifySession() {
       if (!user.email_confirmed_at && !user.confirmed_at) {
         throw new Error('email not confirmed');
       }
-      // Keep name/email in sync with the verified session, not just
-      // whatever was last written to localStorage.
       name = user.user_metadata?.full_name || name || user.email;
       email = user.email;
       return true;
     } catch (err) {
-      const isNetworkFailure = err instanceof TypeError; // fetch() throws
-      // a plain TypeError specifically when the request never got a
-      // response at all (DNS/connection failure) — anything else here
-      // (invalid session, email mismatch, unconfirmed email) is a real,
-      // conclusive rejection and should not be retried.
+      const isNetworkFailure = err instanceof TypeError;
       if (isNetworkFailure && attempt === 1) {
         await new Promise(res => setTimeout(res, 600));
-        continue; // try once more before giving up
+        continue;
       }
       clearSessionAndRedirect();
       return false;
@@ -436,18 +396,9 @@ async function loadDashboard() {
     const r = await fetch(`${BACKEND}/credits?email=${encodeURIComponent(email)}`);
     const data = await r.json();
 
-    // The backend now tracks two genuinely separate credit pools —
-    // clean_credits (Plagiarism & AI Removal) and turnitin_credits
-    // (Turnitin Report). Each tab only ever reflects its own pool, so a
-    // free/removal credit never appears as available Turnitin credit,
-    // and using a removal credit never touches the Turnitin count.
     userCredits = data.clean_credits ?? data.total_credits ?? 0;
     turnitinCredits = data.turnitin_credits ?? 0;
 
-    // Show the free-credit-denied banner only while it's still relevant —
-    // if they've since bought any plan, both totals will be > 0 and this
-    // naturally stops showing without needing a separate "clear the flag"
-    // step on the backend.
     const showDeniedBanner = data.free_credit_denied && userCredits <= 0 && turnitinCredits <= 0;
     document.getElementById('free-credit-denied-banner').style.display = showDeniedBanner ? 'block' : 'none';
 
@@ -455,12 +406,6 @@ async function loadDashboard() {
     document.getElementById('stat-credits-turnitin').textContent = turnitinCredits;
     document.getElementById('welcome-sub').textContent = email;
 
-    // Flexible credits (from Starter/Pro) are included in BOTH lists —
-    // matching the backend, where a flexible credit genuinely counts as
-    // available for either service until it's actually spent. Without
-    // this, a Starter/Pro-only buyer's plan name would fail to show in
-    // the Active Plan box, since their credit row's type is 'flexible',
-    // not literally 'clean'.
     const cleanDetails = (data.details || []).filter(d => (d.type || 'clean') === 'clean' || d.type === 'flexible');
     const turnitinDetails = (data.details || []).filter(d => d.type === 'turnitin' || d.type === 'flexible');
 
@@ -470,18 +415,9 @@ async function loadDashboard() {
       document.getElementById('stat-plan').textContent = 'No plan';
     }
 
-    // Plagiarism & AI Removal tab — reacts only to userCredits (clean pool)
     document.getElementById('no-credits-msg').style.display = userCredits <= 0 ? 'block' : 'none';
     document.getElementById('upload-section').style.display = userCredits <= 0 ? 'none' : 'block';
 
-    // Turnitin Report tab — reacts only to turnitinCredits (turnitin pool)
-    // TEMPORARY: while the Turnitin Report integration is still being
-    // built/tested, credit gating on this tab is bypassed entirely —
-    // matching the backend's REQUIRE_TURNITIN_PAYMENT=false test mode.
-    // Set TURNITIN_TEST_MODE to false (and flip REQUIRE_TURNITIN_PAYMENT
-    // back to true on Render) once the integration is ready to launch
-    // for real, so both the frontend and backend re-enforce payment
-    // together rather than one being locked and the other not.
     if (TURNITIN_TEST_MODE) {
       document.getElementById('tr-no-credits-msg').style.display = 'none';
       document.getElementById('tr-upload-section').style.display = 'block';
@@ -489,10 +425,6 @@ async function loadDashboard() {
       document.getElementById('tr-no-credits-msg').style.display = turnitinCredits <= 0 ? 'block' : 'none';
       document.getElementById('tr-upload-section').style.display = turnitinCredits <= 0 ? 'none' : 'block';
     }
-
-    // renderCreditsTable calls removed — the credit breakdown tables
-    // ("Your Plagiarism & AI Removal Credits" and "Your Turnitin Report
-    // Credits") were removed from the page entirely.
   } catch(err) {
     document.getElementById('welcome-sub').textContent = 'Error loading account data.';
   }
@@ -504,10 +436,6 @@ function renderCreditsTable(tbodyId, rows, purchaseLink) {
     tbody.innerHTML = rows.map(row => {
       const exp = new Date(row.expires);
       const expired = exp < new Date();
-      // Credits are lifetime — the backend still stores a distant expiry
-      // date internally (100 years out) so the existing "still valid"
-      // query logic doesn't need to change, but showing that raw date to
-      // the user would look strange. Show "Lifetime" instead.
       const yearsOut = (exp.getFullYear() - new Date().getFullYear());
       const expStr = yearsOut >= 50 ? 'Lifetime' : exp.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
       return `<tr>
@@ -578,13 +506,6 @@ async function startProcessing() {
 
     setProgress(100, 'Complete!');
     const blob = await r.blob();
-    // BUG FIX: previously this only manually decremented and updated
-    // 'stat-credits' (the AI & Plag Fix box), leaving 'stat-credits-turnitin'
-    // showing a stale number until the next full page reload. Since credits
-    // can be flexible (shared between both services), spending one here can
-    // also reduce the Turnitin box's real balance — so both need to refresh
-    // together. Re-fetching via loadDashboard() keeps them in sync without
-    // requiring a manual page refresh.
     loadDashboard();
 
     downloadUrl = window.URL.createObjectURL(blob);
@@ -669,13 +590,9 @@ async function trRequestReport() {
     trStatusEl.className = 'status ok';
     trRemoveFile();
     loadTurnitinRequests();
-    loadDashboard(); // refresh credit count since a credit was used
+    loadDashboard();
   } catch(err) {
     const msg = err.message || 'Something went wrong. Please try again.';
-    // Special-case only this known message so "Buy Credits" becomes a
-    // real clickable link to the same modal the top-of-page button
-    // opens — using innerHTML safely here since we're inserting fixed,
-    // known text ourselves, not raw backend/user input.
     if (msg.includes('Buy Credits')) {
       trStatusEl.innerHTML = msg.replace(
         'Buy Credits',
@@ -690,19 +607,9 @@ async function trRequestReport() {
   trProcBtn.innerHTML = 'Request report →';
 }
 
-// Renders one report-download cell (Similarity or AI). Shows a working
-// download link when the URL is present; otherwise shows a small
-// "Processing" or "—" placeholder depending on the overall row status,
-// so it's clear the report is still on its way rather than looking like
-// a permanent blank.
-// Backend returns relative paths (e.g. "/turnitin-report/17/similarity?email=...")
-// since it has no way to know what domain the frontend is hosted on. The
-// dashboard itself is served from a different domain (GitHub Pages) than
-// the API (Render) — so a relative link resolves against the dashboard's
-// own domain and 404s. Prefixing with BACKEND here fixes that.
 function toAbsoluteBackendUrl(path) {
   if (!path) return path;
-  if (/^https?:\/\//i.test(path)) return path; // already absolute, leave as-is
+  if (/^https?:\/\//i.test(path)) return path;
   return BACKEND + path;
 }
 
@@ -712,9 +619,6 @@ function renderReportCell(url, overallStatus, label) {
     return `<a href="${absoluteUrl}" target="_blank" rel="noopener" class="report-link">⬇ ${label}</a>`;
   }
   if (overallStatus === 'complete' || overallStatus === 'failed' || overallStatus === 'expired') {
-    // Finished one way or another and this particular report never
-    // showed up (e.g. Plagirazor didn't generate an AI report for
-    // this file) — nothing more to wait for.
     return '<span class="report-pending">—</span>';
   }
   return '<span class="report-pending">Processing…</span>';
@@ -761,10 +665,6 @@ function trRenderPage() {
         ? `<span class="badge expired">${r.status[0].toUpperCase()}${r.status.slice(1)}</span>`
         : '<span class="badge expired">Processing</span>';
 
-    // Similarity and AI reports are shown as two separate cells/links,
-    // since the backend now tracks and delivers them independently —
-    // one can be ready while the other is still processing (or, for
-    // some files, an AI report may never be generated at all).
     const similarityCell = renderReportCell(r.similarity_report_url, r.status, 'Similarity');
     const aiCell = renderReportCell(r.ai_report_url, r.status, 'AI Report');
 
@@ -777,8 +677,6 @@ function trRenderPage() {
     </tr>`;
   }).join('');
 
-  // Only show pagination controls at all once there's more than one page
-  // — no point cluttering the UI for someone with just 1-5 reports.
   if (totalPages > 1) {
     pagination.style.display = 'flex';
     document.getElementById('tr-page-label').textContent = `Page ${trCurrentPage} of ${totalPages}`;
@@ -798,11 +696,6 @@ function trChangePage(direction) {
   trRenderPage();
 }
 
-
-// Auto-refresh the Turnitin requests table every 30s while the user is
-// on that tab, so a report that finishes in the background (reports can
-// take a while, per the note above the upload box) appears without the
-// user needing to manually reload the page or click away and back.
 setInterval(() => {
   const turnitinTabVisible =
     document.getElementById('tab-turnitin').style.display !== 'none';
@@ -811,29 +704,8 @@ setInterval(() => {
   }
 }, 30000);
 
-// ============================================================
-// BUY CREDITS MODAL — lets users purchase without leaving the dashboard
-// ============================================================
 const RAZORPAY_KEY = 'rzp_live_St689tKeuE962U';
 
-// Mirrors the plans defined on index.html. 'clean' plans grant Plagiarism &
-// AI Removal credits; 'turnitin' plans grant Turnitin Report credits; the
-// Classic plan grants both at once and is shown in both modals since it's
-// the one plan that works across both tabs.
-// NOTE — depends on a matching backend change not made yet:
-// This modal intentionally shows ONE unified plan list, regardless of
-// which tab (AI & Plag Fix or Turnitin Report) the user clicked "Buy
-// Credits" from — Starter and Pro are meant to be spendable on EITHER
-// service, and Classic already correctly grants both credit types in
-// one purchase. This matches the homepage's single pricing table.
-//
-// IMPORTANT: as of now, server.py's PLANS still defines 'buy' and 'pro'
-// as granting credit_type:'clean' only (not a flexible/either type), and
-// get_available_credits() does an exact credit_type match with no
-// flexible fallback. Until that backend change is made, a Starter/Pro
-// credit bought here will only actually work for AI & Plag Fix, even
-// though this UI implies it works for either — don't ship this without
-// the corresponding server.py update.
 const dashPlans = [
   { key: 'buy', amount: 19900, name: 'Starter', price: '$2', meta: '1 credit — use for either service',
     features: ['1 credit', 'Use for AI & Plag Fix or Turnitin Report', 'Fast processing'] },
@@ -843,7 +715,7 @@ const dashPlans = [
     features: ['25 credits', 'Use for AI & Plag Fix or Turnitin Report', 'Instant processing'] }
 ];
 
-let currentModalContext = 'clean'; // tracks which tab opened the modal, so we know what to refresh after payment
+let currentModalContext = 'clean';
 
 function openBuyModal(context) {
   currentModalContext = context;
@@ -870,7 +742,25 @@ function closeBuyModal() {
   document.getElementById('buy-modal').style.display = 'none';
 }
 
-function buyPlan(planKey, amount, planName) {
+async function buyPlan(planKey, amount, planName) {
+  // BUG FIX: previously opened checkout with no order_id — Razorpay's
+  // dashboard confirmed every payment's Order ID field was empty,
+  // meaning Automatic Capture never applied and payments required
+  // manual capture (or silently expired and reversed). See
+  // /create-order in server.py for the full explanation.
+  let orderId = null;
+  try {
+    const orderRes = await fetch(`${BACKEND}/create-order`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ amount })
+    });
+    const orderData = await orderRes.json();
+    if (orderRes.ok && orderData.order_id) {
+      orderId = orderData.order_id;
+    }
+  } catch (err) { /* fall through — checkout still proceeds without it */ }
+
   const options = {
     key: RAZORPAY_KEY,
     amount: amount,
@@ -879,15 +769,13 @@ function buyPlan(planKey, amount, planName) {
     description: planName,
     image: 'https://plagifix.com/favicon.ico',
     handler: async function(response) {
-      // Already logged in — confirm the payment directly rather than
-      // sending the user through login.html like the homepage flow does.
       try {
         await fetch(`${BACKEND}/confirm-payment`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({ email, payment_id: response.razorpay_payment_id, plan: planKey })
         });
-      } catch (err) { /* fall through — dashboard refresh below will show current state either way */ }
+      } catch (err) { }
 
       closeBuyModal();
       loadDashboard();
@@ -898,6 +786,9 @@ function buyPlan(planKey, amount, planName) {
     theme: { color: '#2563eb' },
     modal: { ondismiss: function() {} }
   };
+  if (orderId) {
+    options.order_id = orderId;
+  }
   const rzp = new Razorpay(options);
   rzp.open();
 }
@@ -911,7 +802,7 @@ function logout() {
 
 (async () => {
   const ok = await verifySession();
-  if (!ok) return; // verifySession already redirected to /login.html
+  if (!ok) return;
   document.getElementById('nav-name').textContent = name;
   document.getElementById('greeting').textContent = `Welcome back, ${name.split(' ')[0]}!`;
   document.getElementById('loading-gate').style.display = 'none';
