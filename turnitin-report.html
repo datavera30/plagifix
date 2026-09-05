@@ -424,8 +424,6 @@ function aiGoBackToEmail(){
   setStep('ai', 1);
 }
 
-// Resets the whole instant-fix flow back to the email step, so someone
-// can fix another document from scratch after downloading their result.
 function aiResetInstantFlow(){
   document.getElementById('ai-result').classList.remove('show');
   document.getElementById('ai-result-back').style.display = 'none';
@@ -471,13 +469,29 @@ function setStep(group,n){
   }
 }
 
-// Step 1 of paying: open real Razorpay checkout for $2. Actual document
-// processing only starts once payment succeeds — see aiProcessAfterPayment.
-function aiStartPayment(){
+async function aiStartPayment(){
   const btn = document.getElementById('ai-process-btn');
   if(btn.hasAttribute('disabled')) return;
   btn.setAttribute('disabled','true');
   btn.innerHTML = '<span class="spin"></span> Opening payment...';
+
+  // BUG FIX: previously opened checkout with no order_id — Razorpay's
+  // dashboard confirmed every payment's Order ID field was empty,
+  // meaning Automatic Capture never applied and payments required
+  // manual capture (or silently expired and reversed). See
+  // /create-order in server.py for the full explanation.
+  let orderId = null;
+  try {
+    const orderRes = await fetch(`${BACKEND}/create-order`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ amount: 19900 })
+    });
+    const orderData = await orderRes.json();
+    if (orderRes.ok && orderData.order_id) {
+      orderId = orderData.order_id;
+    }
+  } catch (err) { /* fall through — checkout still proceeds without it */ }
 
   const options = {
     key: RAZORPAY_KEY,
@@ -497,13 +511,13 @@ function aiStartPayment(){
       }
     }
   };
+  if (orderId) {
+    options.order_id = orderId;
+  }
   const rzp = new Razorpay(options);
   rzp.open();
 }
 
-// Step 2: payment succeeded — confirm it with the backend (grants 1
-// flexible credit), then immediately spend that credit processing the
-// real uploaded file, and show the real cleaned document for download.
 async function aiProcessAfterPayment(paymentId){
   document.getElementById('ai-upload-block').style.display = 'none';
   const btn = document.getElementById('ai-process-btn');
@@ -516,10 +530,6 @@ async function aiProcessAfterPayment(paymentId){
   if (progLabel) progLabel.textContent = 'Fixing, Please wait…';
 
   try {
-    // Uses /instant-process — a standalone endpoint that never touches
-    // credits, PLANS, or the dashboard. This is a one-off $2 payment for
-    // this single document, not a credit purchase, even if the email
-    // entered matches an existing registered account.
     const formData = new FormData();
     formData.append('file', aiSelectedFile);
     formData.append('email', aiEmail);
@@ -561,24 +571,6 @@ async function aiProcessAfterPayment(paymentId){
   }
 }
 
-// BUG FIX: arriving here from a different page (e.g. clicking "Turnitin
-// Report" on the homepage, which links to
-// turnitin-report.html#turnitin-report) was landing on the wrong section
-// instead of jumping straight to Turnitin Report. This was caused by
-// `scroll-behavior:smooth` in the CSS — it turned the browser's automatic
-// anchor-jump on page load into an animated scroll, and if anything
-// shifted the page's layout while that animation was still running (a
-// web font finishing loading, an image loading in, etc.), the animation
-// got interrupted and landed at the wrong spot, usually near the top.
-// `scroll-behavior:smooth` has been removed from the CSS entirely to fix
-// this at the root — the browser now jumps instantly and correctly on
-// page load, with no animation to interrupt.
-//
-// The only tradeoff: without that CSS, in-page nav clicks (someone
-// already on this page clicking "AI & Plag Fix" or "Turnitin Report" in
-// the nav) would now also jump instantly instead of scrolling smoothly.
-// This restores smooth scrolling specifically for those in-page clicks,
-// without touching the page-load behavior at all.
 document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', (e) => {
     const target = document.querySelector(link.getAttribute('href'));
