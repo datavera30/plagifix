@@ -82,6 +82,7 @@ h1{font-size:2rem;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px;}
 .dl-btn:hover{background:#05603a;}
 .again-btn{display:block;margin-top:8px;font-size:0.75rem;color:#2563eb;cursor:pointer;background:none;border:none;font-family:'Plus Jakarta Sans',sans-serif;}
 .credit-table{width:100%;border-collapse:collapse;}
+.table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
 .credit-table th{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:#98a2b3;text-align:left;padding:8px 12px;border-bottom:1px solid #eaecf0;}
 .credit-table td{font-size:0.82rem;padding:10px 12px;border-bottom:1px solid #f2f4f7;color:#344054;}
 .credit-table tr:last-child td{border-bottom:none;}
@@ -292,6 +293,7 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
         <div class="section-title">Your Turnitin Reports</div>
       </div>
       <div class="section-body" style="padding:0;">
+        <div class="table-scroll">
         <table class="credit-table">
           <thead>
             <tr>
@@ -306,6 +308,7 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
             <tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">Loading...</td></tr>
           </tbody>
         </table>
+        </div>
         <div id="tr-pagination" style="display:none;align-items:center;justify-content:center;gap:14px;padding:16px 22px;border-top:1px solid #eaecf0;">
           <button id="tr-page-prev" onclick="trChangePage(-1)" style="background:#fff;border:1px solid #d0d5dd;border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:0.9rem;color:#344054;">‹</button>
           <span id="tr-page-label" style="font-size:0.8rem;color:#667085;font-weight:600;">Page 1 of 1</span>
