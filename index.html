@@ -27,7 +27,7 @@
   --gold:#d97706;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
+html{scroll-behavior:smooth;overflow-x:hidden;}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;}
 a{text-decoration:none;color:inherit;}
 nav{display:flex;align-items:center;justify-content:space-between;padding:0 64px;height:68px;border-bottom:1px solid var(--border);background:rgba(255,255,255,0.97);backdrop-filter:blur(10px);position:sticky;top:0;z-index:200;}
@@ -229,6 +229,11 @@ footer{background:var(--text);padding:28px 64px;display:flex;align-items:center;
 @media(max-width:600px){
   h1{font-size:2rem;}
   .feat-grid,.price-grid,.rev-grid,.rev-grid-2,.stats-in,.lang-grid,.why-grid{grid-template-columns:1fr;}
+}
+@media(max-width:860px){
+  nav{padding:0 20px;}
+  nav .nav-c a:not(.btn){display:none;}
+  nav .nav-c{gap:8px;}
 }
 </style>
 </head>
