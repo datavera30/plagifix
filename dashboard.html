@@ -725,11 +725,11 @@ setInterval(() => {
 const RAZORPAY_KEY = 'rzp_live_TZ0Hy4lIksHoGJ';
 
 const dashPlans = [
-  { key: 'buy', amount: 200, name: 'Starter', price: '$2', meta: '1 credit — use for either service',
+  { key: 'buy', amount: 19900, name: 'Starter', price: '$2', meta: '1 credit — use for either service',
     features: ['1 credit', 'Use for AI & Plag Fix or Turnitin Report', 'Fast processing'] },
-  { key: 'starter', amount: 2000, name: 'Classic', price: '$20', meta: '18 credits total · one purchase, two credit types', popular: true,
+  { key: 'starter', amount: 199900, name: 'Classic', price: '$20', meta: '18 credits total · one purchase, two credit types', popular: true,
     features: ['10 Plagiarism & AI Removal credits', '8 Turnitin Report credits included', 'Priority support'] },
-  { key: 'pro', amount: 4500, name: 'Pro', price: '$45', meta: '25 credits — use for either service',
+  { key: 'pro', amount: 449900, name: 'Pro', price: '$45', meta: '25 credits — use for either service',
     features: ['25 credits', 'Use for AI & Plag Fix or Turnitin Report', 'Instant processing'] }
 ];
 
@@ -782,7 +782,7 @@ async function buyPlan(planKey, amount, planName) {
   const options = {
     key: RAZORPAY_KEY,
     amount: amount,
-    currency: 'USD',
+    currency: 'INR',
     name: 'PlagiFix',
     description: planName,
     image: 'https://plagifix.com/favicon.ico',
