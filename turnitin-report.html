@@ -498,7 +498,7 @@ async function aiStartPayment(){
     const orderRes = await fetch(`${BACKEND}/create-order`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ amount: 19900 })
+      body: JSON.stringify({ amount: 200 })
     });
     const orderData = await orderRes.json();
     if (orderRes.ok && orderData.order_id) {
@@ -508,8 +508,8 @@ async function aiStartPayment(){
 
   const options = {
     key: RAZORPAY_KEY,
-    amount: 19900, // ₹199 ≈ $2
-    currency: 'INR',
+    amount: 200, // $2.00
+    currency: 'USD',
     name: 'PlagiFix',
     description: '1 document — Plagiarism & AI Removal',
     handler: function(response){
