@@ -337,8 +337,6 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 <script>
 const BACKEND = 'https://file-processor-production-8962.up.railway.app';
 
-// TEMPORARY: set to false once the Turnitin Report integration is ready
-// to launch for real — see the note in loadDashboard() for details.
 const TURNITIN_TEST_MODE = true;
 const SUPABASE_URL = 'https://wrypnctfcwijglyivthg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I7NR_6S40Ydjyw44Ic26pw_I5-XUrTr';
@@ -445,26 +443,6 @@ async function loadDashboard() {
     }
   } catch(err) {
     document.getElementById('welcome-sub').textContent = 'Error loading account data.';
-  }
-}
-
-function renderCreditsTable(tbodyId, rows, purchaseLink) {
-  const tbody = document.getElementById(tbodyId);
-  if (rows.length > 0) {
-    tbody.innerHTML = rows.map(row => {
-      const exp = new Date(row.expires);
-      const expired = exp < new Date();
-      const yearsOut = (exp.getFullYear() - new Date().getFullYear());
-      const expStr = yearsOut >= 50 ? 'Lifetime' : exp.toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'});
-      return `<tr>
-        <td>${row.plan}</td>
-        <td>${row.remaining}</td>
-        <td>${expStr}</td>
-        <td><span class="badge ${expired ? 'expired' : 'active'}">${expired ? 'Expired' : 'Active'}</span></td>
-      </tr>`;
-    }).join('');
-  } else {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;padding:20px;color:#98a2b3;">No credits found. <a href="${purchaseLink}">Purchase a plan</a></td></tr>`;
   }
 }
 
@@ -724,12 +702,33 @@ setInterval(() => {
 
 const RAZORPAY_KEY = 'rzp_live_TZ0Hy4lIksHoGJ';
 
+// CURRENCY DETECTION: mirrors the simple "India vs. everywhere else"
+// approach confirmed on Plagirazor's own site (found via their page
+// comment "show USD to international visitors, INR to Indian
+// visitors" and their /api/geo/currency endpoint). Uses a free IP
+// geolocation lookup - defaults to INR if the lookup fails for any
+// reason (network issue, ad-blocker, etc.), since INR was the
+// existing, always-working behavior before this feature existed.
+let detectedCurrency = 'INR';
+
+async function detectCurrency() {
+  try {
+    const res = await fetch('https://ipapi.co/json/');
+    const data = await res.json();
+    if (data && data.country_code && data.country_code !== 'IN') {
+      detectedCurrency = 'USD';
+    }
+  } catch (err) {
+    // Lookup failed - stays INR, the safe existing default.
+  }
+}
+
 const dashPlans = [
-  { key: 'buy', amount: 19900, name: 'Starter', price: '$2', meta: '1 credit — use for either service',
+  { key: 'buy', amountINR: 19900, amountUSD: 200, name: 'Starter', priceINR: '$2', priceUSD: '$2', meta: '1 credit — use for either service',
     features: ['1 credit', 'Use for AI & Plag Fix or Turnitin Report', 'Fast processing'] },
-  { key: 'starter', amount: 199900, name: 'Classic', price: '$20', meta: '18 credits total · one purchase, two credit types', popular: true,
+  { key: 'starter', amountINR: 199900, amountUSD: 2000, name: 'Classic', priceINR: '$20', priceUSD: '$20', meta: '18 credits total · one purchase, two credit types', popular: true,
     features: ['10 Plagiarism & AI Removal credits', '8 Turnitin Report credits included', 'Priority support'] },
-  { key: 'pro', amount: 449900, name: 'Pro', price: '$45', meta: '25 credits — use for either service',
+  { key: 'pro', amountINR: 449900, amountUSD: 4500, name: 'Pro', priceINR: '$45', priceUSD: '$45', meta: '25 credits — use for either service',
     features: ['25 credits', 'Use for AI & Plag Fix or Turnitin Report', 'Instant processing'] }
 ];
 
@@ -740,18 +739,22 @@ function openBuyModal(context) {
   document.getElementById('modal-title').textContent = 'Buy Credits';
 
   const container = document.getElementById('modal-plans');
-  container.innerHTML = dashPlans.map(p => `
+  container.innerHTML = dashPlans.map(p => {
+    const amount = detectedCurrency === 'USD' ? p.amountUSD : p.amountINR;
+    const price = detectedCurrency === 'USD' ? p.priceUSD : p.priceINR;
+    return `
     <div class="modal-plan ${p.popular ? 'pop' : ''}">
       ${p.popular ? '<div class="modal-plan-badge">Most popular</div>' : ''}
       <div class="modal-plan-top">
         <span class="modal-plan-name">${p.name}</span>
-        <span class="modal-plan-price">${p.price}</span>
+        <span class="modal-plan-price">${price}</span>
       </div>
       <div class="modal-plan-meta">${p.meta}</div>
       <ul class="modal-plan-list">${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
-      <button class="modal-plan-btn" onclick="buyPlan('${p.key}', ${p.amount}, '${p.name}')">Get ${p.name} →</button>
+      <button class="modal-plan-btn" onclick="buyPlan('${p.key}', ${amount}, '${p.name}')">Get ${p.name} →</button>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   document.getElementById('buy-modal').style.display = 'flex';
 }
@@ -761,28 +764,23 @@ function closeBuyModal() {
 }
 
 async function buyPlan(planKey, amount, planName) {
-  // BUG FIX: previously opened checkout with no order_id — Razorpay's
-  // dashboard confirmed every payment's Order ID field was empty,
-  // meaning Automatic Capture never applied and payments required
-  // manual capture (or silently expired and reversed). See
-  // /create-order in server.py for the full explanation.
   let orderId = null;
   try {
     const orderRes = await fetch(`${BACKEND}/create-order`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ amount })
+      body: JSON.stringify({ amount, currency: detectedCurrency })
     });
     const orderData = await orderRes.json();
     if (orderRes.ok && orderData.order_id) {
       orderId = orderData.order_id;
     }
-  } catch (err) { /* fall through — checkout still proceeds without it */ }
+  } catch (err) { }
 
   const options = {
     key: RAZORPAY_KEY,
     amount: amount,
-    currency: 'INR',
+    currency: detectedCurrency,
     name: 'PlagiFix',
     description: planName,
     image: 'https://plagifix.com/favicon.ico',
@@ -824,6 +822,7 @@ function logout() {
   document.getElementById('nav-name').textContent = name;
   document.getElementById('greeting').textContent = `Welcome back, ${name.split(' ')[0]}!`;
   document.getElementById('loading-gate').style.display = 'none';
+  detectCurrency();
   loadDashboard();
 })();
 </script>
