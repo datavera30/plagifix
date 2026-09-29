@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en"> 
+<html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>PlagiFix — Dashboard</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 html{overflow-x:hidden;}
@@ -700,15 +699,11 @@ setInterval(() => {
   }
 }, 30000);
 
-const RAZORPAY_KEY = 'rzp_live_TZ0Hy4lIksHoGJ';
-
-// CURRENCY DETECTION: mirrors the simple "India vs. everywhere else"
-// approach confirmed on Plagirazor's own site (found via their page
-// comment "show USD to international visitors, INR to Indian
-// visitors" and their /api/geo/currency endpoint). Uses a free IP
-// geolocation lookup - defaults to INR if the lookup fails for any
-// reason (network issue, ad-blocker, etc.), since INR was the
-// existing, always-working behavior before this feature existed.
+// CURRENCY DETECTION: kept for display purposes only (the price shown
+// in the plan modal). PayU (replacing Razorpay) settles in INR only on
+// a standard India merchant account, so the actual amount charged is
+// always computed server-side from the INR plan price regardless of
+// what's displayed here - see buyPlan() below.
 let detectedCurrency = 'INR';
 
 async function detectCurrency() {
@@ -763,50 +758,81 @@ function closeBuyModal() {
   document.getElementById('buy-modal').style.display = 'none';
 }
 
+// PAYU CHECKOUT: replaces the old Razorpay popup. PayU's hosted
+// checkout is a full-page form-POST redirect, not a JS widget - the
+// browser navigates away entirely to PayU's own payment page, the
+// customer pays there, and PayU redirects the browser straight back
+// to our backend's /payment-success or /payment-failure route (which
+// then bounces here with a ?payment=... query param - handled by
+// handlePaymentReturn() below). There is no in-page "handler" callback
+// like Razorpay had, because credits are granted server-side by
+// /payment-success before the browser ever comes back to this page.
 async function buyPlan(planKey, amount, planName) {
-  let orderId = null;
   try {
-    const orderRes = await fetch(`${BACKEND}/create-order`, {
+    const res = await fetch(`${BACKEND}/create-payu-transaction`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ amount, currency: detectedCurrency })
+      body: JSON.stringify({ email, name, plan: planKey })
     });
-    const orderData = await orderRes.json();
-    if (orderRes.ok && orderData.order_id) {
-      orderId = orderData.order_id;
+    const data = await res.json();
+    if (!res.ok || !data.txnid) {
+      throw new Error(data.error || 'Could not start payment. Please try again.');
     }
-  } catch (err) { }
 
-  const options = {
-    key: RAZORPAY_KEY,
-    amount: amount,
-    currency: detectedCurrency,
-    name: 'PlagiFix',
-    description: planName,
-    image: 'https://plagifix.com/favicon.ico',
-    handler: async function(response) {
-      try {
-        await fetch(`${BACKEND}/confirm-payment`, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ email, payment_id: response.razorpay_payment_id, plan: planKey })
-        });
-      } catch (err) { }
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = data.action;
 
-      closeBuyModal();
-      loadDashboard();
-      if (currentModalContext === 'turnitin') loadTurnitinRequests();
-    },
-    prefill: { name: name || '', email: email || '' },
-    notes: { plan: planName },
-    theme: { color: '#2563eb' },
-    modal: { ondismiss: function() {} }
-  };
-  if (orderId) {
-    options.order_id = orderId;
+    const fields = {
+      key: data.key,
+      txnid: data.txnid,
+      amount: data.amount,
+      productinfo: data.productinfo,
+      firstname: data.firstname,
+      email: data.email,
+      udf1: data.udf1,
+      hash: data.hash,
+      surl: data.surl,
+      furl: data.furl
+    };
+    Object.entries(fields).forEach(([k, v]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = k;
+      input.value = v;
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+  } catch (err) {
+    alert(err.message || 'Could not start payment. Please try again.');
   }
-  const rzp = new Razorpay(options);
-  rzp.open();
+}
+
+// Handles the browser landing back here after PayU redirects it
+// through our backend's /payment-success or /payment-failure route
+// (?payment=success|failed|error&txnid=...). Credits were already
+// granted server-side by the time this runs - this just refreshes the
+// on-page totals and lets the customer know what happened.
+function handlePaymentReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const paymentStatus = params.get('payment');
+  if (!paymentStatus) return;
+
+  if (paymentStatus === 'success') {
+    alert('✓ Payment successful! Your credits have been added.');
+  } else if (paymentStatus === 'failed') {
+    alert('Payment was not completed. No charge was made.');
+  } else if (paymentStatus === 'error') {
+    alert('There was a problem confirming your payment. If you were charged, please contact support.');
+  }
+
+  params.delete('payment');
+  params.delete('txnid');
+  const qs = params.toString();
+  const newUrl = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;
+  window.history.replaceState({}, document.title, newUrl);
 }
 
 function logout() {
@@ -824,6 +850,7 @@ function logout() {
   document.getElementById('loading-gate').style.display = 'none';
   detectCurrency();
   loadDashboard();
+  handlePaymentReturn();
 })();
 </script>
 </body>
