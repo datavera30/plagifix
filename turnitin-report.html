@@ -7,7 +7,6 @@
 <meta name="description" content="Remove plagiarism and AI detection flags, or get an official Turnitin Similarity & AI report — both from one PlagiFix account."/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
 :root{
   --bg:#f7f8fa;--white:#fff;
@@ -379,27 +378,6 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
 const BACKEND = 'https://file-processor-production-8962.up.railway.app';
 let aiEmail = '';
 let aiSelectedFile = null;
-const RAZORPAY_KEY = 'rzp_live_TZ0Hy4lIksHoGJ';
-
-// CURRENCY DETECTION: same simple "India vs. everywhere else" approach
-// used on dashboard.html - see that file's comment for the full
-// explanation. Defaults to INR if the lookup fails for any reason.
-let detectedCurrency = 'INR';
-const AI_FIX_AMOUNT_INR = 19900;
-const AI_FIX_AMOUNT_USD = 200;
-
-async function detectCurrency() {
-  try {
-    const res = await fetch('https://ipapi.co/json/');
-    const data = await res.json();
-    if (data && data.country_code && data.country_code !== 'IN') {
-      detectedCurrency = 'USD';
-    }
-  } catch (err) {
-    // Lookup failed - stays INR, the safe existing default.
-  }
-}
-detectCurrency();
 
 function aiEmailNext(){
   const input = document.getElementById('ai-email-input');
@@ -467,70 +445,132 @@ function setStep(group,n){
   }
 }
 
+// PAYU CHECKOUT (guest instant-fix flow): PayU's hosted checkout is a
+// full-page redirect - the browser actually leaves this page, goes to
+// PayU's own site, pays, then PayU sends it straight back to our
+// backend's /payment-success route, which in turn redirects here with
+// ?payment=success&txnid=.... The File object picked below (aiSelectedFile)
+// lives only in this tab's JS memory and can't survive that round
+// trip, unlike Razorpay's old popup which never left the page - so the
+// document itself is uploaded to the backend and "stashed" under the
+// same txnid BEFORE redirecting, and picked back up by
+// handleInstantPaymentReturn() once the browser returns.
 async function aiStartPayment(){
   const btn = document.getElementById('ai-process-btn');
   if(btn.hasAttribute('disabled')) return;
+  if (!aiSelectedFile) return;
   btn.setAttribute('disabled','true');
-  btn.innerHTML = '<span class="spin"></span> Opening payment...';
+  btn.innerHTML = '<span class="spin"></span> Preparing payment...';
 
-  let orderId = null;
   try {
-    const orderRes = await fetch(`${BACKEND}/create-order`, {
+    const txnRes = await fetch(`${BACKEND}/create-payu-transaction`, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        amount: detectedCurrency === 'USD' ? AI_FIX_AMOUNT_USD : AI_FIX_AMOUNT_INR,
-        currency: detectedCurrency
-      })
+      body: JSON.stringify({ email: aiEmail, instant: true })
     });
-    const orderData = await orderRes.json();
-    if (orderRes.ok && orderData.order_id) {
-      orderId = orderData.order_id;
+    const txnData = await txnRes.json();
+    if (!txnRes.ok || !txnData.txnid) {
+      throw new Error(txnData.error || 'Could not start payment.');
     }
-  } catch (err) { }
 
-  const options = {
-    key: RAZORPAY_KEY,
-    amount: detectedCurrency === 'USD' ? AI_FIX_AMOUNT_USD : AI_FIX_AMOUNT_INR,
-    currency: detectedCurrency,
-    name: 'PlagiFix',
-    description: '1 document — Plagiarism & AI Removal',
-    handler: function(response){
-      aiProcessAfterPayment(response.razorpay_payment_id);
-    },
-    prefill: { email: aiEmail },
-    theme: { color: '#2563eb' },
-    modal: {
-      ondismiss: function(){
-        btn.removeAttribute('disabled');
-        btn.innerHTML = 'Pay & Fix Document →';
-      }
+    const stashForm = new FormData();
+    stashForm.append('file', aiSelectedFile);
+    stashForm.append('email', aiEmail);
+    stashForm.append('txnid', txnData.txnid);
+    const stashRes = await fetch(`${BACKEND}/stash-instant-file`, { method: 'POST', body: stashForm });
+    if (!stashRes.ok) {
+      const err = await stashRes.json().catch(() => ({}));
+      throw new Error(err.error || 'Could not upload your document. Please try again.');
     }
-  };
-  if (orderId) {
-    options.order_id = orderId;
+
+    // sessionStorage survives the redirect to PayU and back (the
+    // in-memory File object does not) - this is how the page knows,
+    // after returning, which document/email this txnid belongs to.
+    sessionStorage.setItem('pf_instant_txnid', txnData.txnid);
+    sessionStorage.setItem('pf_instant_email', aiEmail);
+    sessionStorage.setItem('pf_instant_filename', aiSelectedFile.name);
+
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = txnData.action;
+    const fields = {
+      key: txnData.key,
+      txnid: txnData.txnid,
+      amount: txnData.amount,
+      productinfo: txnData.productinfo,
+      firstname: txnData.firstname,
+      email: txnData.email,
+      udf1: txnData.udf1,
+      hash: txnData.hash,
+      surl: txnData.surl,
+      furl: txnData.furl
+    };
+    Object.entries(fields).forEach(([k, v]) => {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = k;
+      input.value = v;
+      form.appendChild(input);
+    });
+    document.body.appendChild(form);
+    form.submit();
+  } catch (err) {
+    btn.removeAttribute('disabled');
+    btn.innerHTML = 'Pay & Fix Document →';
+    alert(err.message || 'Could not start payment. Please try again.');
   }
-  const rzp = new Razorpay(options);
-  rzp.open();
 }
 
-async function aiProcessAfterPayment(paymentId){
+// Runs once on page load. Picks up where aiStartPayment() left off
+// after PayU (via our backend) redirects the browser back here with
+// ?payment=success|failed|error&txnid=.... Credits/payment records are
+// already settled server-side by this point - this just fetches the
+// stashed document's fixed version using the txnid, or reports what
+// went wrong.
+async function handleInstantPaymentReturn(){
+  const params = new URLSearchParams(window.location.search);
+  const paymentStatus = params.get('payment');
+  if (!paymentStatus) return;
+
+  const txnid = params.get('txnid') || sessionStorage.getItem('pf_instant_txnid');
+  const storedEmail = sessionStorage.getItem('pf_instant_email');
+  const storedFilename = sessionStorage.getItem('pf_instant_filename');
+
+  params.delete('payment');
+  params.delete('txnid');
+  const qs = params.toString();
+  const newUrl = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;
+  window.history.replaceState({}, document.title, newUrl);
+
+  if (paymentStatus === 'failed') {
+    alert('Payment was not completed. No charge was made. You can try again.');
+    sessionStorage.removeItem('pf_instant_txnid');
+    sessionStorage.removeItem('pf_instant_email');
+    sessionStorage.removeItem('pf_instant_filename');
+    return;
+  }
+  if (paymentStatus === 'error') {
+    alert('There was a problem confirming your payment. If you were charged, please contact support@plagifix.com.');
+    return;
+  }
+  if (paymentStatus !== 'success' || !txnid || !storedEmail) return;
+
+  document.getElementById('ai-email-block').style.display = 'none';
   document.getElementById('ai-upload-block').style.display = 'none';
-  const btn = document.getElementById('ai-process-btn');
-  btn.innerHTML = 'Fixing, Please wait…';
-  const progress=document.getElementById('ai-progress');
-  const bar=document.getElementById('ai-progress-bar');
-  const progLabel=document.getElementById('ai-progress-text');
+  const progress = document.getElementById('ai-progress');
+  const bar = document.getElementById('ai-progress-bar');
+  const progLabel = document.getElementById('ai-progress-text');
   progress.classList.add('show');
   bar.style.width = '20%';
   if (progLabel) progLabel.textContent = 'Fixing, Please wait…';
+  setStep('ai', 2);
 
   try {
-    const formData = new FormData();
-    formData.append('file', aiSelectedFile);
-    formData.append('email', aiEmail);
-    formData.append('payment_id', paymentId);
-    const r = await fetch(`${BACKEND}/instant-process`, { method: 'POST', body: formData });
+    const r = await fetch(`${BACKEND}/instant-process-stashed`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email: storedEmail, txnid })
+    });
     if (!r.ok) {
       const err = await r.json().catch(() => ({}));
       throw new Error(err.error || 'Processing failed');
@@ -539,7 +579,7 @@ async function aiProcessAfterPayment(paymentId){
     bar.style.width = '100%';
     const blob = await r.blob();
     const downloadUrl = window.URL.createObjectURL(blob);
-    const filename = 'fixed_' + (aiSelectedFile ? aiSelectedFile.name : 'document.docx');
+    const filename = 'fixed_' + (storedFilename || 'document.docx');
 
     setTimeout(() => {
       progress.classList.remove('show');
@@ -552,18 +592,20 @@ async function aiProcessAfterPayment(paymentId){
         dlBtn.removeAttribute('onclick');
       }
       document.getElementById('ai-result-back').style.display = 'block';
-      setStep('ai',3);
+      setStep('ai', 3);
     }, 300);
 
   } catch (err) {
     progress.classList.remove('show');
-    document.getElementById('ai-upload-block').style.display = 'block';
-    btn.innerHTML = 'Pay & Fix Document →';
-    btn.removeAttribute('disabled');
+    document.getElementById('ai-email-block').style.display = 'block';
     alert(
       (err.message || 'Something went wrong while processing your document.') +
-      '\n\nYour payment was confirmed but processing failed — please contact support@plagifix.com with this payment ID: ' + paymentId
+      '\n\nYour payment was confirmed but processing failed — please contact support@plagifix.com with this payment reference: ' + txnid
     );
+  } finally {
+    sessionStorage.removeItem('pf_instant_txnid');
+    sessionStorage.removeItem('pf_instant_email');
+    sessionStorage.removeItem('pf_instant_filename');
   }
 }
 
@@ -576,6 +618,8 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     }
   });
 });
+
+handleInstantPaymentReturn();
 </script>
 </body>
 </html>
