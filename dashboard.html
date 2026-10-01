@@ -422,8 +422,14 @@ async function loadDashboard() {
       document.getElementById('stat-plan').textContent = 'No plan';
     }
 
-    document.getElementById('no-credits-msg').style.display = userCredits <= 0 ? 'block' : 'none';
-    document.getElementById('upload-section').style.display = userCredits <= 0 ? 'none' : 'block';
+    // Always show the upload box here, same as the Turnitin tab - a
+    // 0-credit account still sees the drop zone, and only finds out
+    // they're out of credits if they actually upload and hit "Fix
+    // document" (startProcessing()'s catch block then shows the
+    // backend's "No credits remaining. Buy Credits" with Buy Credits
+    // linkified), instead of being blocked from even trying upfront.
+    document.getElementById('no-credits-msg').style.display = 'none';
+    document.getElementById('upload-section').style.display = 'block';
 
     if (TURNITIN_TEST_MODE) {
       document.getElementById('tr-no-credits-msg').style.display = 'none';
