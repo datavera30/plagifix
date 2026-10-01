@@ -432,6 +432,17 @@ async function loadDashboard() {
       document.getElementById('tr-no-credits-msg').style.display = turnitinCredits <= 0 ? 'block' : 'none';
       document.getElementById('tr-upload-section').style.display = turnitinCredits <= 0 ? 'none' : 'block';
     }
+
+    // New / fully-out-of-credits account: nudge toward a purchase with
+    // the buy modal itself, once per visit (sessionStorage), rather than
+    // just leaving it to the inline "No credits remaining" boxes. Resets
+    // on each fresh visit/reload, so it keeps resurfacing until they buy.
+    const hasAnyCredits = userCredits > 0 || turnitinCredits > 0;
+    if (!hasAnyCredits && !sessionStorage.getItem('pf_buy_prompt_shown')) {
+      sessionStorage.setItem('pf_buy_prompt_shown', '1');
+      openBuyModal('clean');
+      document.getElementById('modal-title').textContent = 'Purchase a plan to get started';
+    }
   } catch(err) {
     document.getElementById('welcome-sub').textContent = 'Error loading account data.';
   }
@@ -508,7 +519,15 @@ async function startProcessing() {
 
   } catch(err) {
     progWrap.classList.remove('show');
-    statusEl.textContent = err.message || 'Something went wrong. Please try again.';
+    const msg = err.message || 'Something went wrong. Please try again.';
+    if (msg.includes('Buy Credits')) {
+      statusEl.innerHTML = msg.replace(
+        'Buy Credits',
+        '<a href="javascript:void(0)" onclick="openBuyModal(\'clean\')" style="color:#2563eb;font-weight:700;text-decoration:underline;">Buy Credits</a>'
+      );
+    } else {
+      statusEl.textContent = msg;
+    }
     statusEl.className = 'status err';
     procBtn.disabled = false;
     procBtn.innerHTML = 'Fix document →';
