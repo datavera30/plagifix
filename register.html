@@ -6,7 +6,6 @@
 <title>PlagiFix — Create Account</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
-<script src="https://openfpcdn.io/fingerprintjs/v4/iife.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 html{overflow-x:hidden;}
@@ -127,22 +126,6 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 <script>
 const SUPABASE_URL = 'https://wrypnctfcwijglyivthg.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_I7NR_6S40Ydjyw44Ic26pw_I5-XUrTr';
-const BACKEND = 'https://file-processor-production-8962.up.railway.app';
-
-// Generate a device fingerprint once, as early as possible, and stash it in
-// localStorage so login.html can reuse the SAME id later (this is what lets
-// the backend recognize "this device already claimed a free credit" even
-// when the free credit actually gets granted at login time, not signup time).
-let deviceIdPromise = (async () => {
-  try {
-    const fp = await FingerprintJS.load();
-    const result = await fp.get();
-    localStorage.setItem('pf_device_id', result.visitorId);
-    return result.visitorId;
-  } catch (err) {
-    return '';
-  }
-})();
 
 function togglePw(id, btn) {
   const input = document.getElementById(id);
@@ -181,7 +164,7 @@ async function register() {
   try {
     // redirect_to tells Supabase where to send the user after they click the
     // confirmation link in their email — straight to the login page, where
-    // they'll sign in manually and that sign-in is what grants their free credit.
+    // they'll sign in manually.
     const redirectTo = encodeURIComponent('https://plagifix.com/login.html');
     const r = await fetch(`${SUPABASE_URL}/auth/v1/signup?redirect_to=${redirectTo}`, {
       method: 'POST',
@@ -194,8 +177,8 @@ async function register() {
     // With "Confirm email" enabled, Supabase returns 200 + a user object
     // but NO session (access_token is null/undefined) until the user
     // clicks the confirmation link in their inbox. Only treat signup as
-    // complete — store a session, grant the free credit, and redirect —
-    // once a real access_token is present.
+    // complete — store a session and redirect — once a real access_token
+    // is present.
     if (!data.access_token) {
       statusEl.textContent = '✓ Almost done! Check your inbox and click the confirmation link to activate your account.';
       statusEl.className = 'status ok';
@@ -209,27 +192,11 @@ async function register() {
     localStorage.setItem('pf_email', email);
     localStorage.setItem('pf_name', name);
 
-    // Give 1 free credit to new user
-    const deviceId = await deviceIdPromise;
-    const creditR = await fetch(`${BACKEND}/free-credit`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({email, device_id: deviceId})
-    });
-    const creditData = await creditR.json();
-    if (!creditR.ok) {
-      // Signup itself still succeeded — only the free credit was refused
-      // (e.g. disposable email, or this device/email already claimed one).
-      // Let the user know clearly rather than silently showing "success".
-      statusEl.textContent = creditData.error || 'Account created, but the free credit could not be granted.';
-      statusEl.className = 'status err';
-      setTimeout(() => window.location.href = '/dashboard.html', 2000);
-      return;
-    }
-
-    statusEl.textContent = '✓ Account created! You have 1 free credit. Redirecting...';
+    // Free trial credits were removed (2026-10-01) - new accounts start
+    // with 0 credits and buy a plan from the dashboard.
+    statusEl.textContent = '✓ Account created! Redirecting...';
     statusEl.className = 'status ok';
-    setTimeout(() => window.location.href = '/dashboard.html', 1500);
+    setTimeout(() => window.location.href = '/dashboard.html', 1200);
   } catch(err) {
     statusEl.textContent = err.message || 'Registration failed. Please try again.';
     statusEl.className = 'status err';
