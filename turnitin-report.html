@@ -144,6 +144,7 @@ h1.hero span{color:var(--blue);}
 .credit-note{font-size:0.72rem;color:var(--muted);margin-top:12px;text-align:center;}
 .credit-note strong{color:var(--text);}
 .btn:disabled{opacity:.4;cursor:not-allowed;}
+.paypal-help{font-size:0.72rem;color:var(--muted);text-align:center;margin-top:6px;line-height:1.5;}
 .fab{position:fixed;right:26px;bottom:26px;z-index:60;box-shadow:0 10px 26px rgba(37,99,235,0.35);}
 footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:space-between;}
 .f-logo{font-size:0.9rem;font-weight:800;color:var(--text);}
@@ -281,6 +282,10 @@ footer{padding:18px 48px;border-top:1px solid var(--border);background:#fff;disp
       <div class="workflow-actions">
         <a class="btn btn-blue" id="ai-process-btn" onclick="aiStartPayment()" disabled>Pay & Fix Document →</a>
       </div>
+      <div id="ai-paypal-slot" style="display:none;margin-top:22px;">
+        <div id="ai-paypal-btn"></div>
+        <p class="paypal-help">Secure payment by PayPal (cards accepted). Paid but nothing happened? Email support@plagifix.com with your PayPal receipt.</p>
+      </div>
     </div>
 
     <div class="progress-wrap" id="ai-progress">
@@ -383,6 +388,7 @@ function aiEmailNext(){
 }
 
 function aiGoBackToEmail(){
+  aiHidePayPal();
   document.getElementById('ai-upload-block').style.display = 'none';
   document.getElementById('ai-email-block').style.display = 'block';
   setStep('ai', 1);
@@ -416,6 +422,7 @@ function setFile(group,file){
 }
 function resetFile(group){
   if(group === 'ai') aiSelectedFile = null;
+  if(group === 'ai') aiHidePayPal();
   document.getElementById(group+'-file-row').classList.remove('show');
   document.getElementById(group+'-dropzone').style.display='block';
   document.getElementById(group+'-progress').classList.remove('show');
@@ -433,6 +440,157 @@ function setStep(group,n){
   }
 }
 
+// PAYPAL (international guests). India (by browser timezone) keeps the PayU
+// flow in aiStartPayment() below; everywhere else (or unknown) gets a PayPal
+// button instead of the PayU redirect. The customer never leaves this page,
+// so the document stays in memory; it is still uploaded to the backend
+// stash just BEFORE the PayPal popup opens, so the existing
+// /instant-process-stashed route (single-use) can fix it after payment.
+// The $2 price is set by the server, never here.
+function isIndiaTimezone() {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return ['Asia/Calcutta', 'Asia/Kolkata'].includes(tz);
+  } catch (err) { return false; }   // unknown -> international (PayPal)
+}
+
+let paypalSdkPromise = null;
+function loadPayPalSdk() {
+  if (paypalSdkPromise) return paypalSdkPromise;
+  paypalSdkPromise = fetch(`${BACKEND}/paypal-config`).then(r => r.json()).then(cfg => {
+    if (!cfg.enabled || !cfg.client_id) throw new Error('PayPal not available');
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(cfg.client_id)}&currency=USD&intent=capture`;
+      s.onload = () => resolve(window.paypal);
+      s.onerror = () => reject(new Error('PayPal failed to load'));
+      document.head.appendChild(s);
+    });
+  }).catch(err => { paypalSdkPromise = null; throw err; });
+  return paypalSdkPromise;
+}
+
+let aiPayPalRendered = false;
+
+function aiHidePayPal() {
+  const slot = document.getElementById('ai-paypal-slot');
+  const actions = document.querySelector('#ai-upload-block .workflow-actions');
+  if (slot) slot.style.display = 'none';
+  if (actions) actions.style.display = '';
+}
+
+function aiShowPayPal() {
+  const slot = document.getElementById('ai-paypal-slot');
+  const target = document.getElementById('ai-paypal-btn');
+  const actions = document.querySelector('#ai-upload-block .workflow-actions');
+  if (!slot || !target) return;
+  if (actions) actions.style.display = 'none';
+  slot.style.display = 'block';
+  if (aiPayPalRendered) return;
+  aiPayPalRendered = true;
+  target.innerHTML = '<p class="paypal-help">Loading secure payment…</p>';
+
+  loadPayPalSdk().then(paypal => {
+    target.innerHTML = '';
+    paypal.Buttons({
+      style: { layout: 'vertical', height: 45 },
+      createOrder: async () => {
+        if (!aiSelectedFile) throw new Error('Please choose your document first.');
+        const res = await fetch(`${BACKEND}/create-paypal-order`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ email: aiEmail, instant: true })
+        });
+        const d = await res.json();
+        if (!res.ok || !d.id) throw new Error(d.error || 'Could not start payment.');
+        // Upload the document BEFORE the customer pays (same idea as the PayU flow).
+        const stashForm = new FormData();
+        stashForm.append('file', aiSelectedFile);
+        stashForm.append('email', aiEmail);
+        stashForm.append('txnid', d.id);
+        const stashRes = await fetch(`${BACKEND}/stash-instant-file`, { method: 'POST', body: stashForm });
+        if (!stashRes.ok) {
+          const err = await stashRes.json().catch(() => ({}));
+          throw new Error(err.error || 'Could not upload your document. Please try again.');
+        }
+        return d.id;
+      },
+      onApprove: async (data, actions) => {
+        const res = await fetch(`${BACKEND}/capture-paypal-order`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ order_id: data.orderID })
+        });
+        const d = await res.json();
+        if (res.status === 402 && d.error === 'declined') return actions.restart();
+        if (!res.ok) throw new Error(d.error || 'Payment could not be completed.');
+        if (d.status !== 'success') {
+          alert('Your payment is being processed by PayPal. Your document will be fixed once it is confirmed. If nothing happens within a few hours, email support@plagifix.com with your PayPal receipt.');
+          return;
+        }
+        await aiFinishPayPal(d.txnid, d.email, aiSelectedFile ? aiSelectedFile.name : 'document.docx');
+      },
+      onCancel: () => { alert('Payment cancelled. No charge was made.'); },
+      onError: (err) => {
+        alert((err && err.message ? err.message + '\n\n' : '') +
+          'If you were charged, please email support@plagifix.com with your PayPal receipt.');
+      }
+    }).render('#ai-paypal-btn');
+  }).catch(() => {
+    aiPayPalRendered = false;
+    target.innerHTML = '<p class="paypal-help">Could not load PayPal. Please refresh the page or email support@plagifix.com.</p>';
+  });
+}
+
+// After a successful PayPal payment: fetch the fixed document and show
+// the same "ready to download" result as the PayU return path.
+async function aiFinishPayPal(txnid, payEmail, originalName) {
+  document.getElementById('ai-email-block').style.display = 'none';
+  document.getElementById('ai-upload-block').style.display = 'none';
+  const progress = document.getElementById('ai-progress');
+  const bar = document.getElementById('ai-progress-bar');
+  const progLabel = document.getElementById('ai-progress-text');
+  progress.classList.add('show');
+  bar.style.width = '20%';
+  if (progLabel) progLabel.textContent = 'Fixing, Please wait…';
+  setStep('ai', 2);
+
+  try {
+    const r = await fetch(`${BACKEND}/instant-process-stashed`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email: payEmail, txnid })
+    });
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      throw new Error(err.error || 'Processing failed');
+    }
+    bar.style.width = '100%';
+    const blob = await r.blob();
+    const downloadUrl = window.URL.createObjectURL(blob);
+    setTimeout(() => {
+      progress.classList.remove('show');
+      const resultEl = document.getElementById('ai-result');
+      resultEl.classList.add('show');
+      const dlBtn = resultEl.querySelector('a.btn');
+      if (dlBtn) {
+        dlBtn.href = downloadUrl;
+        dlBtn.download = 'fixed_' + originalName;
+        dlBtn.removeAttribute('onclick');
+      }
+      document.getElementById('ai-result-back').style.display = 'block';
+      setStep('ai', 3);
+    }, 300);
+  } catch (err) {
+    progress.classList.remove('show');
+    document.getElementById('ai-email-block').style.display = 'block';
+    alert(
+      (err.message || 'Something went wrong while processing your document.') +
+      '\n\nYour payment was confirmed but processing failed — please contact support@plagifix.com with this payment reference: ' + txnid
+    );
+  }
+}
+
 // PAYU CHECKOUT (guest instant-fix flow): PayU's hosted checkout is a
 // full-page redirect - the browser actually leaves this page, goes to
 // PayU's own site, pays, then PayU sends it straight back to our
@@ -447,6 +605,7 @@ async function aiStartPayment(){
   const btn = document.getElementById('ai-process-btn');
   if(btn.hasAttribute('disabled')) return;
   if (!aiSelectedFile) return;
+  if (!isIndiaTimezone()) { aiShowPayPal(); return; }
   btn.setAttribute('disabled','true');
   btn.innerHTML = '<span class="spin"></span> Preparing payment...';
 
