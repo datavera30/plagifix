@@ -125,6 +125,8 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
 .modal-plan-list li::before{content:'✓ ';color:#027a48;font-weight:700;}
 .modal-plan-btn{width:100%;padding:11px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;border:none;background:#2563eb;color:#fff;}
 .modal-plan-btn:hover{background:#1d4ed8;}
+.paypal-slot{margin-top:2px;}
+.paypal-help{font-size:0.72rem;color:#667085;text-align:center;margin-top:6px;line-height:1.5;}
 @media(max-width:700px){
   nav,main,footer{padding-left:20px;padding-right:20px;}
   .welcome-banner{margin:0 -20px 28px -20px;}
@@ -763,7 +765,11 @@ function openBuyModal(context) {
       </div>
       <div class="modal-plan-meta">${p.meta}</div>
       <ul class="modal-plan-list">${p.features.map(f => `<li>${f}</li>`).join('')}</ul>
-      <button class="modal-plan-btn" onclick="buyPlan('${p.key}', ${amount}, '${p.name}')">Get ${p.name} →</button>
+      <button class="modal-plan-btn" id="plan-btn-${p.key}" onclick="buyPlan('${p.key}', ${amount}, '${p.name}')">Get ${p.name} →</button>
+      <div class="paypal-slot" id="paypal-${p.key}" style="display:none;">
+        <div id="paypal-btn-${p.key}"></div>
+        <p class="paypal-help">Secure payment by PayPal (cards accepted). Paid but no credits? Email support@plagifix.com with your PayPal receipt.</p>
+      </div>
     </div>
   `;
   }).join('');
@@ -773,6 +779,88 @@ function openBuyModal(context) {
 
 function closeBuyModal() {
   document.getElementById('buy-modal').style.display = 'none';
+}
+
+// PAYPAL (international customers). The popup above is the same for
+// everyone; the India / international split happens only when a plan is
+// clicked: India (by browser timezone) -> buyPlan() -> PayU in INR,
+// everywhere else (or unknown) -> PayPal in USD. PayPal needs its own
+// button for the customer to click, so showPayPalFor() swaps that plan's
+// "Get Plan" button for it. Prices are set by the server, never here.
+function isIndiaTimezone() {
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return ['Asia/Calcutta', 'Asia/Kolkata'].includes(tz);
+  } catch (err) { return false; }   // unknown -> international (PayPal)
+}
+
+let paypalSdkPromise = null;
+function loadPayPalSdk() {
+  if (paypalSdkPromise) return paypalSdkPromise;
+  paypalSdkPromise = fetch(`${BACKEND}/paypal-config`).then(r => r.json()).then(cfg => {
+    if (!cfg.enabled || !cfg.client_id) throw new Error('PayPal not available');
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(cfg.client_id)}&currency=USD&intent=capture`;
+      s.onload = () => resolve(window.paypal);
+      s.onerror = () => reject(new Error('PayPal failed to load'));
+      document.head.appendChild(s);
+    });
+  }).catch(err => { paypalSdkPromise = null; throw err; });
+  return paypalSdkPromise;
+}
+
+function showPayPalFor(planKey) {
+  const btn = document.getElementById('plan-btn-' + planKey);
+  const slot = document.getElementById('paypal-' + planKey);
+  const target = document.getElementById('paypal-btn-' + planKey);
+  if (!slot || !target) return;
+  if (btn) btn.style.display = 'none';
+  slot.style.display = 'block';
+  if (slot.dataset.rendered) return;
+  slot.dataset.rendered = '1';
+  target.innerHTML = '<p class="paypal-help">Loading secure payment…</p>';
+
+  loadPayPalSdk().then(paypal => {
+    target.innerHTML = '';
+    paypal.Buttons({
+      style: { layout: 'vertical', height: 40 },
+      createOrder: async () => {
+        const res = await fetch(`${BACKEND}/create-paypal-order`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ email, plan: planKey })
+        });
+        const d = await res.json();
+        if (!res.ok || !d.id) throw new Error(d.error || 'Could not start payment.');
+        return d.id;
+      },
+      onApprove: async (data, actions) => {
+        const res = await fetch(`${BACKEND}/capture-paypal-order`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ order_id: data.orderID })
+        });
+        const d = await res.json();
+        if (res.status === 402 && d.error === 'declined') return actions.restart();
+        if (!res.ok) throw new Error(d.error || 'Payment could not be completed.');
+        closeBuyModal();
+        if (d.status === 'success') {
+          alert('✓ Payment successful! Your credits have been added.');
+          loadDashboard();
+        } else {
+          alert('Your payment is being processed. Credits will be added once PayPal confirms it. If they do not appear within a few hours, email support@plagifix.com.');
+        }
+      },
+      onCancel: () => { alert('Payment cancelled. No charge was made.'); },
+      onError: () => {
+        alert('Something went wrong with the payment. If you were charged, please email support@plagifix.com with your PayPal receipt.');
+      }
+    }).render('#paypal-btn-' + planKey);
+  }).catch(() => {
+    slot.dataset.rendered = '';
+    target.innerHTML = '<p class="paypal-help">Could not load PayPal. Please refresh the page or email support@plagifix.com.</p>';
+  });
 }
 
 // PAYU CHECKOUT: replaces the old Razorpay popup. PayU's hosted
@@ -785,6 +873,7 @@ function closeBuyModal() {
 // like Razorpay had, because credits are granted server-side by
 // /payment-success before the browser ever comes back to this page.
 async function buyPlan(planKey, amount, planName) {
+  if (!isIndiaTimezone()) { showPayPalFor(planKey); return; }
   try {
     const res = await fetch(`${BACKEND}/create-payu-transaction`, {
       method: 'POST',
