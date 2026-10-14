@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>PlagiFix Admin</title>
+<style>
+  :root{--bg:#f6f4ee;--card:#fff;--line:#e2ddd0;--text:#111827;--muted:#64748b;--blue:#2563eb;--green:#15803d;--red:#b91c1c;--amber:#b45309;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',system-ui,-apple-system,Segoe UI,sans-serif;font-size:14px}
+  .wrap{max-width:1100px;margin:0 auto;padding:24px 16px 60px}
+  h1{font-size:1.4rem;margin:0 0 4px}
+  .sub{color:var(--muted);margin-bottom:18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .login{max-width:360px;margin:12vh auto 0}
+  input[type=password],input[type=text]{width:100%;padding:10px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px}
+  button{font:inherit;cursor:pointer;border:1px solid transparent;border-radius:8px;padding:8px 14px;font-weight:600}
+  .primary{background:var(--blue);color:#fff}
+  .primary:disabled{opacity:.5;cursor:not-allowed}
+  .ghost{background:#fff;border-color:#cbd5e1;color:var(--text)}
+  .danger{background:#fff;border-color:#f1b5b5;color:var(--red)}
+  .bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+  .tab{background:#fff;border:1px solid var(--line);color:var(--muted)}
+  .tab.on{background:var(--text);border-color:var(--text);color:#fff}
+  .grow{flex:1}
+  .msg{margin:10px 0;padding:10px 12px;border-radius:8px;display:none}
+  .msg.err{display:block;background:#fef2f2;color:var(--red);border:1px solid #fecaca}
+  .msg.ok{display:block;background:#ecfdf3;color:var(--green);border:1px solid #bbf7d0}
+  .req{border:1px solid var(--line);border-radius:12px;background:#fff;padding:14px 16px;margin-bottom:12px}
+  .top{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+  .id{font-weight:800}
+  .fname{font-weight:600;word-break:break-all}
+  .meta{color:var(--muted);font-size:13px;margin-top:2px;word-break:break-all}
+  .late{color:var(--amber);font-weight:700}
+  .badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;background:#eef2ff;color:#3730a3}
+  .badge.complete{background:#dcfce7;color:var(--green)}
+  .badge.failed,.badge.expired{background:#fee2e2;color:var(--red)}
+  .send{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
+  .send label{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}
+  .send input[type=file]{width:100%;font-size:13px}
+  .prog{height:6px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-top:8px;display:none}
+  .prog i{display:block;height:100%;width:0;background:var(--blue)}
+  .empty{text-align:center;color:var(--muted);padding:30px}
+  @media(max-width:720px){.send{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- password screen -->
+  <div id="login" class="card login">
+    <h1>PlagiFix admin</h1>
+    <div class="sub">Enter the admin password.</div>
+    <input type="password" id="pw" placeholder="Password" autocomplete="current-password">
+    <div id="loginMsg" class="msg"></div>
+    <div style="margin-top:12px"><button class="primary" id="loginBtn" style="width:100%">Open</button></div>
+  </div>
+
+  <!-- main screen -->
+  <div id="main" style="display:none">
+    <div class="bar">
+      <div class="grow"><h1>Turnitin requests</h1><div class="sub" id="count"></div></div>
+      <button class="ghost" id="refresh">Refresh</button>
+      <button class="ghost" id="logout">Log out</button>
+    </div>
+    <div class="bar" id="tabs">
+      <button class="tab on" data-f="waiting">Waiting</button>
+      <button class="tab" data-f="complete">Delivered</button>
+      <button class="tab" data-f="failed">Failed</button>
+      <button class="tab" data-f="all">All</button>
+    </div>
+    <div id="msg" class="msg"></div>
+    <div id="list"></div>
+  </div>
+</div>
+
+<script>
+const BACKEND = 'https://file-processor-production-8962.up.railway.app';
+let PW = '';
+let FILTER = 'waiting';
+const $ = id => document.getElementById(id);
+
+function show(el, text, kind){ el.textContent = text; el.className = 'msg ' + kind; }
+function clearMsg(el){ el.className = 'msg'; el.textContent = ''; }
+
+async function api(path, opts){
+  opts = opts || {};
+  opts.headers = Object.assign({'X-Admin-Password': PW}, opts.headers || {});
+  const r = await fetch(BACKEND + path, opts);
+  let data = {};
+  try { data = await r.json(); } catch(e){}
+  if (!r.ok) { const err = new Error(data.error || ('Error ' + r.status)); err.status = r.status; err.data = data; throw err; }
+  return data;
+}
+
+async function login(){
+  PW = $('pw').value;
+  if (!PW) return;
+  clearMsg($('loginMsg'));
+  $('loginBtn').disabled = true;
+  try {
+    await api('/admin/turnitin/requests?filter=waiting');
+    try { sessionStorage.setItem('pf_admin', PW); } catch(e){}
+    $('login').style.display = 'none';
+    $('main').style.display = 'block';
+    load();
+  } catch(e){
+    PW = '';
+    show($('loginMsg'), e.message, 'err');
+  }
+  $('loginBtn').disabled = false;
+}
+
+function logout(){
+  PW = '';
+  try { sessionStorage.removeItem('pf_admin'); } catch(e){}
+  $('main').style.display = 'none';
+  $('login').style.display = 'block';
+  $('pw').value = '';
+}
+
+function fmtDate(s){
+  if (!s) return '—';
+  const d = new Date(s);
+  return d.toLocaleString('en-GB', {day:'numeric', month:'short', hour:'2-digit', minute:'2-digit'});
+}
+function waited(h){
+  if (h < 1) return 'under 1 hour';
+  if (h < 48) return Math.round(h) + ' h';
+  return Math.round(h / 24) + ' days';
+}
+function el(tag, cls, text){
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text != null) e.textContent = text;   // textContent: student-supplied text can never run as code
+  return e;
+}
+
+async function load(keepMsg){
+  if (!keepMsg) clearMsg($('msg'));
+  $('list').textContent = 'Loading…';
+  try {
+    const d = await api('/admin/turnitin/requests?filter=' + FILTER);
+    render(d.requests);
+  } catch(e){
+    if (e.status === 401 || e.status === 429) { logout(); show($('loginMsg'), e.message, 'err'); return; }
+    $('list').textContent = '';
+    show($('msg'), e.message, 'err');
+  }
+}
+
+function render(rows){
+  const list = $('list');
+  list.textContent = '';
+  $('count').textContent = rows.length + (rows.length === 1 ? ' request' : ' requests');
+  if (!rows.length) { list.appendChild(el('div', 'empty', 'Nothing here.')); return; }
+
+  rows.forEach(r => {
+    const card = el('div', 'req');
+    const top = el('div', 'top');
+    const left = el('div', 'grow');
+    const line1 = el('div');
+    line1.appendChild(el('span', 'id', '#' + r.id + '  '));
+    line1.appendChild(el('span', 'badge ' + r.status, r.status));
+    left.appendChild(line1);
+    left.appendChild(el('div', 'fname', r.filename || '—'));
+    const meta = el('div', 'meta', r.email + '  ·  requested ' + fmtDate(r.requested_at));
+    left.appendChild(meta);
+    if (r.status === 'processing') {
+      const w = el('div', 'meta' + (r.hours_waiting >= 12 ? ' late' : ''), 'Waiting ' + waited(r.hours_waiting));
+      left.appendChild(w);
+    }
+    if (r.completed_at) left.appendChild(el('div', 'meta', 'Delivered ' + fmtDate(r.completed_at)));
+    if (r.error_message && r.status === 'failed') left.appendChild(el('div', 'meta', 'Reason: ' + r.error_message));
+    top.appendChild(left);
+
+    if (r.has_file) {
+      const dl = el('button', 'ghost', 'Download student file');
+      dl.onclick = () => downloadFile(r.id, dl);
+      top.appendChild(dl);
+    }
+    if (r.status === 'processing') {
+      const bad = el('button', 'danger', 'Mark failed + refund');
+      bad.onclick = () => markFailed(r);
+      top.appendChild(bad);
+    }
+    card.appendChild(top);
+
+    if (r.status === 'processing') card.appendChild(sendForm(r));
+    list.appendChild(card);
+  });
+}
+
+function sendForm(r){
+  const box = el('div', 'send');
+  const a = el('div'); a.appendChild(el('label', null, 'Similarity report (PDF)'));
+  const fa = el('input'); fa.type = 'file'; fa.accept = '.pdf,application/pdf'; a.appendChild(fa);
+  const b = el('div'); b.appendChild(el('label', null, 'AI report (PDF)'));
+  const fb = el('input'); fb.type = 'file'; fb.accept = '.pdf,application/pdf'; b.appendChild(fb);
+  const btn = el('button', 'primary', 'Send reports');
+  box.appendChild(a); box.appendChild(b); box.appendChild(btn);
+  const prog = el('div', 'prog'); const bar = el('i'); prog.appendChild(bar);
+  const wrap = el('div'); wrap.style.gridColumn = '1 / -1'; wrap.appendChild(prog); box.appendChild(wrap);
+
+  btn.onclick = () => {
+    if (!fa.files[0] && !fb.files[0]) { show($('msg'), 'Choose at least one report PDF first.', 'err'); return; }
+    const what = [fa.files[0] ? 'Similarity' : null, fb.files[0] ? 'AI' : null].filter(Boolean).join(' + ');
+    if (!confirm('Send the ' + what + ' report(s) to ' + r.email + ' for request #' + r.id + '?')) return;
+    const fd = new FormData();
+    if (fa.files[0]) fd.append('similarity', fa.files[0]);
+    if (fb.files[0]) fd.append('ai', fb.files[0]);
+    btn.disabled = true; btn.textContent = 'Uploading…'; prog.style.display = 'block';
+    const x = new XMLHttpRequest();
+    x.open('POST', BACKEND + '/admin/turnitin/' + r.id + '/send-reports');
+    x.setRequestHeader('X-Admin-Password', PW);
+    x.upload.onprogress = ev => { if (ev.lengthComputable) bar.style.width = Math.round(ev.loaded / ev.total * 100) + '%'; };
+    x.onload = () => {
+      let d = {}; try { d = JSON.parse(x.responseText); } catch(e){}
+      if (x.status === 200) {
+        show($('msg'), d.email_sent
+          ? 'Sent. #' + r.id + ' is delivered and ' + r.email + ' was emailed. Their ' + d.download_hours + '-hour window has started.'
+          : 'Delivered, but the email did NOT send. The reports are on their dashboard. Please email ' + r.email + ' yourself.',
+          d.email_sent ? 'ok' : 'err');
+        load(true);
+      } else {
+        show($('msg'), d.error || ('Error ' + x.status), 'err');
+        btn.disabled = false; btn.textContent = 'Send reports'; prog.style.display = 'none';
+      }
+    };
+    x.onerror = () => { show($('msg'), 'Network error. Nothing was sent. Try again.', 'err'); btn.disabled = false; btn.textContent = 'Send reports'; };
+    x.send(fd);
+  };
+  return box;
+}
+
+async function downloadFile(id, btn){
+  btn.disabled = true;
+  try {
+    const d = await api('/admin/turnitin/' + id + '/file-link');
+    window.open(d.url, '_blank', 'noopener');
+  } catch(e){ show($('msg'), e.message, 'err'); }
+  btn.disabled = false;
+}
+
+async function markFailed(r){
+  const reason = prompt('Reason to tell the student (their credit will be returned and their file deleted):',
+                        'We could not produce a report for this document.');
+  if (reason === null) return;
+  try {
+    await api('/admin/turnitin/' + r.id + '/mark-failed', {
+      method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({reason})
+    });
+    show($('msg'), '#' + r.id + ' marked failed. Credit returned and the student was emailed.', 'ok');
+    load(true);
+  } catch(e){ show($('msg'), e.message, 'err'); }
+}
+
+$('loginBtn').onclick = login;
+$('pw').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+$('refresh').onclick = () => load();
+$('logout').onclick = logout;
+$('tabs').addEventListener('click', e => {
+  const b = e.target.closest('.tab'); if (!b) return;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  b.classList.add('on'); FILTER = b.dataset.f; load();
+});
+
+// keep the password for this browser tab only, so a refresh does not log you out
+try {
+  const saved = sessionStorage.getItem('pf_admin');
+  if (saved) { $('pw').value = saved; login(); }
+} catch(e){}
+</script>
+</body>
+</html>
