@@ -262,10 +262,10 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
         <div id="tr-upload-section">
           <div class="drop" id="tr-drop" onclick="document.getElementById('tr-file-input').click()">
             <span class="drop-icon">📄</span>
-            <div class="drop-title">Drop your .docx file here</div>
+            <div class="drop-title">Drop your .pdf, .doc or .docx file here</div>
             <p class="drop-sub">or <b onclick="event.stopPropagation();document.getElementById('tr-file-input').click()">browse to upload</b></p>
           </div>
-          <input type="file" id="tr-file-input" accept=".docx"/>
+          <input type="file" id="tr-file-input" accept=".pdf,.doc,.docx"/>
 
           <div class="file-row" id="tr-file-row">
             <span style="font-size:1.2rem;">📝</span>
@@ -570,7 +570,9 @@ trDrop.addEventListener('drop', e => { e.preventDefault(); trDrop.classList.remo
 trFileInput.addEventListener('change', () => { if (trFileInput.files[0]) trSetFile(trFileInput.files[0]); });
 
 function trSetFile(file) {
-  if (!file.name.endsWith('.docx')) { trStatusEl.textContent = 'Please upload a .docx file.'; trStatusEl.className = 'status err'; return; }
+  const trExt = file.name.toLowerCase().slice(file.name.lastIndexOf('.'));
+  if (!['.pdf', '.doc', '.docx'].includes(trExt)) { trStatusEl.textContent = 'Please upload a .pdf, .doc or .docx file.'; trStatusEl.className = 'status err'; return; }
+  if (file.size > 50 * 1024 * 1024) { trStatusEl.textContent = 'File is too large. Maximum size is 50 MB.'; trStatusEl.className = 'status err'; return; }
   trSelectedFile = file;
   document.getElementById('tr-file-name-el').textContent = file.name;
   document.getElementById('tr-file-size-el').textContent = (file.size/1024/1024).toFixed(2) + ' MB';
