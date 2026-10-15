@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PlagiFix | Dashboard</title>
+<title>PlagiFix — Dashboard</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
@@ -145,7 +145,7 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
   <a href="/" class="logo" style="display:flex;align-items:center;gap:0;"><img src="/images/logo.png" alt="PlagiFix logo" style="width:42px;height:42px;border-radius:11px;"/>Plagi<span>Fix</span></a>
   <div class="nav-c" id="nav-c">
     <a href="/">Home</a>
-    <a href="/#how">AI & Plag Fix</a>
+    <a href="/turnitin-report.html#ai-plagfix">AI & Plag Fix</a>
     <a href="/turnitin-report.html#turnitin-report">Turnitin Report</a>
     <a href="/pricing.html">Pricing</a>
     <a href="/faq.html">FAQ</a>
@@ -154,7 +154,6 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
     <button class="hamburger" id="hamburger" aria-label="Menu" onclick="document.getElementById('hamburger').classList.toggle('open');document.getElementById('nav-c').classList.toggle('open');">
       <span></span><span></span><span></span>
     </button>
-    <span class="nav-name" id="nav-name"></span>
     <button class="logout-btn" onclick="logout()">Sign out</button>
   </div>
 </nav>
@@ -953,7 +952,6 @@ function logout() {
 (async () => {
   const ok = await verifySession();
   if (!ok) return;
-  document.getElementById('nav-name').textContent = name;
   document.getElementById('greeting').textContent = `Welcome back, ${name.split(' ')[0]}!`;
   document.getElementById('loading-gate').style.display = 'none';
   detectCurrency();
