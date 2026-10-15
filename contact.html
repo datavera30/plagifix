@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Contact — PlagiFix</title>
+<title>Contact | PlagiFix</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
@@ -38,10 +38,43 @@ footer{background:#0f172a;padding:24px 64px;display:flex;align-items:center;just
 .foot-links{display:flex;gap:20px;}
 .foot-links a{font-size:0.74rem;color:rgba(255,255,255,0.35);}
 .foot-copy{font-size:0.72rem;color:rgba(255,255,255,0.25);}
+nav{height:64px;position:relative;justify-content:space-between;padding:0 48px;border-bottom:1px solid #eaecf0;}
+.nav-c{display:flex;gap:18px;align-items:center;}
+.nav-c a{font-size:0.875rem;font-weight:700;color:#101828;transition:color .15s;}
+.nav-c a:hover{color:#2563eb;}
+.nav-c .btn-blue{padding:9px 18px;border-radius:8px;font-size:0.85rem;font-weight:700;background:linear-gradient(135deg,#3b82f6 0%,#2563eb 45%,#1e40af 100%);color:#fff;}
+.nav-c .btn-blue:hover{color:#fff;}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;width:38px;height:38px;flex-direction:column;justify-content:center;align-items:center;gap:5px;}
+.hamburger span{display:block;width:22px;height:2px;background:#101828;border-radius:2px;transition:all .2s;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+@media(max-width:640px){
+  nav{padding:0 20px;}
+  .hamburger{display:flex;}
+  .nav-c{display:none;position:absolute;top:100%;left:0;right:0;z-index:500;background:#fff;flex-direction:column;align-items:stretch;gap:0;padding:8px 20px 16px;border-bottom:1px solid #eaecf0;box-shadow:0 12px 24px rgba(16,24,40,0.08);}
+  .nav-c.open{display:flex;}
+  .nav-c a{padding:12px 4px;border-bottom:1px solid #eaecf0;}
+  .nav-c a.btn-blue{border-bottom:none;text-align:center;margin-top:10px;}
+}
+nav{z-index:500;}
 </style>
 </head>
 <body>
-<nav><a href="/" class="logo">Plagi<span>Fix</span></a></nav>
+<nav>
+  <a href="/" class="logo" style="display:flex;align-items:center;gap:0;"><img src="/images/logo.png" alt="PlagiFix logo" style="width:42px;height:42px;border-radius:11px;"/>Plagi<span>Fix</span></a>
+  <button class="hamburger" id="hamburger" aria-label="Menu" onclick="document.getElementById('hamburger').classList.toggle('open');document.getElementById('nav-c').classList.toggle('open');">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-c" id="nav-c">
+    <a href="/">Home</a>
+    <a href="/turnitin-report.html#ai-plagfix">AI & Plag Fix</a>
+    <a href="/turnitin-report.html#turnitin-report">Turnitin Report</a>
+    <a href="/pricing.html">Pricing</a>
+    <a href="/faq.html">FAQ</a>
+    <a href="/login.html" class="btn-blue">Sign in</a>
+  </div>
+</nav>
 <main>
   <div class="wrap">
     <div class="tag">Support</div>
