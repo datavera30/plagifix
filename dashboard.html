@@ -1,9 +1,9 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PlagiFix — Dashboard</title>
+<title>PlagiFix | Dashboard</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232563eb'/><text x='16' y='23' text-anchor='middle' font-family='Georgia,serif' font-size='20' font-weight='bold' fill='white'>P</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <style>
@@ -137,6 +137,7 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
   .stats{grid-template-columns:1fr 1fr;}
   .buy-more{flex-direction:column;gap:14px;text-align:center;}
 }
+nav{position:sticky!important;top:0;z-index:500!important;}
 </style>
 </head>
 <body>
@@ -343,6 +344,7 @@ let name = localStorage.getItem('pf_name') || email;
 let userCredits = 0;
 let selectedFile = null;
 let downloadUrl = null;
+let cleanDone = false; // true while the "document is ready" box is showing
 
 function clearSessionAndRedirect() {
   localStorage.removeItem('pf_token');
@@ -430,15 +432,14 @@ async function loadDashboard() {
     // backend's "No credits remaining. Buy Credits" with Buy Credits
     // linkified), instead of being blocked from even trying upfront.
     document.getElementById('no-credits-msg').style.display = 'none';
-    document.getElementById('upload-section').style.display = 'block';
+    // Do not bring the upload box back while the "document is ready" box is showing
+    // (this refresh can finish after processing and used to re-show the old button).
+    if (!cleanDone) document.getElementById('upload-section').style.display = 'block';
 
-    if (TURNITIN_TEST_MODE) {
-      document.getElementById('tr-no-credits-msg').style.display = 'none';
-      document.getElementById('tr-upload-section').style.display = 'block';
-    } else {
-      document.getElementById('tr-no-credits-msg').style.display = turnitinCredits <= 0 ? 'block' : 'none';
-      document.getElementById('tr-upload-section').style.display = turnitinCredits <= 0 ? 'none' : 'block';
-    }
+    // Same as the AI & Plag Fix tab: always show the upload box. "No credits remaining.
+    // Buy Credits" appears only when they try to submit.
+    document.getElementById('tr-no-credits-msg').style.display = 'none';
+    document.getElementById('tr-upload-section').style.display = 'block';
 
     // New / fully-out-of-credits account: nudge toward a purchase with
     // the buy modal itself, once per visit (sessionStorage), rather than
@@ -511,6 +512,8 @@ async function startProcessing() {
 
     setProgress(100, 'Complete!');
     const blob = await r.blob();
+    cleanDone = true;
+    document.getElementById('upload-section').style.display = 'none';
     loadDashboard();
 
     downloadUrl = window.URL.createObjectURL(blob);
@@ -542,6 +545,7 @@ async function startProcessing() {
 }
 
 function processAnother() {
+  cleanDone = false;
   document.getElementById('upload-section').style.display = 'block';
   document.getElementById('download-box').classList.remove('show');
   removeFile();
@@ -549,10 +553,8 @@ function processAnother() {
   progFill.style.width = '0%';
   procBtn.innerHTML = 'Fix document →';
   if (downloadUrl) { window.URL.revokeObjectURL(downloadUrl); downloadUrl = null; }
-  if (userCredits <= 0) {
-    document.getElementById('no-credits-msg').style.display = 'block';
-    document.getElementById('upload-section').style.display = 'none';
-  }
+  // Keep the upload box visible even with 0 credits; "No credits remaining. Buy Credits"
+  // appears only if they try to process (see startProcessing).
 }
 
 let trSelectedFile = null;
