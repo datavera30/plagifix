@@ -606,7 +606,7 @@ async function trRequestReport() {
     // Clear the upload box FIRST (trRemoveFile also clears the status line),
     // then show the message so it stays visible under the button.
     trRemoveFile();
-    trStatusEl.textContent = 'Request received. Please wait a few hours while we send you the report. We will email you as soon as it is ready.';
+    trStatusEl.textContent = 'Request received. Please wait a few hours. The report will be emailed to you as soon as it is ready.';
     trStatusEl.className = 'status ok';
     loadTurnitinRequests();
     loadDashboard();
