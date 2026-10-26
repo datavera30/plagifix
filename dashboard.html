@@ -138,6 +138,10 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
   .buy-more{flex-direction:column;gap:14px;text-align:center;}
 }
 nav{position:sticky!important;top:0;z-index:500!important;}
+/* PF-PROTECT: no text selection / image dragging; typing fields stay normal */
+body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none;}
+input,textarea,select{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}
+img{-webkit-user-drag:none;user-drag:none;}
 </style>
 </head>
 <body>
@@ -146,8 +150,8 @@ nav{position:sticky!important;top:0;z-index:500!important;}
   <a href="/" class="logo" style="display:flex;align-items:center;gap:0;"><img src="/images/logo.png" alt="PlagiFix logo" style="width:42px;height:42px;border-radius:11px;"/>Plagi<span>Fix</span></a>
   <div class="nav-c" id="nav-c">
     <a href="/">Home</a>
-    <a href="/turnitin-report.html#ai-plagfix">AI & Plag Fix</a>
-    <a href="/turnitin-report.html#turnitin-report">Turnitin Report</a>
+    <a href="/ai-plag-score.html#ai-plagfix">AI & Plag Fix</a>
+    <a href="/ai-plag-score.html#ai-plag-score">AI & Plag Score</a>
     <a href="/pricing.html">Pricing</a>
     <a href="/faq.html">FAQ</a>
   </div>
@@ -183,7 +187,7 @@ nav{position:sticky!important;top:0;z-index:500!important;}
         <div id="indicator-clean" style="position:absolute;top:14px;right:16px;font-size:0.7rem;font-weight:700;color:#2563eb;">Viewing</div>
       </div>
       <div class="stat-card" id="card-tab-turnitin" onclick="switchTab('turnitin')" style="cursor:pointer;position:relative;">
-        <div class="stat-label" style="color:#101828;font-weight:800;">Turnitin Report</div>
+        <div class="stat-label" style="color:#101828;font-weight:800;">AI &amp; Similarity Score</div>
         <div class="stat-value blue" id="stat-credits-turnitin">—</div>
         <div class="stat-sub" style="color:#101828;">Credits ready to use</div>
         <div id="indicator-turnitin" style="position:absolute;top:14px;right:16px;font-size:0.7rem;font-weight:700;color:#2563eb;">Open →</div>
@@ -247,15 +251,15 @@ nav{position:sticky!important;top:0;z-index:500!important;}
   <div id="tab-turnitin" style="display:none;">
     <div class="section" style="box-shadow:0 0 24px rgba(37,99,235,0.25),0 0 44px rgba(37,99,235,0.15),0 24px 48px rgba(16,24,40,0.22),0 8px 18px rgba(16,24,40,0.14);transform:translateY(-6px) scaleX(1.06) scaleY(1.06);">
       <div style="padding:32px 28px 8px;text-align:center;">
-        <div class="section-title" style="font-size:1.15rem;">📊 Turnitin Report</div>
-        <p style="font-size:0.85rem;color:#667085;margin-top:8px;line-height:1.6;max-width:480px;margin-left:auto;margin-right:auto;">Upload the document and get an official Similarity and AI Detection report, typically ready within a few hours.</p>
+        <div class="section-title" style="font-size:1.15rem;">📊 AI &amp; Similarity Score</div>
+        <p style="font-size:0.85rem;color:#667085;margin-top:8px;line-height:1.6;max-width:480px;margin-left:auto;margin-right:auto;">Upload your document and get your AI and Similarity scores, typically ready within a few hours.</p>
 
       </div>
       <div class="section-body" style="padding:24px 28px 28px;">
         <div id="tr-no-credits-msg" style="display:none;text-align:center;padding:20px;">
           <div style="font-size:1.5rem;margin-bottom:10px;">😔</div>
           <div style="font-size:0.88rem;font-weight:600;margin-bottom:6px;">No credits remaining</div>
-          <div style="font-size:0.78rem;color:#667085;margin-bottom:14px;">Purchase a plan to request Turnitin reports.</div>
+          <div style="font-size:0.78rem;color:#667085;margin-bottom:14px;">Purchase a plan to request scores.</div>
           <a href="javascript:void(0)" onclick="openBuyModal('turnitin')" style="display:inline-block;background:#2563eb;color:#fff;padding:9px 20px;border-radius:8px;font-weight:600;font-size:0.82rem;">Buy Credits →</a>
         </div>
 
@@ -277,7 +281,7 @@ nav{position:sticky!important;top:0;z-index:500!important;}
           </div>
 
           <button class="proc-btn" id="tr-proc-btn" onclick="trRequestReport()" disabled>
-            Request report →
+            Request score →
           </button>
           <div class="status" id="tr-status"></div>
         </div>
@@ -286,7 +290,7 @@ nav{position:sticky!important;top:0;z-index:500!important;}
 
     <div class="section">
       <div class="section-header">
-        <div class="section-title">Your Turnitin Reports</div>
+        <div class="section-title">Your AI &amp; Similarity Scores</div>
       </div>
       <div class="section-body" style="padding:0;">
         <div class="table-scroll">
@@ -297,7 +301,7 @@ nav{position:sticky!important;top:0;z-index:500!important;}
               <th>Requested</th>
               <th>Status</th>
               <th>Similarity</th>
-              <th>AI Report</th>
+              <th>AI Writing</th>
             </tr>
           </thead>
           <tbody id="tr-requests-tbody">
@@ -305,6 +309,7 @@ nav{position:sticky!important;top:0;z-index:500!important;}
           </tbody>
         </table>
         </div>
+        <p style="font-size:0.74rem;color:#667085;padding:12px 22px 0;line-height:1.5;">Scores are taken from a Turnitin report of your document. PlagiFix does not calculate or change them.</p>
         <div id="tr-pagination" style="display:none;align-items:center;justify-content:center;gap:14px;padding:16px 22px;border-top:1px solid #eaecf0;">
           <button id="tr-page-prev" onclick="trChangePage(-1)" style="background:#fff;border:1px solid #d0d5dd;border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:0.9rem;color:#344054;">‹</button>
           <span id="tr-page-label" style="font-size:0.8rem;color:#667085;font-weight:600;">Page 1 of 1</span>
@@ -606,7 +611,7 @@ async function trRequestReport() {
     // Clear the upload box FIRST (trRemoveFile also clears the status line),
     // then show the message so it stays visible under the button.
     trRemoveFile();
-    trStatusEl.textContent = 'Request received. Please wait a few hours. The report will be emailed to you as soon as it is ready.';
+    trStatusEl.textContent = 'Request received. Please wait a few hours. The scores will be emailed to you as soon as they are ready.';
     trStatusEl.className = 'status ok';
     loadTurnitinRequests();
     loadDashboard();
@@ -623,7 +628,7 @@ async function trRequestReport() {
     trStatusEl.className = 'status err';
   }
   trProcBtn.disabled = false;
-  trProcBtn.innerHTML = 'Request report →';
+  trProcBtn.innerHTML = 'Request score →';
 }
 
 function toAbsoluteBackendUrl(path) {
@@ -656,7 +661,7 @@ async function loadTurnitinRequests() {
     trCurrentPage = 1;
     trRenderPage();
   } catch(err) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">Could not load reports.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">Could not load scores.</td></tr>';
     document.getElementById('tr-pagination').style.display = 'none';
   }
 }
@@ -666,7 +671,7 @@ function trRenderPage() {
   const pagination = document.getElementById('tr-pagination');
 
   if (trAllRequests.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">No reports requested yet.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:20px;color:#98a2b3;">No scores requested yet.</td></tr>';
     pagination.style.display = 'none';
     return;
   }
@@ -678,14 +683,25 @@ function trRenderPage() {
 
   tbody.innerHTML = pageRows.map(r => {
     const date = r.requested_at ? new Date(r.requested_at).toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}) : '—';
-    const statusBadge = r.status === 'complete'
+    const statusBadge = (r.status === 'complete' || r.status === 'scored')
       ? '<span class="badge active">Ready</span>'
       : (r.status === 'failed' || r.status === 'expired' || r.status === 'error')
         ? `<span class="badge expired">${r.status[0].toUpperCase()}${r.status.slice(1)}</span>`
         : '<span class="badge expired">Processing</span>';
 
-    const similarityCell = renderReportCell(r.similarity_report_url, r.status, 'Similarity');
-    const aiCell = renderReportCell(r.ai_report_url, r.status, 'AI Report');
+    let similarityCell, aiCell;
+    if (r.status === 'scored') {
+      // Scores typed in by the team from the real report: shown as plain text, no download.
+      const sim = Number.isFinite(Number(r.similarity_score)) && r.similarity_score !== null
+        ? `<strong>${Number(r.similarity_score)}%</strong>` : '<span class="report-pending">—</span>';
+      const ai = Number.isFinite(Number(r.ai_score)) && r.ai_score !== null
+        ? `<strong>${Number(r.ai_score)}%</strong>` : '<span class="report-pending">Not available</span>';
+      similarityCell = sim;
+      aiCell = ai;
+    } else {
+      similarityCell = renderReportCell(r.similarity_report_url, r.status, 'Similarity');
+      aiCell = renderReportCell(r.ai_report_url, r.status, 'AI Report');
+    }
 
     return `<tr>
       <td>${r.filename || '—'}</td>
@@ -744,11 +760,11 @@ async function detectCurrency() {
 
 const dashPlans = [
   { key: 'buy', amountINR: 39900, amountUSD: 400, name: 'Starter', priceINR: '$4', priceUSD: '$4', meta: '1 credit — use for either service',
-    features: ['1 credit', 'Use for AI & Plag Fix or Turnitin Report', 'Fast processing'] },
+    features: ['1 credit', 'Use for AI & Plag Fix or AI & Similarity Score', 'Fast processing'] },
   { key: 'starter', amountINR: 329900, amountUSD: 3500, name: 'Classic', priceINR: '$35', priceUSD: '$35', meta: '12 credits total · one purchase, two credit types', popular: true,
-    features: ['7 Plagiarism & AI Removal credits', '5 Turnitin Report credits included', 'Priority support'] },
+    features: ['7 Plagiarism & AI Removal credits', '5 Score credits included', 'Priority support'] },
   { key: 'pro', amountINR: 769900, amountUSD: 8000, name: 'Pro', priceINR: '$80', priceUSD: '$80', meta: '20 credits — use for either service',
-    features: ['20 credits', 'Use for AI & Plag Fix or Turnitin Report', 'Instant processing'] }
+    features: ['20 credits', 'Use for AI & Plag Fix or AI & Similarity Score', 'Instant processing'] }
 ];
 
 let currentModalContext = 'clean';
@@ -961,6 +977,19 @@ function logout() {
   detectCurrency();
   loadDashboard();
   handlePaymentReturn();
+})();
+</script>
+<script>
+/* PF-PROTECT: right-click, copy, cut and drag are blocked (typing fields excepted) */
+(function () {
+  function inField(e) {
+    var t = e.target;
+    return t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]');
+  }
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  ['copy', 'cut', 'dragstart', 'selectstart'].forEach(function (name) {
+    document.addEventListener(name, function (e) { if (!inField(e)) e.preventDefault(); });
+  });
 })();
 </script>
 </body>
