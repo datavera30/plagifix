@@ -34,11 +34,13 @@
   .meta{color:var(--muted);font-size:13px;margin-top:2px;word-break:break-all}
   .late{color:var(--amber);font-weight:700}
   .badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;background:#eef2ff;color:#3730a3}
-  .badge.complete{background:#dcfce7;color:var(--green)}
+  .badge.complete,.badge.scored{background:#dcfce7;color:var(--green)}
   .badge.failed,.badge.expired{background:#fee2e2;color:var(--red)}
   .send{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}
   .send label{display:block;font-size:12px;color:var(--muted);margin-bottom:3px}
   .send input[type=file]{width:100%;font-size:13px}
+  .send input[type=number]{width:100%;font-size:15px;padding:8px 10px;border:1px solid var(--line);border-radius:8px}
+  .send .na{font-size:12px;color:var(--muted);margin-top:4px;display:block}
   .prog{height:6px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin-top:8px;display:none}
   .prog i{display:block;height:100%;width:0;background:var(--blue)}
   .empty{text-align:center;color:var(--muted);padding:30px}
@@ -172,6 +174,7 @@ function render(rows){
       left.appendChild(w);
     }
     if (r.completed_at) left.appendChild(el('div', 'meta', 'Delivered ' + fmtDate(r.completed_at)));
+    if (r.status === 'scored') left.appendChild(el('div', 'meta', 'Sent: Similarity ' + r.similarity_score + '%  ·  AI ' + (r.ai_score === null || r.ai_score === undefined ? 'Not available' : r.ai_score + '%')));
     if (r.error_message && r.status === 'failed') left.appendChild(el('div', 'meta', 'Reason: ' + r.error_message));
     top.appendChild(left);
 
@@ -187,49 +190,52 @@ function render(rows){
     }
     card.appendChild(top);
 
-    if (r.status === 'processing') card.appendChild(sendForm(r));
+    if (r.status === 'processing') card.appendChild(sendForm(r, false));
+    if (r.status === 'scored') card.appendChild(sendForm(r, true));
     list.appendChild(card);
   });
 }
 
-function sendForm(r){
+function sendForm(r, isCorrection){
   const box = el('div', 'send');
-  const a = el('div'); a.appendChild(el('label', null, 'Similarity report (PDF)'));
-  const fa = el('input'); fa.type = 'file'; fa.accept = '.pdf,application/pdf'; a.appendChild(fa);
-  const b = el('div'); b.appendChild(el('label', null, 'AI report (PDF)'));
-  const fb = el('input'); fb.type = 'file'; fb.accept = '.pdf,application/pdf'; b.appendChild(fb);
-  const btn = el('button', 'primary', 'Send reports');
+  const a = el('div'); a.appendChild(el('label', null, 'Similarity % (0 to 100)'));
+  const sim = el('input'); sim.type = 'number'; sim.min = 0; sim.max = 100; sim.step = 1; sim.inputMode = 'numeric';
+  if (isCorrection && r.similarity_score != null) sim.value = r.similarity_score;
+  a.appendChild(sim);
+  const b = el('div'); b.appendChild(el('label', null, 'AI writing % (0 to 100)'));
+  const ai = el('input'); ai.type = 'number'; ai.min = 0; ai.max = 100; ai.step = 1; ai.inputMode = 'numeric';
+  if (isCorrection && r.ai_score != null) ai.value = r.ai_score;
+  b.appendChild(ai);
+  const naLabel = el('label', 'na'); const na = el('input'); na.type = 'checkbox';
+  naLabel.appendChild(na); naLabel.appendChild(document.createTextNode(' Not available (no AI score in the report)'));
+  b.appendChild(naLabel);
+  na.onchange = () => { ai.disabled = na.checked; if (na.checked) ai.value = ''; };
+  if (isCorrection && r.ai_score == null) { na.checked = true; ai.disabled = true; }
+  const btn = el('button', 'primary', isCorrection ? 'Send corrected scores' : 'Send scores');
   box.appendChild(a); box.appendChild(b); box.appendChild(btn);
-  const prog = el('div', 'prog'); const bar = el('i'); prog.appendChild(bar);
-  const wrap = el('div'); wrap.style.gridColumn = '1 / -1'; wrap.appendChild(prog); box.appendChild(wrap);
 
-  btn.onclick = () => {
-    if (!fa.files[0] && !fb.files[0]) { show($('msg'), 'Choose at least one report PDF first.', 'err'); return; }
-    const what = [fa.files[0] ? 'Similarity' : null, fb.files[0] ? 'AI' : null].filter(Boolean).join(' + ');
-    if (!confirm('Send the ' + what + ' report(s) to ' + r.email + ' for request #' + r.id + '?')) return;
-    const fd = new FormData();
-    if (fa.files[0]) fd.append('similarity', fa.files[0]);
-    if (fb.files[0]) fd.append('ai', fb.files[0]);
-    btn.disabled = true; btn.textContent = 'Uploading…'; prog.style.display = 'block';
-    const x = new XMLHttpRequest();
-    x.open('POST', BACKEND + '/admin/turnitin/' + r.id + '/send-reports');
-    x.setRequestHeader('X-Admin-Password', PW);
-    x.upload.onprogress = ev => { if (ev.lengthComputable) bar.style.width = Math.round(ev.loaded / ev.total * 100) + '%'; };
-    x.onload = () => {
-      let d = {}; try { d = JSON.parse(x.responseText); } catch(e){}
-      if (x.status === 200) {
-        show($('msg'), d.email_sent
-          ? 'Sent. #' + r.id + ' is delivered and ' + r.email + ' was emailed. Their ' + d.download_hours + '-hour window has started.'
-          : 'Delivered, but the email did NOT send. The reports are on their dashboard. Please email ' + r.email + ' yourself.',
-          d.email_sent ? 'ok' : 'err');
-        load(true);
-      } else {
-        show($('msg'), d.error || ('Error ' + x.status), 'err');
-        btn.disabled = false; btn.textContent = 'Send reports'; prog.style.display = 'none';
-      }
-    };
-    x.onerror = () => { show($('msg'), 'Network error. Nothing was sent. Try again.', 'err'); btn.disabled = false; btn.textContent = 'Send reports'; };
-    x.send(fd);
+  btn.onclick = async () => {
+    const s = sim.value.trim(), t = ai.value.trim();
+    const okNum = v => /^\d{1,3}$/.test(v) && Number(v) <= 100;
+    if (!okNum(s)) { show($('msg'), 'Type the Similarity % as a whole number from 0 to 100.', 'err'); return; }
+    if (!na.checked && !okNum(t)) { show($('msg'), 'Type the AI writing % (0 to 100), or tick "Not available".', 'err'); return; }
+    const aiText = na.checked ? 'Not available' : t + '%';
+    if (!confirm('Send these scores to ' + r.email + ' for request #' + r.id + '?\n\nSimilarity: ' + s + '%\nAI writing: ' + aiText + '\n\nCheck the numbers against the real report.')) return;
+    btn.disabled = true; btn.textContent = 'Sending…';
+    try {
+      const d = await api('/admin/turnitin/' + r.id + '/send-scores', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ similarity: s, ai: na.checked ? null : t, force: isCorrection ? '1' : '' })
+      });
+      show($('msg'), d.email_sent
+        ? 'Sent. #' + r.id + ' is done and ' + r.email + ' was emailed the scores.'
+        : 'Saved on their dashboard, but the email did NOT send. Please email ' + r.email + ' yourself.',
+        d.email_sent ? 'ok' : 'err');
+      load(true);
+    } catch(e){
+      show($('msg'), e.message, 'err');
+      btn.disabled = false; btn.textContent = isCorrection ? 'Send corrected scores' : 'Send scores';
+    }
   };
   return box;
 }
@@ -245,7 +251,7 @@ async function downloadFile(id, btn){
 
 async function markFailed(r){
   const reason = prompt('Reason to tell the student (their credit will be returned and their file deleted):',
-                        'We could not produce a report for this document.');
+                        'We could not produce a score for this document.');
   if (reason === null) return;
   try {
     await api('/admin/turnitin/' + r.id + '/mark-failed', {
