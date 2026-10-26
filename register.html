@@ -65,6 +65,11 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
   .nav-c a.btn-out{border-bottom:none;text-align:center;margin-top:10px;}
   footer{padding:18px 20px;flex-direction:column;gap:10px;text-align:center;}
 }
+nav{position:sticky!important;top:0;z-index:500!important;}
+/* PF-PROTECT: no text selection / image dragging; typing fields stay normal */
+body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none;}
+input,textarea,select{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}
+img{-webkit-user-drag:none;user-drag:none;}
 </style>
 </head>
 <body>
@@ -75,8 +80,8 @@ footer{padding:18px 48px;border-top:1px solid #eaecf0;background:#fff;display:fl
   </button>
   <div class="nav-c" id="nav-c">
     <a href="/">Home</a>
-    <a href="/turnitin-report.html#ai-plagfix">AI & Plag Fix</a>
-    <a href="/turnitin-report.html#turnitin-report">Turnitin Report</a>
+    <a href="/ai-plag-score.html#ai-plagfix">AI & Plag Fix</a>
+    <a href="/ai-plag-score.html#ai-plag-score">AI & Plag Score</a>
     <a href="/pricing.html">Pricing</a>
     <a href="/faq.html">FAQ</a>
     <a href="/login.html" class="btn-out">Sign in</a>
@@ -204,6 +209,19 @@ async function register() {
     btn.disabled = false;
   }
 }
+</script>
+<script>
+/* PF-PROTECT: right-click, copy, cut and drag are blocked (typing fields excepted) */
+(function () {
+  function inField(e) {
+    var t = e.target;
+    return t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]');
+  }
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  ['copy', 'cut', 'dragstart', 'selectstart'].forEach(function (name) {
+    document.addEventListener(name, function (e) { if (!inField(e)) e.preventDefault(); });
+  });
+})();
 </script>
 </body>
 </html>
