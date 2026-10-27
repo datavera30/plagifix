@@ -493,6 +493,10 @@ body{font-variant-numeric:lining-nums;}
 .cta::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 45% 140% at 12% 0%,rgba(255,255,255,.22) 0,transparent 65%),radial-gradient(ellipse 40% 140% at 95% 100%,rgba(14,28,90,.35) 0,transparent 70%);}
 .cta>*{position:relative;}
 nav{z-index:500!important;}
+/* PF-PROTECT: no text selection / image dragging; typing fields stay normal */
+body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none;}
+input,textarea,select{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}
+img{-webkit-user-drag:none;user-drag:none;}
 </style>
 </head>
 <body>
@@ -601,7 +605,7 @@ nav{z-index:500!important;}
       <div class="mock-dot" style="background:#ff5f57"></div>
       <div class="mock-dot" style="background:#febc2e"></div>
       <div class="mock-dot" style="background:#28c840"></div>
-      <div class="mock-url">🔒 turnitin.com Integrity Report</div>
+      <div class="mock-url">🔒 Turnitin Integrity Report</div>
     </div>
     <div class="mock-grid">
       <div class="mock-col">
@@ -639,9 +643,9 @@ nav{z-index:500!important;}
   <div class="sec-in prob">
     <div class="prob-head">
       <div class="prob-tag">The Problem</div>
-      <h2 class="prob-t">Turnitin gets it wrong.<br>Your work shouldn&#39;t pay for it.</h2>
+      <h2 class="prob-t">AI detectors get it wrong.<br>Your work shouldn&#39;t pay for it.</h2>
       <div class="about-rule"></div>
-      <p class="prob-p">Used an AI tool to brainstorm or refine your writing? Even when the final words are entirely your own, Turnitin&#39;s AI detector can flag your work, sometimes <strong>70%, 85%, or higher</strong>.</p>
+      <p class="prob-p">Used an AI tool to brainstorm or refine your writing? Even when the final words are entirely your own, an AI detector can flag your work, sometimes <strong>70%, 85%, or higher</strong>.</p>
     </div>
     <div class="prob-intro">
             <p class="prob-p prob-fix"><strong>PlagiFix removes those false triggers</strong> so your Similarity score and AI detection score reflect what you actually wrote, not what the algorithm misread.</p>
@@ -661,7 +665,7 @@ nav{z-index:500!important;}
   <div class="sec-in">
     <div class="how-head">
       <div class="prob-tag">Process</div>
-      <h2 class="prob-t">How Plagiarism &amp; AI Removal works</h2>
+      <h2 class="prob-t">How AI &amp; Plagiarism Removal works</h2>
       <div class="about-rule" style="margin-left:auto;margin-right:auto;"></div>
       <p class="how-sub">From upload to a clean, submission-ready document faster than you think.</p>
     </div>
@@ -701,7 +705,7 @@ nav{z-index:500!important;}
     <div class="fx">
       <div class="fx-l">
         <div class="sec-tag">What we clean</div>
-        <div class="sec-t">Every Turnitin trigger.<br>Fixed in one pass.</div>
+        <div class="sec-t">Every trigger.<br>Fixed in one pass.</div>
         <p class="sec-s">PlagiFix looks for the document issues behind these flags and cleans them in a single run.</p>
         <ul class="fx-pts">
           <li><svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8.2" opacity=".25"/><path d="M6 10.3l2.6 2.6L14 7.6"/></svg>One run, all four fixes</li>
@@ -727,7 +731,7 @@ nav{z-index:500!important;}
           <div class="fxc-ic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 10.5h10M4 15h16M4 19.5h8"/><path d="M18.5 12.2l.7 1.5 1.5.7-1.5.7-.7 1.5-.7-1.5-1.5-.7 1.5-.7z" fill="currentColor" stroke="none"/></svg></div>
           <div class="fxc-b">
             <div class="fxc-top"><h4>Formatting Cleanup</h4><span class="fxc-tag">Integrity flags</span></div>
-            <p>Cleans heading styles, document properties, and revision history that quietly raise Turnitin's integrity flags before you even submit.</p>
+            <p>Cleans heading styles, document properties, and revision history that quietly raise integrity flags before you even submit.</p>
           </div>
         </div>
         <div class="fxc">
@@ -855,6 +859,19 @@ counters.forEach(c => observer.observe(c));
 document.addEventListener('contextmenu', function(e) {
   e.preventDefault();
 });
+</script>
+<script>
+/* PF-PROTECT: right-click, copy, cut and drag are blocked (typing fields excepted) */
+(function () {
+  function inField(e) {
+    var t = e.target;
+    return t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]');
+  }
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  ['copy', 'cut', 'dragstart', 'selectstart'].forEach(function (name) {
+    document.addEventListener(name, function (e) { if (!inField(e)) e.preventDefault(); });
+  });
+})();
 </script>
 </body>
 </html>
