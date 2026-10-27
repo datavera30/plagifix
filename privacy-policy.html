@@ -15,16 +15,22 @@ nav{display:flex;align-items:center;padding:0 64px;height:68px;border-bottom:1px
 .logo span{color:#2563eb;}
 .wrap{max-width:680px;margin:0 auto;padding:56px 24px 80px;}
 .tag{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:#2563eb;margin-bottom:10px;}
-h1{font-size:1.8rem;font-weight:800;letter-spacing:-0.03em;margin-bottom:6px;}
-.meta{font-size:0.8rem;color:#94a3b8;margin-bottom:36px;}
+h1{font-size:1.8rem;font-weight:800;letter-spacing:-0.03em;margin-bottom:36px;}
 h2{font-size:0.95rem;font-weight:700;margin:28px 0 8px;color:#0f172a;}
 p{font-size:0.88rem;color:#475569;line-height:1.8;margin-bottom:12px;}
+.back-home{display:inline-block;margin-top:28px;font-size:0.82rem;font-weight:600;color:#2563eb;}
+.back-home:hover{text-decoration:underline;}
 footer{background:#0f172a;padding:24px 64px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
 .foot-logo{font-size:1rem;font-weight:800;color:#fff;}
 .foot-logo span{color:#818cf8;}
 .foot-links{display:flex;gap:20px;}
 .foot-links a{font-size:0.74rem;color:rgba(255,255,255,0.35);}
 .foot-copy{font-size:0.72rem;color:rgba(255,255,255,0.25);}
+@media(max-width:600px){nav{padding:0 20px;}footer{padding:24px 20px;}}
+/* PF-PROTECT: no text selection / image dragging; typing fields stay normal */
+body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none;}
+input,textarea,select{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}
+img{-webkit-user-drag:none;user-drag:none;}
 </style>
 </head>
 <body>
@@ -32,22 +38,28 @@ footer{background:#0f172a;padding:24px 64px;display:flex;align-items:center;just
 <div class="wrap">
   <div class="tag">Legal</div>
   <h1>Privacy Policy</h1>
-  <div class="meta">Last updated: May 22, 2025</div>
+
+  <h2>About this policy</h2>
+  <p>Your privacy matters to us. This policy explains what information PlagiFix collects, how we use it and how we protect it.</p>
+
+  <h2>Information we collect</h2>
+  <p>When you register, place an order or contact us, we collect your name and email address. For Instant Fix we collect the email address you enter.</p>
+
+  <h2>How we use your information</h2>
+  <p>We use your information to provide the service you asked for, to deliver your results by email and in your dashboard, to process payments and refunds, to answer support requests, and to keep the service safe and working well. We do not sell your information.</p>
 
   <h2>Your documents</h2>
-  <p>Documents you upload are processed entirely in memory and permanently deleted from our servers immediately after your download. We never read, store, or share the content of your documents.</p>
-
-  <h2>Your personal data</h2>
-  <p>We collect your name and email address when you place an order. This is used only to send your order confirmation and respond to support requests. We do not sell or share your personal data with third parties.</p>
+  <p>We use your documents only to provide the service you asked for. For Instant Fix, your file is processed and the fixed file is not kept after it is sent to you. For AI &amp; Plag Score, your uploaded file is deleted a few days after your score is sent. We keep your uploaded documents and related data only for as long as we need them to provide the service. This is usually a short time after processing, so you can download your result and get support. After that, they are securely deleted.</p>
 
   <h2>Payments</h2>
-  <p>All payments are processed by Razorpay. We never see or store your card or bank details.</p>
+  <p>Payments are handled by our payment providers. We do not see or store your card or bank details.</p>
 
   <h2>Cookies</h2>
-  <p>We use only essential cookies required for the website to function. No advertising or tracking cookies.</p>
+  <p>We use only the cookies that the website needs to work. We do not use advertising cookies.</p>
 
-  <h2>Contact</h2>
-  <p>Questions about your privacy? <a href="/contact.html">Contact us</a> or email <a href="mailto:support@plagifix.com">support@plagifix.com</a></p>
+  <h2>Data security</h2>
+  <p>We take reasonable steps to protect your information and your documents from unauthorized access, change, disclosure or loss. Because no method of sending data over the internet or storing it electronically is completely secure, we cannot promise absolute security.</p>
+  <a href="/" class="back-home">&larr; Back to home</a>
 </div>
 <footer>
   <div class="foot-logo">Plagi<span>Fix</span></div>
@@ -59,5 +71,18 @@ footer{background:#0f172a;padding:24px 64px;display:flex;align-items:center;just
   </div>
   <div class="foot-copy">© 2025 PlagiFix</div>
 </footer>
+<script>
+/* PF-PROTECT: right-click, copy, cut and drag are blocked (typing fields excepted) */
+(function () {
+  function inField(e) {
+    var t = e.target;
+    return t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]');
+  }
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  ['copy', 'cut', 'dragstart', 'selectstart'].forEach(function (name) {
+    document.addEventListener(name, function (e) { if (!inField(e)) e.preventDefault(); });
+  });
+})();
+</script>
 </body>
 </html>
