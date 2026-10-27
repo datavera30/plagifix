@@ -15,8 +15,7 @@ nav{display:flex;align-items:center;padding:0 64px;height:68px;border-bottom:1px
 .logo span{color:#2563eb;}
 .wrap{max-width:680px;margin:0 auto;padding:56px 24px 80px;}
 .tag{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:#2563eb;margin-bottom:10px;}
-h1{font-size:1.8rem;font-weight:800;letter-spacing:-0.03em;margin-bottom:6px;}
-.meta{font-size:0.8rem;color:#94a3b8;margin-bottom:36px;}
+h1{font-size:1.8rem;font-weight:800;letter-spacing:-0.03em;margin-bottom:36px;}
 h2{font-size:0.95rem;font-weight:700;margin:28px 0 8px;color:#0f172a;}
 p{font-size:0.88rem;color:#475569;line-height:1.8;margin-bottom:12px;}
 footer{background:#0f172a;padding:24px 64px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
@@ -25,6 +24,11 @@ footer{background:#0f172a;padding:24px 64px;display:flex;align-items:center;just
 .foot-links{display:flex;gap:20px;}
 .foot-links a{font-size:0.74rem;color:rgba(255,255,255,0.35);}
 .foot-copy{font-size:0.72rem;color:rgba(255,255,255,0.25);}
+@media(max-width:600px){nav{padding:0 20px;}footer{padding:24px 20px;}}
+/* PF-PROTECT: no text selection / image dragging; typing fields stay normal */
+body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none;}
+input,textarea,select{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}
+img{-webkit-user-drag:none;user-drag:none;}
 </style>
 </head>
 <body>
@@ -32,22 +36,35 @@ footer{background:#0f172a;padding:24px 64px;display:flex;align-items:center;just
 <div class="wrap">
   <div class="tag">Legal</div>
   <h1>Terms of Service</h1>
-  <div class="meta">Last updated: May 22, 2025</div>
 
-  <h2>The service</h2>
-  <p>PlagiFix removes hidden formatting artifacts from .docx files that may trigger plagiarism or AI detection flags on platforms such as Turnitin and iThenticate. By using our service, you agree to these terms.</p>
+  <h2>About these terms</h2>
+  <p>Welcome to PlagiFix (plagifix.com), referred to here as &ldquo;PlagiFix&rdquo;, &ldquo;we&rdquo; or &ldquo;us&rdquo;. By using our website or any of our services, you agree to be bound by these terms. If you do not agree, please do not use the service.</p>
+
+  <h2>Our services</h2>
+  <p>PlagiFix is a document optimization tool. Instant Fix and AI &amp; Plagiarism Removal work on .docx files. The tool cleans hidden formatting, document properties and revision history that can cause false similarity and AI-detection flags. It does not rewrite your text.</p>
+  <p>AI &amp; Plag Score: you upload a document and we send you a Similarity score and an AI Writing score. The scores are taken from a Turnitin report of your document. PlagiFix does not calculate or change them. They are shown in your dashboard and sent to your email.</p>
+  <p>Results are not guaranteed. Scores and flags can differ between checkers, versions and dates, and your school or publisher may get a different result.</p>
+
+  <h2>Responsible and lawful use</h2>
+  <p>You agree to use PlagiFix only for lawful purposes and in a way that does not infringe the rights of anyone else. You confirm that you are the author of the document, or that you have the right to use it, and that you will use the results in line with the academic integrity rules of your school, publisher or employer. PlagiFix does not support academic dishonesty.</p>
+
+  <h2>Accounts, credits and payments</h2>
+  <p>Some services need an account with your email address. Please keep your login details private. One credit is used for each document fix and for each score request. Credits do not expire. If we cannot produce a fix or a score, the credit is returned. Instant Fix is a single payment for one document. Payments are handled by third-party payment providers. Refunds are covered in our <a href="/refund-policy.html">Refund Policy</a>.</p>
 
   <h2>Your documents</h2>
-  <p>You must own or have rights to the documents you upload. Documents are processed in memory and deleted immediately after download.</p>
+  <p>You keep all rights to your documents. We use them only to provide the service you asked for. For Instant Fix, your file is processed and the fixed file is not kept after it is sent to you. For AI &amp; Plag Score, your uploaded file is stored privately and is deleted after your score is sent. Your scores stay in your dashboard.</p>
 
-  <h2>Credits</h2>
-  <p>Credits are deducted upon processing and are valid for the period shown on your plan. See our <a href="/refund-policy.html">Refund Policy</a> for details on unused credits.</p>
+  <h2>Intellectual property</h2>
+  <p>The PlagiFix website, name and design belong to us. Your documents belong to you.</p>
 
-  <h2>Limitation of liability</h2>
-  <p>Results may vary across detection platforms. Our liability is limited to the amount paid for the credit used.</p>
+  <h2>No warranty</h2>
+  <p>The service is provided &ldquo;as is&rdquo;. We try to be accurate, but we do not promise that the service will be error-free or that the results will meet your needs.</p>
 
-  <h2>Contact</h2>
-  <p>Questions? <a href="/contact.html">Contact us</a> or email <a href="mailto:support@plagifix.com">support@plagifix.com</a></p>
+  <h2>Limit of liability</h2>
+  <p>To the extent the law allows, PlagiFix is not liable for any indirect or consequential loss arising from the use of, or inability to use, the service. Our total liability is limited to the amount you paid for the credit or service in question.</p>
+
+  <h2>Misuse and changes</h2>
+  <p>We may suspend an account that breaks these terms or misuses the service. We may update these terms from time to time. Using the service after a change means you accept the new terms.</p>
 </div>
 <footer>
   <div class="foot-logo">Plagi<span>Fix</span></div>
@@ -59,5 +76,18 @@ footer{background:#0f172a;padding:24px 64px;display:flex;align-items:center;just
   </div>
   <div class="foot-copy">© 2025 PlagiFix</div>
 </footer>
+<script>
+/* PF-PROTECT: right-click, copy, cut and drag are blocked (typing fields excepted) */
+(function () {
+  function inField(e) {
+    var t = e.target;
+    return t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]');
+  }
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  ['copy', 'cut', 'dragstart', 'selectstart'].forEach(function (name) {
+    document.addEventListener(name, function (e) { if (!inField(e)) e.preventDefault(); });
+  });
+})();
+</script>
 </body>
 </html>
