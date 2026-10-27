@@ -15,17 +15,22 @@ nav{display:flex;align-items:center;padding:0 64px;height:68px;border-bottom:1px
 .logo span{color:#2563eb;}
 .wrap{max-width:680px;margin:0 auto;padding:56px 24px 80px;}
 .tag{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:#2563eb;margin-bottom:10px;}
-h1{font-size:1.8rem;font-weight:800;letter-spacing:-0.03em;margin-bottom:6px;}
-.meta{font-size:0.8rem;color:#94a3b8;margin-bottom:36px;}
-.guarantee{background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:16px 20px;margin-bottom:28px;font-size:0.88rem;color:#1e40af;font-weight:500;}
+h1{font-size:1.8rem;font-weight:800;letter-spacing:-0.03em;margin-bottom:36px;}
 h2{font-size:0.95rem;font-weight:700;margin:28px 0 8px;color:#0f172a;}
 p{font-size:0.88rem;color:#475569;line-height:1.8;margin-bottom:12px;}
+.back-home{display:inline-block;margin-top:28px;font-size:0.82rem;font-weight:600;color:#2563eb;}
+.back-home:hover{text-decoration:underline;}
 footer{background:#0f172a;padding:24px 64px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
 .foot-logo{font-size:1rem;font-weight:800;color:#fff;}
 .foot-logo span{color:#818cf8;}
 .foot-links{display:flex;gap:20px;}
 .foot-links a{font-size:0.74rem;color:rgba(255,255,255,0.35);}
 .foot-copy{font-size:0.72rem;color:rgba(255,255,255,0.25);}
+@media(max-width:600px){nav{padding:0 20px;}footer{padding:24px 20px;}}
+/* PF-PROTECT: no text selection / image dragging; typing fields stay normal */
+body{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-touch-callout:none;}
+input,textarea,select{-webkit-user-select:text;-moz-user-select:text;-ms-user-select:text;user-select:text;}
+img{-webkit-user-drag:none;user-drag:none;}
 </style>
 </head>
 <body>
@@ -33,21 +38,13 @@ footer{background:#0f172a;padding:24px 64px;display:flex;align-items:center;just
 <div class="wrap">
   <div class="tag">Legal</div>
   <h1>Refund Policy</h1>
-  <div class="meta">Last updated: May 22, 2025</div>
 
-  <div class="guarantee">🛡️ If your document is not processed correctly, we will reprocess it or issue a full refund. No questions asked.</div>
+  <p>PlagiFix gives you your result as soon as your document has been processed. Because of this, payments are final once the service has been delivered, and we cannot refund them.</p>
 
-  <h2>When you get a refund</h2>
-  <p>You are eligible for a full refund if your document's visible content was altered by our processing, if our service failed due to a technical error, or if you were charged but did not receive a processed document.</p>
-
-  <h2>When refunds don't apply</h2>
-  <p>Refunds are not available for successfully processed and downloaded documents, expired credits due to non-use, unsupported file formats (we only support .docx), or dissatisfaction with results on a specific detection platform.</p>
-
-  <h2>How to request a refund</h2>
-  <p>Email us at <a href="mailto:support@plagifix.com">support@plagifix.com</a> with your order number and a brief description of the issue. We will respond within 24 hours and process approved refunds within 5–7 business days.</p>
-
-  <h2>Contact</h2>
-  <p>Questions? <a href="/contact.html">Contact us</a> or email <a href="mailto:support@plagifix.com">support@plagifix.com</a></p>
+  <h2>If something goes wrong</h2>
+  <p>Did your document not come out right? Write to us at <a href="mailto:support@plagifix.com">support@plagifix.com</a> or use our <a href="/contact.html">Contact</a> page and tell us what happened.</p>
+  <p>We will run your document again at no extra cost, so that you get the result you paid for.</p>
+  <a href="/" class="back-home">&larr; Back to home</a>
 </div>
 <footer>
   <div class="foot-logo">Plagi<span>Fix</span></div>
@@ -59,5 +56,18 @@ footer{background:#0f172a;padding:24px 64px;display:flex;align-items:center;just
   </div>
   <div class="foot-copy">© 2025 PlagiFix</div>
 </footer>
+<script>
+/* PF-PROTECT: right-click, copy, cut and drag are blocked (typing fields excepted) */
+(function () {
+  function inField(e) {
+    var t = e.target;
+    return t && t.closest && t.closest('input, textarea, select, [contenteditable="true"]');
+  }
+  document.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+  ['copy', 'cut', 'dragstart', 'selectstart'].forEach(function (name) {
+    document.addEventListener(name, function (e) { if (!inField(e)) e.preventDefault(); });
+  });
+})();
+</script>
 </body>
 </html>
