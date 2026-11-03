@@ -554,6 +554,10 @@ function loadPayPalSdk() {
   return paypalSdkPromise;
 }
 
+// International payments are switched off for now (no international
+// gateway is live). Set this to true again when one is connected.
+const INTERNATIONAL_PAYMENTS_AVAILABLE = false;
+
 function showPayPalFor(planKey) {
   const btn = document.getElementById('plan-btn-' + planKey);
   const slot = document.getElementById('paypal-' + planKey);
@@ -561,6 +565,10 @@ function showPayPalFor(planKey) {
   if (!slot || !target) return;
   if (btn) btn.style.display = 'none';
   slot.style.display = 'block';
+  if (!INTERNATIONAL_PAYMENTS_AVAILABLE) {
+    slot.innerHTML = '<p style="font-size:0.85rem;font-weight:600;color:#667085;text-align:center;line-height:1.5;margin:6px 0 0;">International payments are coming soon.</p>';
+    return;
+  }
   if (slot.dataset.rendered) return;
   slot.dataset.rendered = '1';
   target.innerHTML = '<p class="paypal-help">Loading secure payment…</p>';
