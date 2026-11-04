@@ -309,8 +309,7 @@ footer{flex-wrap:wrap;gap:12px;}
         <a class="btn btn-blue" id="ai-process-btn" onclick="aiStartPayment()" disabled>Pay & Fix Document →</a>
       </div>
       <div id="ai-paypal-slot" style="display:none;margin-top:22px;">
-        <div id="ai-paypal-btn"></div>
-        <p class="paypal-help">Secure payment by PayPal (cards accepted). Paid but nothing happened? Email support@plagifix.com with your PayPal receipt.</p>
+        
       </div>
     </div>
 
@@ -452,23 +451,31 @@ function isIndiaTimezone() {
   } catch (err) { return false; }   // unknown -> international (PayPal)
 }
 
-let paypalSdkPromise = null;
-function loadPayPalSdk() {
-  if (paypalSdkPromise) return paypalSdkPromise;
-  paypalSdkPromise = fetch(`${BACKEND}/paypal-config`).then(r => r.json()).then(cfg => {
-    if (!cfg.enabled || !cfg.client_id) throw new Error('PayPal not available');
+let paddlePromise = null;
+let paddleOnDone = null;
+function loadPaddle() {
+  if (paddlePromise) return paddlePromise;
+  paddlePromise = fetch(`${BACKEND}/paddle-config`).then(r => r.json()).then(cfg => {
+    if (!cfg.enabled || !cfg.client_token) throw new Error('disabled');
     return new Promise((resolve, reject) => {
       const s = document.createElement('script');
-      s.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(cfg.client_id)}&currency=USD&intent=capture`;
-      s.onload = () => resolve(window.paypal);
-      s.onerror = () => reject(new Error('PayPal failed to load'));
+      s.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
+      s.onload = () => {
+        if (cfg.environment === 'sandbox') Paddle.Environment.set('sandbox');
+        Paddle.Initialize({
+          token: cfg.client_token,
+          eventCallback: ev => {
+            if (ev && ev.name === 'checkout.completed' && paddleOnDone) paddleOnDone(ev.data);
+          }
+        });
+        resolve(cfg);
+      };
+      s.onerror = () => reject(new Error('Paddle failed to load'));
       document.head.appendChild(s);
     });
-  }).catch(err => { paypalSdkPromise = null; throw err; });
-  return paypalSdkPromise;
+  }).catch(err => { paddlePromise = null; throw err; });
+  return paddlePromise;
 }
-
-let aiPayPalRendered = false;
 
 function aiHidePayPal() {
   const slot = document.getElementById('ai-paypal-slot');
@@ -477,75 +484,65 @@ function aiHidePayPal() {
   if (actions) actions.style.display = '';
 }
 
-// International payments are switched off for now (no international
-// gateway is live). Set this to true again when one is connected.
-const INTERNATIONAL_PAYMENTS_AVAILABLE = false;
-
-function aiShowPayPal() {
+async function aiShowPaddle() {
   const slot = document.getElementById('ai-paypal-slot');
-  const target = document.getElementById('ai-paypal-btn');
   const actions = document.querySelector('#ai-upload-block .workflow-actions');
-  if (!slot || !target) return;
-  if (actions) actions.style.display = 'none';
-  slot.style.display = 'block';
-  if (!INTERNATIONAL_PAYMENTS_AVAILABLE) {
-    slot.innerHTML = '<p style="font-size:0.85rem;font-weight:600;color:#667085;text-align:center;line-height:1.5;margin:6px 0 0;">International payments are coming soon.</p>';
+  try {
+    await loadPaddle();
+  } catch (err) {
+    if (err && err.message === 'disabled') {
+      // International payments are not switched on yet.
+      if (actions) actions.style.display = 'none';
+      if (slot) {
+        slot.style.display = 'block';
+        slot.innerHTML = '<p style="font-size:0.85rem;font-weight:600;color:#667085;text-align:center;line-height:1.5;margin:6px 0 0;">International payments are coming soon.</p>';
+      }
+    } else {
+      alert('Could not load the payment window. Please refresh the page or email support@plagifix.com.');
+    }
     return;
   }
-  if (aiPayPalRendered) return;
-  aiPayPalRendered = true;
-  target.innerHTML = '<p class="paypal-help">Loading secure payment…</p>';
-
-  loadPayPalSdk().then(paypal => {
-    target.innerHTML = '';
-    paypal.Buttons({
-      style: { layout: 'vertical', height: 45 },
-      createOrder: async () => {
-        if (!aiSelectedFile) throw new Error('Please choose your document first.');
-        const res = await fetch(`${BACKEND}/create-paypal-order`, {
+  if (!aiSelectedFile) { alert('Please choose your document first.'); return; }
+  try {
+    const res = await fetch(`${BACKEND}/create-paddle-transaction`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ email: aiEmail, instant: true })
+    });
+    const d = await res.json();
+    if (!res.ok || !d.id) throw new Error(d.error || 'Could not start payment.');
+    // Upload the document BEFORE the customer pays (same idea as the PayU flow).
+    const stashForm = new FormData();
+    stashForm.append('file', aiSelectedFile);
+    stashForm.append('email', aiEmail);
+    stashForm.append('txnid', d.id);
+    const stashRes = await fetch(`${BACKEND}/stash-instant-file`, { method: 'POST', body: stashForm });
+    if (!stashRes.ok) {
+      const err = await stashRes.json().catch(() => ({}));
+      throw new Error(err.error || 'Could not upload your document. Please try again.');
+    }
+    paddleOnDone = async () => {
+      try { Paddle.Checkout.close(); } catch (e) {}
+      try {
+        const r2 = await fetch(`${BACKEND}/confirm-paddle-transaction`, {
           method: 'POST',
           headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ email: aiEmail, instant: true })
+          body: JSON.stringify({ transaction_id: d.id })
         });
-        const d = await res.json();
-        if (!res.ok || !d.id) throw new Error(d.error || 'Could not start payment.');
-        // Upload the document BEFORE the customer pays (same idea as the PayU flow).
-        const stashForm = new FormData();
-        stashForm.append('file', aiSelectedFile);
-        stashForm.append('email', aiEmail);
-        stashForm.append('txnid', d.id);
-        const stashRes = await fetch(`${BACKEND}/stash-instant-file`, { method: 'POST', body: stashForm });
-        if (!stashRes.ok) {
-          const err = await stashRes.json().catch(() => ({}));
-          throw new Error(err.error || 'Could not upload your document. Please try again.');
-        }
-        return d.id;
-      },
-      onApprove: async (data, actions) => {
-        const res = await fetch(`${BACKEND}/capture-paypal-order`, {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({ order_id: data.orderID })
-        });
-        const d = await res.json();
-        if (res.status === 402 && d.error === 'declined') return actions.restart();
-        if (!res.ok) throw new Error(d.error || 'Payment could not be completed.');
-        if (d.status !== 'success') {
-          alert('Your payment is being processed by PayPal. Your document will be fixed once it is confirmed. If nothing happens within a few hours, email support@plagifix.com with your PayPal receipt.');
+        const c = await r2.json();
+        if (!r2.ok || c.status !== 'success') {
+          alert('Your payment is being confirmed. Your document will be fixed once it is confirmed. If nothing happens within a few hours, email support@plagifix.com with your payment receipt.');
           return;
         }
-        await aiFinishPayPal(d.txnid, d.email, aiSelectedFile ? aiSelectedFile.name : 'document.docx');
-      },
-      onCancel: () => { alert('Payment cancelled. No charge was made.'); },
-      onError: (err) => {
-        alert((err && err.message ? err.message + '\n\n' : '') +
-          'If you were charged, please email support@plagifix.com with your PayPal receipt.');
+        await aiFinishPayPal(c.txnid, c.email, aiSelectedFile ? aiSelectedFile.name : 'document.docx');
+      } catch (e) {
+        alert('Your payment was received but we could not confirm it yet. Please email support@plagifix.com with your payment receipt.');
       }
-    }).render('#ai-paypal-btn');
-  }).catch(() => {
-    aiPayPalRendered = false;
-    target.innerHTML = '<p class="paypal-help">Could not load PayPal. Please refresh the page or email support@plagifix.com.</p>';
-  });
+    };
+    Paddle.Checkout.open({ transactionId: d.id });
+  } catch (err) {
+    alert(err.message || 'Could not start payment. Please try again.');
+  }
 }
 
 // After a successful PayPal payment: fetch the fixed document and show
@@ -613,7 +610,7 @@ async function aiStartPayment(){
   const btn = document.getElementById('ai-process-btn');
   if(btn.hasAttribute('disabled')) return;
   if (!aiSelectedFile) return;
-  if (!isIndiaTimezone()) { aiShowPayPal(); return; }
+  if (!isIndiaTimezone()) { aiShowPaddle(); return; }
   btn.setAttribute('disabled','true');
   btn.innerHTML = '<span class="spin"></span> Preparing payment...';
 
