@@ -242,26 +242,26 @@ footer{flex-wrap:wrap;gap:12px;}
     <div class="mini-plan free" onclick="document.getElementById('instant-fix').scrollIntoView({behavior:'smooth',block:'start'})">
       <span class="mini-tag green">No account needed</span>
       <div class="mini-name">Instant Fix</div>
-      <div class="mini-price">$2</div>
+      <div class="mini-price">$3</div>
       <div class="mini-meta">1 AI &amp; Plag Fix, no sign-up</div>
       <span class="btn btn-green btn-sm btn-block">Fix now</span>
     </div>
     <div class="mini-plan" onclick="window.location.href='/register.html'">
       <div class="mini-name">Starter</div>
-      <div class="mini-price">$6</div>
+      <div class="mini-price">$8</div>
       <div class="mini-meta">4 AI &amp; Plag Fix credits</div>
       <span class="btn btn-blue btn-sm btn-block">Get Starter</span>
     </div>
     <div class="mini-plan popular" onclick="window.location.href='/register.html'">
       <span class="mini-tag red">Most popular</span>
       <div class="mini-name">Classic</div>
-      <div class="mini-price">$15</div>
+      <div class="mini-price">$18</div>
       <div class="mini-meta">12 AI &amp; Plag Fix credits</div>
       <span class="btn btn-blue btn-sm btn-block">Get Classic</span>
     </div>
     <div class="mini-plan" onclick="window.location.href='/register.html'">
       <div class="mini-name">Pro</div>
-      <div class="mini-price">$30</div>
+      <div class="mini-price">$35</div>
       <div class="mini-meta">30 AI &amp; Plag Fix credits</div>
       <span class="btn btn-blue btn-sm btn-block">Get Pro</span>
     </div>
@@ -443,7 +443,7 @@ function setStep(group,n){
 // so the document stays in memory; it is still uploaded to the backend
 // stash just BEFORE the PayPal popup opens, so the existing
 // /instant-process-stashed route (single-use) can fix it after payment.
-// The $2 price is set by the server, never here.
+// The $3 price is set by the server, never here.
 function isIndiaTimezone() {
   try {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
