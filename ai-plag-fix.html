@@ -464,6 +464,7 @@ function loadPaddle() {
         if (cfg.environment === 'sandbox') Paddle.Environment.set('sandbox');
         Paddle.Initialize({
           token: cfg.client_token,
+          checkout: { settings: { showAddDiscounts: false } },
           eventCallback: ev => {
             if (ev && ev.name === 'checkout.completed' && paddleOnDone) paddleOnDone(ev.data);
           }
